@@ -1,11 +1,15 @@
 package gapi
 
-import "github.com/ebukacodes21/soleluxury-server/pb"
+import (
+	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
+	"github.com/ebukacodes21/soleluxury-server/pb"
+)
 
 type Server struct {
 	pb.UnimplementedSoleluxuryServer
+	repository db.DatabaseContract
 }
 
-func NewServer() *Server {
-	return &Server{}
+func NewServer(repository db.DatabaseContract) *Server {
+	return &Server{repository: repository}
 }
