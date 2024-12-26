@@ -34,8 +34,9 @@ func main() {
 
 	group, ctx := errgroup.WithContext(ctx)
 
-	servers.RunGrpcServer(group, ctx, repository)
 	servers.RunMigration(config.MigrationURL, config.DBSource)
+	servers.RunGrpcServer(group, ctx, repository, config)
+	servers.RunGrpcGateway(group, ctx, repository, config)
 
 	err = group.Wait()
 	if err != nil {
