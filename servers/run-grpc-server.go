@@ -8,26 +8,27 @@ import (
 	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
 	"github.com/ebukacodes21/soleluxury-server/gapi"
 	"github.com/ebukacodes21/soleluxury-server/pb"
+	"github.com/ebukacodes21/soleluxury-server/utils"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-func RunGrpcServer(group *errgroup.Group, ctx context.Context, repository db.DatabaseContract) {
-	server := gapi.NewServer(repository)
-	// logger
-	gServer := grpc.NewServer()
+func RunGrpcServer(group *errgroup.Group, ctx context.Context, repository db.DatabaseContract, config utils.Config) {
+	server := gapi.NewServer(repository, config)
+	logger := grpc.UnaryInterceptor(gapi.GrpcLogger)
+	gServer := grpc.NewServer(logger)
 
 	pb.RegisterSoleluxuryServer(gServer, server)
 	reflection.Register(gServer)
 
-	listener, err := net.Listen("tcp", "0.0.0.0:8000")
+	listener, err := net.Listen("tcp", config.GRPCServerAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	group.Go(func() error {
-		log.Print("Grpc server running on ", "0.0.0.0:8000")
+		log.Print("Grpc server running on ", config.GRPCServerAddr)
 		err = gServer.Serve(listener)
 		if err != nil {
 			log.Fatal(err)
