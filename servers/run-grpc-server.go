@@ -9,13 +9,14 @@ import (
 	"github.com/ebukacodes21/soleluxury-server/gapi"
 	"github.com/ebukacodes21/soleluxury-server/pb"
 	"github.com/ebukacodes21/soleluxury-server/utils"
+	"github.com/ebukacodes21/soleluxury-server/worker"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
-func RunGrpcServer(group *errgroup.Group, ctx context.Context, repository db.DatabaseContract, config utils.Config) {
-	server := gapi.NewServer(repository, config)
+func RunGrpcServer(group *errgroup.Group, ctx context.Context, repository db.DatabaseContract, config utils.Config, td worker.Distributor, tp worker.Processor) {
+	server := gapi.NewServer(repository, config, td, tp)
 	logger := grpc.UnaryInterceptor(gapi.GrpcLogger)
 	gServer := grpc.NewServer(logger)
 

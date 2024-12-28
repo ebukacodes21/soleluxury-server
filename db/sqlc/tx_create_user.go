@@ -8,7 +8,7 @@ type CreateUserTxParams struct {
 }
 
 type CreateUserTxResponse struct {
-	user User
+	User User
 }
 
 func (sr *SoleluxuryRepository) CreateUserTx(ctx context.Context, args CreateUserTxParams) (CreateUserTxResponse, error) {
@@ -16,12 +16,12 @@ func (sr *SoleluxuryRepository) CreateUserTx(ctx context.Context, args CreateUse
 
 	err := sr.execTx(ctx, func(queries *Queries) error {
 		var err error
-		result.user, err = sr.CreateUser(ctx, args.CreateUserParams)
+		result.User, err = sr.CreateUser(ctx, args.CreateUserParams)
 		if err != nil {
 			return err
 		}
 
-		return args.AfterCreate(result.user)
+		return args.AfterCreate(result.User)
 	})
 
 	return result, err

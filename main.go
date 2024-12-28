@@ -11,6 +11,8 @@ import (
 	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
 	"github.com/ebukacodes21/soleluxury-server/servers"
 	"github.com/ebukacodes21/soleluxury-server/utils"
+	"github.com/ebukacodes21/soleluxury-server/worker"
+	"github.com/hibiken/asynq"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -34,9 +36,15 @@ func main() {
 
 	group, ctx := errgroup.WithContext(ctx)
 
+	opt := asynq.RedisClientOpt{
+		Addr: config.REDISServerAddr,
+	}
+	td := worker.NewTaskDistributor(opt)
+	tp := worker.NewTaskProcessor(opt, repository)
+
 	servers.RunMigration(config.MigrationURL, config.DBSource)
-	servers.RunGrpcServer(group, ctx, repository, config)
-	servers.RunGrpcGateway(group, ctx, repository, config)
+	servers.RunGrpcServer(group, ctx, repository, config, td, tp)
+	servers.RunGrpcGateway(group, ctx, repository, config, td, tp)
 
 	err = group.Wait()
 	if err != nil {

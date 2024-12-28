@@ -11,21 +11,49 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-    username, email, password
+    username, email, password, verification_code
 ) VALUES (
-  $1, $2, $3
+  $1, $2, $3, $4
 )
 RETURNING id, username, password, email, is_verified, verification_code, role, created_at
 `
 
 type CreateUserParams struct {
-	Username string `db:"username" json:"username"`
-	Email    string `db:"email" json:"email"`
-	Password string `db:"password" json:"password"`
+	Username         string `db:"username" json:"username"`
+	Email            string `db:"email" json:"email"`
+	Password         string `db:"password" json:"password"`
+	VerificationCode string `db:"verification_code" json:"verification_code"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.Email, arg.Password)
+	row := q.db.QueryRowContext(ctx, createUser,
+		arg.Username,
+		arg.Email,
+		arg.Password,
+		arg.VerificationCode,
+	)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Password,
+		&i.Email,
+		&i.IsVerified,
+		&i.VerificationCode,
+		&i.Role,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getUser = `-- name: GetUser :one
+SELECT id, username, password, email, is_verified, verification_code, role, created_at FROM users 
+WHERE email = $1
+LIMIT 1
+`
+
+func (q *Queries) GetUser(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, email)
 	var i User
 	err := row.Scan(
 		&i.ID,

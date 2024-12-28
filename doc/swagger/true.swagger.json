@@ -57,7 +57,7 @@
     "/api/create-user": {
       "post": {
         "summary": "create a new user",
-        "description": "Use this API to create a new User",
+        "description": "Use this API to create a new user",
         "operationId": "Soleluxury_CreateUser",
         "responses": {
           "200": {
@@ -80,6 +80,40 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
+    "/api/login-user": {
+      "post": {
+        "summary": "Login a user",
+        "description": "Use this API to login a user",
+        "operationId": "Soleluxury_LoginUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbLoginUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbLoginUserRequest"
             }
           }
         ],
@@ -123,6 +157,42 @@
     "pbCreateUserResponse": {
       "type": "object",
       "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        }
+      }
+    },
+    "pbLoginUserRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "pbLoginUserResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "accessTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "refreshTokenExpiresAt": {
+          "type": "string",
+          "format": "date-time"
+        },
         "user": {
           "$ref": "#/definitions/pbUser"
         }
