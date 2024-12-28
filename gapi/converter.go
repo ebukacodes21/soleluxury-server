@@ -13,3 +13,15 @@ func convertStore(store db.Store) *pb.Store {
 		CreatedAt: timestamppb.New(store.CreatedAt),
 	}
 }
+
+func convertUser(user db.User) *pb.User {
+	return &pb.User{
+		Id:               user.ID,
+		Username:         user.Username,
+		Email:            user.Email,
+		IsVerified:       user.IsVerified,
+		VerificationCode: user.VerificationCode,
+		Role:             user.Role,
+		CreatedAt:        timestamppb.New(user.CreatedAt),
+	}
+}

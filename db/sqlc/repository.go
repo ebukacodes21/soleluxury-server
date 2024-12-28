@@ -8,6 +8,7 @@ import (
 
 type DatabaseContract interface {
 	Querier
+	CreateUserTx(ctx context.Context, args CreateUserTxParams) (CreateUserTxResponse, error)
 }
 
 type SoleluxuryRepository struct {

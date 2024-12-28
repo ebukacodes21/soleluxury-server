@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	_ "github.com/ebukacodes21/soleluxury-server/doc/statik"
+	"github.com/ebukacodes21/soleluxury-server/worker"
 
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/cors"
@@ -19,8 +20,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func RunGrpcGateway(group *errgroup.Group, ctx context.Context, repository db.DatabaseContract, config utils.Config) {
-	server := gapi.NewServer(repository, config)
+func RunGrpcGateway(group *errgroup.Group, ctx context.Context, repository db.DatabaseContract, config utils.Config, td worker.Distributor, tp worker.Processor) {
+	server := gapi.NewServer(repository, config, td, tp)
 
 	options := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
 		MarshalOptions: protojson.MarshalOptions{
