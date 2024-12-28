@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SoleluxuryClient interface {
+	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	CreateStore(ctx context.Context, in *CreateStoreRequest, opts ...grpc.CallOption) (*CreateStoreResponse, error)
 }
 
@@ -31,6 +32,15 @@ type soleluxuryClient struct {
 
 func NewSoleluxuryClient(cc grpc.ClientConnInterface) SoleluxuryClient {
 	return &soleluxuryClient{cc}
+}
+
+func (c *soleluxuryClient) CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error) {
+	out := new(CreateUserResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/CreateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *soleluxuryClient) CreateStore(ctx context.Context, in *CreateStoreRequest, opts ...grpc.CallOption) (*CreateStoreResponse, error) {
@@ -46,6 +56,7 @@ func (c *soleluxuryClient) CreateStore(ctx context.Context, in *CreateStoreReque
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
 type SoleluxuryServer interface {
+	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	CreateStore(context.Context, *CreateStoreRequest) (*CreateStoreResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
@@ -54,6 +65,9 @@ type SoleluxuryServer interface {
 type UnimplementedSoleluxuryServer struct {
 }
 
+func (UnimplementedSoleluxuryServer) CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUser not implemented")
+}
 func (UnimplementedSoleluxuryServer) CreateStore(context.Context, *CreateStoreRequest) (*CreateStoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateStore not implemented")
 }
@@ -68,6 +82,24 @@ type UnsafeSoleluxuryServer interface {
 
 func RegisterSoleluxuryServer(s grpc.ServiceRegistrar, srv SoleluxuryServer) {
 	s.RegisterService(&Soleluxury_ServiceDesc, srv)
+}
+
+func _Soleluxury_CreateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).CreateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/CreateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).CreateUser(ctx, req.(*CreateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _Soleluxury_CreateStore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -95,6 +127,10 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.Soleluxury",
 	HandlerType: (*SoleluxuryServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateUser",
+			Handler:    _Soleluxury_CreateUser_Handler,
+		},
 		{
 			MethodName: "CreateStore",
 			Handler:    _Soleluxury_CreateStore_Handler,

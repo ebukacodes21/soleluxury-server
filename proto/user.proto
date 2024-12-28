@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+message User {
+    int64 id = 1;
+    string username = 2;
+    string password = 3;
+    string email = 4;
+    bool is_verified = 5;
+    string verification_code = 6;
+    string role = 7;
+    google.protobuf.Timestamp created_at = 8;
+}

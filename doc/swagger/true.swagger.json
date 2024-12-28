@@ -53,6 +53,40 @@
           "Soleluxury"
         ]
       }
+    },
+    "/api/create-user": {
+      "post": {
+        "summary": "create a new user",
+        "description": "Use this API to create a new User",
+        "operationId": "Soleluxury_CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
     }
   },
   "definitions": {
@@ -72,6 +106,28 @@
         }
       }
     },
+    "pbCreateUserRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateUserResponse": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        }
+      }
+    },
     "pbStore": {
       "type": "object",
       "properties": {
@@ -80,6 +136,37 @@
           "format": "int64"
         },
         "name": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "isVerified": {
+          "type": "boolean"
+        },
+        "verificationCode": {
+          "type": "string"
+        },
+        "role": {
           "type": "string"
         },
         "createdAt": {
