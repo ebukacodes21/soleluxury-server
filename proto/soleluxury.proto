@@ -6,9 +6,12 @@ option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
 
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
+import "google/protobuf/empty.proto"; 
 import "rpc_create_user.proto";
 import "rpc_login_user.proto";
 import "rpc_create_store.proto";
+import "rpc_get_store.proto";
+import "rpc_get_stores.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -51,6 +54,33 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to create a new store";
             summary: "create a new store";
+        };
+    }
+    rpc GetStore (GetStoreRequest) returns (GetStoreResponse) {
+        option (google.api.http) = {
+            get: "/api/get-store"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a store";
+            summary: "Get a store";
+        };
+    }
+    rpc GetFirstStore (google.protobuf.Empty) returns (GetStoreResponse) {
+        option (google.api.http) = {
+            get: "/api/get-first-store"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get the first store";
+            summary: "Get first store";
+        };
+    }
+    rpc GetStores (google.protobuf.Empty) returns (GetStoresResponse) {
+        option (google.api.http) = {
+            get: "/api/get-stores"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get stores";
+            summary: "Get stores";
         };
     }
 }

@@ -16,7 +16,10 @@ import (
 )
 
 func RunGrpcServer(group *errgroup.Group, ctx context.Context, repository db.DatabaseContract, config utils.Config, td worker.Distributor, tp worker.Processor) {
-	server := gapi.NewServer(repository, config, td, tp)
+	server, err := gapi.NewServer(repository, config, td, tp)
+	if err != nil {
+		log.Fatal(err)
+	}
 	logger := grpc.UnaryInterceptor(gapi.GrpcLogger)
 	gServer := grpc.NewServer(logger)
 

@@ -57,7 +57,7 @@ func (s Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.
 				return nil, status.Errorf(codes.Internal, "unique violation %s ", pgErr)
 			}
 		}
-		return nil, status.Errorf(codes.Internal, "failed to create user")
+		return nil, status.Errorf(codes.Internal, "failed to create user -- %s", err)
 	}
 
 	resp := &pb.CreateUserResponse{

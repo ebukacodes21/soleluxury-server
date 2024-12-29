@@ -88,6 +88,87 @@
         ]
       }
     },
+    "/api/get-first-store": {
+      "get": {
+        "summary": "Get first store",
+        "description": "Use this API to get the first store",
+        "operationId": "Soleluxury_GetFirstStore",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetStoreResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
+    "/api/get-store": {
+      "get": {
+        "summary": "Get a store",
+        "description": "Use this API to get a store",
+        "operationId": "Soleluxury_GetStore",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetStoreResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
+    "/api/get-stores": {
+      "get": {
+        "summary": "Get stores",
+        "description": "Use this API to get stores",
+        "operationId": "Soleluxury_GetStores",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetStoresResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/login-user": {
       "post": {
         "summary": "Login a user",
@@ -159,6 +240,26 @@
       "properties": {
         "user": {
           "$ref": "#/definitions/pbUser"
+        }
+      }
+    },
+    "pbGetStoreResponse": {
+      "type": "object",
+      "properties": {
+        "store": {
+          "$ref": "#/definitions/pbStore"
+        }
+      }
+    },
+    "pbGetStoresResponse": {
+      "type": "object",
+      "properties": {
+        "stores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbStore"
+          }
         }
       }
     },

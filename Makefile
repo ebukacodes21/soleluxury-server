@@ -1,3 +1,5 @@
+DB_SOURCE=postgresql://user:rocketman1@localhost:5432/soleluxury?sslmode=disable
+
 init:
 	sqlc init
 
@@ -6,6 +8,12 @@ generate:
 
 table:
 	docker run -it --rm --network host --volume "/Users/george/workspace/soleluxury-server/db:/db" migrate/migrate:v4.17.0 create -ext sql -dir /db/migrations $(name)
+
+migrateup:
+	docker run -it --rm --network host --volume ./db:/db migrate/migrate:v4.17.0 -path=/db/migrations -database "$(DB_SOURCE)" -verbose up
+
+migratedown:
+	docker run -it --rm --network host --volume ./db:/db migrate/migrate:v4.17.0 -path=/db/migrations -database "$(DB_SOURCE)" -verbose down
 
 proto:
 	rm -f pb/*.go
@@ -32,6 +40,6 @@ composeup:
 	docker compose --env-file app.env up -d
 
 composedown:
-	docker compose down
+	docker compose --env-file app.env down
 
-PHONY: init generate table proto evans server composeup composedown
+PHONY: init generate table proto evans server composeup composedown migrateup migratedown

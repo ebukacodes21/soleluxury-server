@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -25,6 +26,9 @@ type SoleluxuryClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	CreateStore(ctx context.Context, in *CreateStoreRequest, opts ...grpc.CallOption) (*CreateStoreResponse, error)
+	GetStore(ctx context.Context, in *GetStoreRequest, opts ...grpc.CallOption) (*GetStoreResponse, error)
+	GetFirstStore(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoreResponse, error)
+	GetStores(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoresResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -62,6 +66,33 @@ func (c *soleluxuryClient) CreateStore(ctx context.Context, in *CreateStoreReque
 	return out, nil
 }
 
+func (c *soleluxuryClient) GetStore(ctx context.Context, in *GetStoreRequest, opts ...grpc.CallOption) (*GetStoreResponse, error) {
+	out := new(GetStoreResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetStore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) GetFirstStore(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoreResponse, error) {
+	out := new(GetStoreResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetFirstStore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) GetStores(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoresResponse, error) {
+	out := new(GetStoresResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetStores", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SoleluxuryServer is the server API for Soleluxury service.
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
@@ -69,6 +100,9 @@ type SoleluxuryServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	CreateStore(context.Context, *CreateStoreRequest) (*CreateStoreResponse, error)
+	GetStore(context.Context, *GetStoreRequest) (*GetStoreResponse, error)
+	GetFirstStore(context.Context, *emptypb.Empty) (*GetStoreResponse, error)
+	GetStores(context.Context, *emptypb.Empty) (*GetStoresResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -84,6 +118,15 @@ func (UnimplementedSoleluxuryServer) LoginUser(context.Context, *LoginUserReques
 }
 func (UnimplementedSoleluxuryServer) CreateStore(context.Context, *CreateStoreRequest) (*CreateStoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateStore not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetStore(context.Context, *GetStoreRequest) (*GetStoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStore not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetFirstStore(context.Context, *emptypb.Empty) (*GetStoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFirstStore not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetStores(context.Context, *emptypb.Empty) (*GetStoresResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStores not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -152,6 +195,60 @@ func _Soleluxury_CreateStore_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_GetStore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetStore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetStore",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetStore(ctx, req.(*GetStoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_GetFirstStore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetFirstStore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetFirstStore",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetFirstStore(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_GetStores_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetStores(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetStores",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetStores(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Soleluxury_ServiceDesc is the grpc.ServiceDesc for Soleluxury service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -170,6 +267,18 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateStore",
 			Handler:    _Soleluxury_CreateStore_Handler,
+		},
+		{
+			MethodName: "GetStore",
+			Handler:    _Soleluxury_GetStore_Handler,
+		},
+		{
+			MethodName: "GetFirstStore",
+			Handler:    _Soleluxury_GetFirstStore_Handler,
+		},
+		{
+			MethodName: "GetStores",
+			Handler:    _Soleluxury_GetStores_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

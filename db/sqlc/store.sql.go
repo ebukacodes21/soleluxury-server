@@ -24,3 +24,57 @@ func (q *Queries) CreateStore(ctx context.Context, name string) (Store, error) {
 	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
 	return i, err
 }
+
+const getFirstStore = `-- name: GetFirstStore :one
+SELECT id, name, created_at FROM stores
+ORDER BY created_at ASC 
+LIMIT 1
+`
+
+func (q *Queries) GetFirstStore(ctx context.Context) (Store, error) {
+	row := q.db.QueryRowContext(ctx, getFirstStore)
+	var i Store
+	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
+	return i, err
+}
+
+const getStore = `-- name: GetStore :one
+SELECT id, name, created_at FROM stores
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetStore(ctx context.Context, id int64) (Store, error) {
+	row := q.db.QueryRowContext(ctx, getStore, id)
+	var i Store
+	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
+	return i, err
+}
+
+const getStores = `-- name: GetStores :many
+SELECT id, name, created_at FROM stores
+ORDER BY id
+`
+
+func (q *Queries) GetStores(ctx context.Context) ([]Store, error) {
+	rows, err := q.db.QueryContext(ctx, getStores)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Store{}
+	for rows.Next() {
+		var i Store
+		if err := rows.Scan(&i.ID, &i.Name, &i.CreatedAt); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
