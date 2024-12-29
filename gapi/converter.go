@@ -25,3 +25,16 @@ func convertUser(user db.User) *pb.User {
 		CreatedAt:        timestamppb.New(user.CreatedAt),
 	}
 }
+
+func convertStores(stores []db.Store) []*pb.Store {
+	var pbStores []*pb.Store
+	for _, store := range stores {
+		pbStores = append(pbStores, &pb.Store{
+			Id:        store.ID,
+			Name:      store.Name,
+			CreatedAt: timestamppb.New(store.CreatedAt),
+		})
+	}
+
+	return pbStores
+}

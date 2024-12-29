@@ -21,7 +21,10 @@ import (
 )
 
 func RunGrpcGateway(group *errgroup.Group, ctx context.Context, repository db.DatabaseContract, config utils.Config, td worker.Distributor, tp worker.Processor) {
-	server := gapi.NewServer(repository, config, td, tp)
+	server, err := gapi.NewServer(repository, config, td, tp)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	options := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
 		MarshalOptions: protojson.MarshalOptions{
@@ -33,7 +36,7 @@ func RunGrpcGateway(group *errgroup.Group, ctx context.Context, repository db.Da
 	})
 
 	mux := runtime.NewServeMux(options)
-	err := pb.RegisterSoleluxuryHandlerServer(ctx, mux, server)
+	err = pb.RegisterSoleluxuryHandlerServer(ctx, mux, server)
 	if err != nil {
 		log.Fatal(err)
 	}

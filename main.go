@@ -45,6 +45,7 @@ func main() {
 	servers.RunMigration(config.MigrationURL, config.DBSource)
 	servers.RunGrpcServer(group, ctx, repository, config, td, tp)
 	servers.RunGrpcGateway(group, ctx, repository, config, td, tp)
+	servers.RunTasks(group, ctx, opt, repository)
 
 	err = group.Wait()
 	if err != nil {
