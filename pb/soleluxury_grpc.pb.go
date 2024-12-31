@@ -25,12 +25,14 @@ const _ = grpc.SupportPackageIsVersion7
 type SoleluxuryClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
+	LogoutUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutResponse, error)
 	CreateStore(ctx context.Context, in *CreateStoreRequest, opts ...grpc.CallOption) (*CreateStoreResponse, error)
 	GetStore(ctx context.Context, in *GetStoreRequest, opts ...grpc.CallOption) (*GetStoreResponse, error)
 	GetFirstStore(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoreResponse, error)
 	GetStores(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoresResponse, error)
 	UpdateStore(ctx context.Context, in *UpdateStoreRequest, opts ...grpc.CallOption) (*UpdateStoreResponse, error)
 	DeleteStore(ctx context.Context, in *DeleteStoreRequest, opts ...grpc.CallOption) (*DeleteStoreResponse, error)
+	GetBillboard(ctx context.Context, in *GetBillboardRequest, opts ...grpc.CallOption) (*GetBillboardResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -53,6 +55,15 @@ func (c *soleluxuryClient) CreateUser(ctx context.Context, in *CreateUserRequest
 func (c *soleluxuryClient) LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error) {
 	out := new(LoginUserResponse)
 	err := c.cc.Invoke(ctx, "/pb.Soleluxury/LoginUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) LogoutUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*LogoutResponse, error) {
+	out := new(LogoutResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/LogoutUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -113,18 +124,29 @@ func (c *soleluxuryClient) DeleteStore(ctx context.Context, in *DeleteStoreReque
 	return out, nil
 }
 
+func (c *soleluxuryClient) GetBillboard(ctx context.Context, in *GetBillboardRequest, opts ...grpc.CallOption) (*GetBillboardResponse, error) {
+	out := new(GetBillboardResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetBillboard", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SoleluxuryServer is the server API for Soleluxury service.
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
 type SoleluxuryServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
+	LogoutUser(context.Context, *emptypb.Empty) (*LogoutResponse, error)
 	CreateStore(context.Context, *CreateStoreRequest) (*CreateStoreResponse, error)
 	GetStore(context.Context, *GetStoreRequest) (*GetStoreResponse, error)
 	GetFirstStore(context.Context, *emptypb.Empty) (*GetStoreResponse, error)
 	GetStores(context.Context, *emptypb.Empty) (*GetStoresResponse, error)
 	UpdateStore(context.Context, *UpdateStoreRequest) (*UpdateStoreResponse, error)
 	DeleteStore(context.Context, *DeleteStoreRequest) (*DeleteStoreResponse, error)
+	GetBillboard(context.Context, *GetBillboardRequest) (*GetBillboardResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -137,6 +159,9 @@ func (UnimplementedSoleluxuryServer) CreateUser(context.Context, *CreateUserRequ
 }
 func (UnimplementedSoleluxuryServer) LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginUser not implemented")
+}
+func (UnimplementedSoleluxuryServer) LogoutUser(context.Context, *emptypb.Empty) (*LogoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogoutUser not implemented")
 }
 func (UnimplementedSoleluxuryServer) CreateStore(context.Context, *CreateStoreRequest) (*CreateStoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateStore not implemented")
@@ -155,6 +180,9 @@ func (UnimplementedSoleluxuryServer) UpdateStore(context.Context, *UpdateStoreRe
 }
 func (UnimplementedSoleluxuryServer) DeleteStore(context.Context, *DeleteStoreRequest) (*DeleteStoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteStore not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetBillboard(context.Context, *GetBillboardRequest) (*GetBillboardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBillboard not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -201,6 +229,24 @@ func _Soleluxury_LoginUser_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SoleluxuryServer).LoginUser(ctx, req.(*LoginUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_LogoutUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).LogoutUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/LogoutUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).LogoutUser(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -313,6 +359,24 @@ func _Soleluxury_DeleteStore_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_GetBillboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBillboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetBillboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetBillboard",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetBillboard(ctx, req.(*GetBillboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Soleluxury_ServiceDesc is the grpc.ServiceDesc for Soleluxury service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -327,6 +391,10 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "LoginUser",
 			Handler:    _Soleluxury_LoginUser_Handler,
+		},
+		{
+			MethodName: "LogoutUser",
+			Handler:    _Soleluxury_LogoutUser_Handler,
 		},
 		{
 			MethodName: "CreateStore",
@@ -351,6 +419,10 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteStore",
 			Handler:    _Soleluxury_DeleteStore_Handler,
+		},
+		{
+			MethodName: "GetBillboard",
+			Handler:    _Soleluxury_GetBillboard_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

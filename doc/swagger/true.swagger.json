@@ -122,6 +122,39 @@
         ]
       }
     },
+    "/api/get-billboard": {
+      "get": {
+        "summary": "Get a billboard",
+        "description": "Use this API to get a billboard",
+        "operationId": "Soleluxury_GetBillboard",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetBillboardResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/get-first-store": {
       "get": {
         "summary": "Get first store",
@@ -237,6 +270,41 @@
         ]
       }
     },
+    "/api/logout-user": {
+      "post": {
+        "summary": "Logout user",
+        "description": "Use this API to logout user",
+        "operationId": "Soleluxury_LogoutUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbLogoutResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {}
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/update-store": {
       "patch": {
         "summary": "Update a store",
@@ -273,6 +341,29 @@
     }
   },
   "definitions": {
+    "pbBillboard": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "label": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "pbCreateStoreRequest": {
       "type": "object",
       "properties": {
@@ -325,6 +416,14 @@
       "properties": {
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "pbGetBillboardResponse": {
+      "type": "object",
+      "properties": {
+        "billboard": {
+          "$ref": "#/definitions/pbBillboard"
         }
       }
     },
@@ -381,6 +480,14 @@
         },
         "user": {
           "$ref": "#/definitions/pbUser"
+        }
+      }
+    },
+    "pbLogoutResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },

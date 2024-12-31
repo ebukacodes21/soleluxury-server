@@ -60,10 +60,16 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 
 const logout = `-- name: Logout :exec
 DELETE FROM sessions
-WHERE id = $1
+WHERE user_id = $1
+AND username = $2
 `
 
-func (q *Queries) Logout(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.ExecContext(ctx, logout, id)
+type LogoutParams struct {
+	UserID   int64  `db:"user_id" json:"user_id"`
+	Username string `db:"username" json:"username"`
+}
+
+func (q *Queries) Logout(ctx context.Context, arg LogoutParams) error {
+	_, err := q.db.ExecContext(ctx, logout, arg.UserID, arg.Username)
 	return err
 }

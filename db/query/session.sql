@@ -8,4 +8,5 @@ RETURNING *;
 
 -- name: Logout :exec
 DELETE FROM sessions
-WHERE id = $1;
+WHERE user_id = $1
+AND username = $2;

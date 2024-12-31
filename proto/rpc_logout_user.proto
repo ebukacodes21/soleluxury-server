@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+message LogoutResponse {
+   string message = 1;
+}

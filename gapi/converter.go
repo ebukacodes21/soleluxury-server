@@ -38,3 +38,13 @@ func convertStores(stores []db.Store) []*pb.Store {
 
 	return pbStores
 }
+
+func convertBillboard(billboard db.Billboard) *pb.Billboard {
+	return &pb.Billboard{
+		Id:        billboard.ID,
+		Label:     billboard.Label,
+		ImageUrl:  billboard.ImageUrl,
+		StoreId:   billboard.StoreID,
+		CreatedAt: timestamppb.New(billboard.CreatedAt),
+	}
+}
