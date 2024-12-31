@@ -1,1 +1,3 @@
+DROP TABLE IF EXISTS "billboards";
+
 DROP TABLE IF EXISTS "stores";

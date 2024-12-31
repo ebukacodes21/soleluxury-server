@@ -10,6 +10,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type Billboard struct {
+	ID        int64     `db:"id" json:"id"`
+	StoreID   int64     `db:"store_id" json:"store_id"`
+	Label     string    `db:"label" json:"label"`
+	ImageUrl  string    `db:"image_url" json:"image_url"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
+}
+
 type Session struct {
 	ID           uuid.UUID `db:"id" json:"id"`
 	UserID       int64     `db:"user_id" json:"user_id"`

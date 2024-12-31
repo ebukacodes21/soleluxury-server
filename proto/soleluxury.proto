@@ -9,11 +9,13 @@ import "protoc-gen-openapiv2/options/annotations.proto";
 import "google/protobuf/empty.proto"; 
 import "rpc_create_user.proto";
 import "rpc_login_user.proto";
+import "rpc_logout_user.proto";
 import "rpc_create_store.proto";
 import "rpc_get_store.proto";
 import "rpc_get_stores.proto";
 import "rpc_update_store.proto";
 import "rpc_delete_store.proto";
+import "rpc_get_billboard.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -46,6 +48,16 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to login a user";
             summary: "Login a user";
+        };
+    }
+    rpc LogoutUser (google.protobuf.Empty) returns (LogoutResponse) {
+        option (google.api.http) = {
+            post: "/api/logout-user"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to logout user";
+            summary: "Logout user";
         };
     }
     rpc CreateStore (CreateStoreRequest) returns (CreateStoreResponse) {
@@ -103,6 +115,15 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a store";
             summary: "Delete a store";
+        };
+    }
+    rpc GetBillboard (GetBillboardRequest) returns (GetBillboardResponse) {
+        option (google.api.http) = {
+            get: "/api/get-billboard"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a billboard";
+            summary: "Get a billboard";
         };
     }
 }

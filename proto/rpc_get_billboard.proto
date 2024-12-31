@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+import "billboard.proto";
+
+message GetBillboardRequest {
+    int64 id = 1;
+}
+
+message GetBillboardResponse {
+    Billboard billboard = 1;
+}
