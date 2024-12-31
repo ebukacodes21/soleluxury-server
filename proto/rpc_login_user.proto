@@ -20,3 +20,7 @@ message LoginUserResponse {
     google.protobuf.Timestamp refresh_token_expires_at = 5;
     User user = 6;
 }
+
+message LogoutUserResponse {
+    string message = 1;
+}
