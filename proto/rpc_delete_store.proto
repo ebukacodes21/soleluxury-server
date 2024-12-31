@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+message DeleteStoreRequest {
+    int64 id = 1;
+}
+
+message DeleteStoreResponse {
+    string message = 1;
+}

@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createStore = `-- name: CreateStore :one
@@ -23,6 +24,16 @@ func (q *Queries) CreateStore(ctx context.Context, name string) (Store, error) {
 	var i Store
 	err := row.Scan(&i.ID, &i.Name, &i.CreatedAt)
 	return i, err
+}
+
+const deleteStore = `-- name: DeleteStore :exec
+DELETE FROM stores
+WHERE id = $1
+`
+
+func (q *Queries) DeleteStore(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteStore, id)
+	return err
 }
 
 const getFirstStore = `-- name: GetFirstStore :one
@@ -77,4 +88,22 @@ func (q *Queries) GetStores(ctx context.Context) ([]Store, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateStore = `-- name: UpdateStore :exec
+UPDATE stores
+SET
+  name = COALESCE($1, name)
+WHERE 
+  id = $2
+`
+
+type UpdateStoreParams struct {
+	Name sql.NullString `db:"name" json:"name"`
+	ID   int64          `db:"id" json:"id"`
+}
+
+func (q *Queries) UpdateStore(ctx context.Context, arg UpdateStoreParams) error {
+	_, err := q.db.ExecContext(ctx, updateStore, arg.Name, arg.ID)
+	return err
 }

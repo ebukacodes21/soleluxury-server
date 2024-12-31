@@ -12,6 +12,8 @@ import "rpc_login_user.proto";
 import "rpc_create_store.proto";
 import "rpc_get_store.proto";
 import "rpc_get_stores.proto";
+import "rpc_update_store.proto";
+import "rpc_delete_store.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -81,6 +83,26 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to get stores";
             summary: "Get stores";
+        };
+    }
+    rpc UpdateStore (UpdateStoreRequest) returns (UpdateStoreResponse) {
+        option (google.api.http) = {
+            patch: "/api/update-store"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to update a store";
+            summary: "Update a store";
+        };
+    }
+    rpc DeleteStore (DeleteStoreRequest) returns (DeleteStoreResponse) {
+        option (google.api.http) = {
+            post: "/api/delete-store"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to delete a store";
+            summary: "Delete a store";
         };
     }
 }

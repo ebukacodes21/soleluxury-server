@@ -29,6 +29,8 @@ type SoleluxuryClient interface {
 	GetStore(ctx context.Context, in *GetStoreRequest, opts ...grpc.CallOption) (*GetStoreResponse, error)
 	GetFirstStore(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoreResponse, error)
 	GetStores(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoresResponse, error)
+	UpdateStore(ctx context.Context, in *UpdateStoreRequest, opts ...grpc.CallOption) (*UpdateStoreResponse, error)
+	DeleteStore(ctx context.Context, in *DeleteStoreRequest, opts ...grpc.CallOption) (*DeleteStoreResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -93,6 +95,24 @@ func (c *soleluxuryClient) GetStores(ctx context.Context, in *emptypb.Empty, opt
 	return out, nil
 }
 
+func (c *soleluxuryClient) UpdateStore(ctx context.Context, in *UpdateStoreRequest, opts ...grpc.CallOption) (*UpdateStoreResponse, error) {
+	out := new(UpdateStoreResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/UpdateStore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) DeleteStore(ctx context.Context, in *DeleteStoreRequest, opts ...grpc.CallOption) (*DeleteStoreResponse, error) {
+	out := new(DeleteStoreResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/DeleteStore", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SoleluxuryServer is the server API for Soleluxury service.
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
@@ -103,6 +123,8 @@ type SoleluxuryServer interface {
 	GetStore(context.Context, *GetStoreRequest) (*GetStoreResponse, error)
 	GetFirstStore(context.Context, *emptypb.Empty) (*GetStoreResponse, error)
 	GetStores(context.Context, *emptypb.Empty) (*GetStoresResponse, error)
+	UpdateStore(context.Context, *UpdateStoreRequest) (*UpdateStoreResponse, error)
+	DeleteStore(context.Context, *DeleteStoreRequest) (*DeleteStoreResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -127,6 +149,12 @@ func (UnimplementedSoleluxuryServer) GetFirstStore(context.Context, *emptypb.Emp
 }
 func (UnimplementedSoleluxuryServer) GetStores(context.Context, *emptypb.Empty) (*GetStoresResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStores not implemented")
+}
+func (UnimplementedSoleluxuryServer) UpdateStore(context.Context, *UpdateStoreRequest) (*UpdateStoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateStore not implemented")
+}
+func (UnimplementedSoleluxuryServer) DeleteStore(context.Context, *DeleteStoreRequest) (*DeleteStoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteStore not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -249,6 +277,42 @@ func _Soleluxury_GetStores_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_UpdateStore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateStoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).UpdateStore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/UpdateStore",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).UpdateStore(ctx, req.(*UpdateStoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_DeleteStore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteStoreRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).DeleteStore(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/DeleteStore",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).DeleteStore(ctx, req.(*DeleteStoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Soleluxury_ServiceDesc is the grpc.ServiceDesc for Soleluxury service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -279,6 +343,14 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStores",
 			Handler:    _Soleluxury_GetStores_Handler,
+		},
+		{
+			MethodName: "UpdateStore",
+			Handler:    _Soleluxury_UpdateStore_Handler,
+		},
+		{
+			MethodName: "DeleteStore",
+			Handler:    _Soleluxury_DeleteStore_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

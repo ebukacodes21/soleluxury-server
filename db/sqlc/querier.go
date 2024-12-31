@@ -14,11 +14,13 @@ type Querier interface {
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateStore(ctx context.Context, name string) (Store, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	DeleteStore(ctx context.Context, id int64) error
 	GetFirstStore(ctx context.Context) (Store, error)
 	GetStore(ctx context.Context, id int64) (Store, error)
 	GetStores(ctx context.Context) ([]Store, error)
 	GetUser(ctx context.Context, email string) (User, error)
 	Logout(ctx context.Context, id uuid.UUID) error
+	UpdateStore(ctx context.Context, arg UpdateStoreParams) error
 }
 
 var _ Querier = (*Queries)(nil)

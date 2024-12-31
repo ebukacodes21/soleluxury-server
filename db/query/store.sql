@@ -19,3 +19,14 @@ LIMIT 1;
 -- name: GetStores :many
 SELECT * FROM stores
 ORDER BY id;
+
+-- name: UpdateStore :exec
+UPDATE stores
+SET
+  name = COALESCE(sqlc.narg(name), name)
+WHERE 
+  id = sqlc.arg(id);
+
+-- name: DeleteStore :exec
+DELETE FROM stores
+WHERE id = $1;

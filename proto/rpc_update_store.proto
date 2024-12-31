@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+
+message UpdateStoreRequest {
+    int64 id = 1;
+    string name = 2;
+}
+
+message UpdateStoreResponse {
+    string message = 1;
+}
