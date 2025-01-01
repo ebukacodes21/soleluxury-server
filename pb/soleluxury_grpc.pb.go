@@ -32,7 +32,11 @@ type SoleluxuryClient interface {
 	GetStores(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStoresResponse, error)
 	UpdateStore(ctx context.Context, in *UpdateStoreRequest, opts ...grpc.CallOption) (*UpdateStoreResponse, error)
 	DeleteStore(ctx context.Context, in *DeleteStoreRequest, opts ...grpc.CallOption) (*DeleteStoreResponse, error)
+	CreateBillboard(ctx context.Context, in *CreateBillboardRequest, opts ...grpc.CallOption) (*CreateBillboardResponse, error)
 	GetBillboard(ctx context.Context, in *GetBillboardRequest, opts ...grpc.CallOption) (*GetBillboardResponse, error)
+	GetBillboards(ctx context.Context, in *GetBillboardsRequest, opts ...grpc.CallOption) (*GetBillboardsResponse, error)
+	UpdateBillboard(ctx context.Context, in *UpdateBillboardRequest, opts ...grpc.CallOption) (*UpdateBillboardResponse, error)
+	DeleteBillboard(ctx context.Context, in *DeleteBillboardRequest, opts ...grpc.CallOption) (*DeleteBillboardResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -124,9 +128,45 @@ func (c *soleluxuryClient) DeleteStore(ctx context.Context, in *DeleteStoreReque
 	return out, nil
 }
 
+func (c *soleluxuryClient) CreateBillboard(ctx context.Context, in *CreateBillboardRequest, opts ...grpc.CallOption) (*CreateBillboardResponse, error) {
+	out := new(CreateBillboardResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/CreateBillboard", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *soleluxuryClient) GetBillboard(ctx context.Context, in *GetBillboardRequest, opts ...grpc.CallOption) (*GetBillboardResponse, error) {
 	out := new(GetBillboardResponse)
 	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetBillboard", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) GetBillboards(ctx context.Context, in *GetBillboardsRequest, opts ...grpc.CallOption) (*GetBillboardsResponse, error) {
+	out := new(GetBillboardsResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetBillboards", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) UpdateBillboard(ctx context.Context, in *UpdateBillboardRequest, opts ...grpc.CallOption) (*UpdateBillboardResponse, error) {
+	out := new(UpdateBillboardResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/UpdateBillboard", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) DeleteBillboard(ctx context.Context, in *DeleteBillboardRequest, opts ...grpc.CallOption) (*DeleteBillboardResponse, error) {
+	out := new(DeleteBillboardResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/DeleteBillboard", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,7 +186,11 @@ type SoleluxuryServer interface {
 	GetStores(context.Context, *emptypb.Empty) (*GetStoresResponse, error)
 	UpdateStore(context.Context, *UpdateStoreRequest) (*UpdateStoreResponse, error)
 	DeleteStore(context.Context, *DeleteStoreRequest) (*DeleteStoreResponse, error)
+	CreateBillboard(context.Context, *CreateBillboardRequest) (*CreateBillboardResponse, error)
 	GetBillboard(context.Context, *GetBillboardRequest) (*GetBillboardResponse, error)
+	GetBillboards(context.Context, *GetBillboardsRequest) (*GetBillboardsResponse, error)
+	UpdateBillboard(context.Context, *UpdateBillboardRequest) (*UpdateBillboardResponse, error)
+	DeleteBillboard(context.Context, *DeleteBillboardRequest) (*DeleteBillboardResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -181,8 +225,20 @@ func (UnimplementedSoleluxuryServer) UpdateStore(context.Context, *UpdateStoreRe
 func (UnimplementedSoleluxuryServer) DeleteStore(context.Context, *DeleteStoreRequest) (*DeleteStoreResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteStore not implemented")
 }
+func (UnimplementedSoleluxuryServer) CreateBillboard(context.Context, *CreateBillboardRequest) (*CreateBillboardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateBillboard not implemented")
+}
 func (UnimplementedSoleluxuryServer) GetBillboard(context.Context, *GetBillboardRequest) (*GetBillboardResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBillboard not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetBillboards(context.Context, *GetBillboardsRequest) (*GetBillboardsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBillboards not implemented")
+}
+func (UnimplementedSoleluxuryServer) UpdateBillboard(context.Context, *UpdateBillboardRequest) (*UpdateBillboardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateBillboard not implemented")
+}
+func (UnimplementedSoleluxuryServer) DeleteBillboard(context.Context, *DeleteBillboardRequest) (*DeleteBillboardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteBillboard not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -359,6 +415,24 @@ func _Soleluxury_DeleteStore_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_CreateBillboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateBillboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).CreateBillboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/CreateBillboard",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).CreateBillboard(ctx, req.(*CreateBillboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Soleluxury_GetBillboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetBillboardRequest)
 	if err := dec(in); err != nil {
@@ -373,6 +447,60 @@ func _Soleluxury_GetBillboard_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SoleluxuryServer).GetBillboard(ctx, req.(*GetBillboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_GetBillboards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBillboardsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetBillboards(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetBillboards",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetBillboards(ctx, req.(*GetBillboardsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_UpdateBillboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateBillboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).UpdateBillboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/UpdateBillboard",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).UpdateBillboard(ctx, req.(*UpdateBillboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_DeleteBillboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteBillboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).DeleteBillboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/DeleteBillboard",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).DeleteBillboard(ctx, req.(*DeleteBillboardRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -421,8 +549,24 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Soleluxury_DeleteStore_Handler,
 		},
 		{
+			MethodName: "CreateBillboard",
+			Handler:    _Soleluxury_CreateBillboard_Handler,
+		},
+		{
 			MethodName: "GetBillboard",
 			Handler:    _Soleluxury_GetBillboard_Handler,
+		},
+		{
+			MethodName: "GetBillboards",
+			Handler:    _Soleluxury_GetBillboards_Handler,
+		},
+		{
+			MethodName: "UpdateBillboard",
+			Handler:    _Soleluxury_UpdateBillboard_Handler,
+		},
+		{
+			MethodName: "DeleteBillboard",
+			Handler:    _Soleluxury_DeleteBillboard_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

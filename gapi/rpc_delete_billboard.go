@@ -10,34 +10,34 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (s *Server) DeleteStore(ctx context.Context, req *pb.DeleteStoreRequest) (*pb.DeleteStoreResponse, error) {
+func (s *Server) DeleteBillboard(ctx context.Context, req *pb.DeleteBillboardRequest) (*pb.DeleteBillboardResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
 	}
 
-	violations := validateDeleteStoreRequest(req)
+	violations := validateDeleteBillboardRequest(req)
 	if violations != nil {
 		return nil, invalidArgs(violations)
 	}
 
 	if payload.Role == "user" {
-		return nil, status.Errorf(codes.PermissionDenied, "not authorized to delete store")
+		return nil, status.Errorf(codes.PermissionDenied, "not authorized to delete billboard")
 	}
 
-	err = s.repository.DeleteStore(ctx, req.GetId())
+	err = s.repository.DeleteBillboard(ctx, req.GetId())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "unable to delete store")
+		return nil, status.Errorf(codes.Internal, "unable to delete billboard")
 	}
 
-	resp := &pb.DeleteStoreResponse{
-		Message: "store delete successful",
+	resp := &pb.DeleteBillboardResponse{
+		Message: "billboard delete successful",
 	}
 
 	return resp, nil
 }
 
-func validateDeleteStoreRequest(req *pb.DeleteStoreRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+func validateDeleteBillboardRequest(req *pb.DeleteBillboardRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 	if err := validate.ValidateId(req.GetId()); err != nil {
 		violations = append(violations, fieldViolation("id", err))
 	}

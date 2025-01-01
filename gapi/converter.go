@@ -48,3 +48,18 @@ func convertBillboard(billboard db.Billboard) *pb.Billboard {
 		CreatedAt: timestamppb.New(billboard.CreatedAt),
 	}
 }
+
+func convertBillboards(billboards []db.Billboard) []*pb.Billboard {
+	var pbBillboards []*pb.Billboard
+	for _, billboard := range billboards {
+		pbBillboards = append(pbBillboards, &pb.Billboard{
+			Id:        billboard.ID,
+			Label:     billboard.Label,
+			ImageUrl:  billboard.ImageUrl,
+			StoreId:   billboard.StoreID,
+			CreatedAt: timestamppb.New(billboard.CreatedAt),
+		})
+	}
+
+	return pbBillboards
+}

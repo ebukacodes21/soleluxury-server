@@ -10,3 +10,21 @@ RETURNING *;
 SELECT * FROM billboards
 WHERE id = $1
 LIMIT 1;
+
+-- name: GetBillboards :many
+SELECT * FROM billboards
+WHERE store_id = $1
+ORDER BY id;
+
+-- name: UpdateBillboard :exec
+UPDATE billboards
+SET
+  label = COALESCE(sqlc.narg(label), label),
+  image_url = COALESCE(sqlc.narg(image_url), image_url)
+WHERE 
+  id = sqlc.arg(id)
+  AND store_id = sqlc.arg(store_id);
+
+-- name: DeleteBillboard :exec
+DELETE FROM billboards
+WHERE id = $1;
