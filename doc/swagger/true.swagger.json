@@ -20,6 +20,40 @@
     "application/json"
   ],
   "paths": {
+    "/api/create-billboard": {
+      "post": {
+        "summary": "Create a billboard",
+        "description": "Use this API to create a billboard",
+        "operationId": "Soleluxury_CreateBillboard",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateBillboardResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateBillboardRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/create-store": {
       "post": {
         "summary": "create a new store",
@@ -88,6 +122,40 @@
         ]
       }
     },
+    "/api/delete-billboard": {
+      "post": {
+        "summary": "Delete a billboard",
+        "description": "Use this API to delete a billboard",
+        "operationId": "Soleluxury_DeleteBillboard",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteBillboardResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDeleteBillboardRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/delete-store": {
       "post": {
         "summary": "Delete a store",
@@ -144,6 +212,39 @@
         "parameters": [
           {
             "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
+    "/api/get-billboards": {
+      "get": {
+        "summary": "Get all billboards for a store",
+        "description": "Use this API to get all billboards for a store",
+        "operationId": "Soleluxury_GetBillboards",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetBillboardsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "storeId",
             "in": "query",
             "required": false,
             "type": "string",
@@ -305,6 +406,40 @@
         ]
       }
     },
+    "/api/update-billboard": {
+      "patch": {
+        "summary": "Update a billboard",
+        "description": "Use this API to update a billboard",
+        "operationId": "Soleluxury_UpdateBillboard",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateBillboardResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateBillboardRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/update-store": {
       "patch": {
         "summary": "Update a store",
@@ -364,6 +499,29 @@
         }
       }
     },
+    "pbCreateBillboardRequest": {
+      "type": "object",
+      "properties": {
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "label": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateBillboardResponse": {
+      "type": "object",
+      "properties": {
+        "billboard": {
+          "$ref": "#/definitions/pbBillboard"
+        }
+      }
+    },
     "pbCreateStoreRequest": {
       "type": "object",
       "properties": {
@@ -402,6 +560,23 @@
         }
       }
     },
+    "pbDeleteBillboardRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbDeleteBillboardResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "pbDeleteStoreRequest": {
       "type": "object",
       "properties": {
@@ -424,6 +599,18 @@
       "properties": {
         "billboard": {
           "$ref": "#/definitions/pbBillboard"
+        }
+      }
+    },
+    "pbGetBillboardsResponse": {
+      "type": "object",
+      "properties": {
+        "billboards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBillboard"
+          }
         }
       }
     },
@@ -504,6 +691,33 @@
         "createdAt": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "pbUpdateBillboardRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "label": {
+          "type": "string"
+        },
+        "imageUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateBillboardResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
         }
       }
     },

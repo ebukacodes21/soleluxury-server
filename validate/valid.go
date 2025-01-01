@@ -1,9 +1,11 @@
 package validate
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"net/mail"
+	"net/url"
 	"regexp"
 	"strings"
 )
@@ -65,6 +67,14 @@ func RandomString(n int) string {
 func ValidateId(value int64) error {
 	if value <= 0 {
 		return fmt.Errorf("value must be a positive integer")
+	}
+	return nil
+}
+
+func ValidateUrl(value string) error {
+	_, err := url.ParseRequestURI(value)
+	if err != nil {
+		return errors.New("invalid URL")
 	}
 	return nil
 }

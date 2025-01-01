@@ -15,7 +15,10 @@ import "rpc_get_store.proto";
 import "rpc_get_stores.proto";
 import "rpc_update_store.proto";
 import "rpc_delete_store.proto";
+import "rpc_create_billboard.proto";
 import "rpc_get_billboard.proto";
+import "rpc_update_billboard.proto";
+import "rpc_delete_billboard.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -117,6 +120,16 @@ service Soleluxury {
             summary: "Delete a store";
         };
     }
+    rpc CreateBillboard (CreateBillboardRequest) returns (CreateBillboardResponse) {
+        option (google.api.http) = {
+            post: "/api/create-billboard"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to create a billboard";
+            summary: "Create a billboard";
+        };
+    }
     rpc GetBillboard (GetBillboardRequest) returns (GetBillboardResponse) {
         option (google.api.http) = {
             get: "/api/get-billboard"
@@ -124,6 +137,35 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to get a billboard";
             summary: "Get a billboard";
+        };
+    }
+    rpc GetBillboards (GetBillboardsRequest) returns (GetBillboardsResponse) {
+        option (google.api.http) = {
+            get: "/api/get-billboards"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get all billboards for a store";
+            summary: "Get all billboards for a store";
+        };
+    }
+    rpc UpdateBillboard (UpdateBillboardRequest) returns (UpdateBillboardResponse) {
+        option (google.api.http) = {
+            patch: "/api/update-billboard"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to update a billboard";
+            summary: "Update a billboard";
+        };
+    }
+    rpc DeleteBillboard (DeleteBillboardRequest) returns (DeleteBillboardResponse) {
+        option (google.api.http) = {
+            post: "/api/delete-billboard"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to delete a billboard";
+            summary: "Delete a billboard";
         };
     }
 }
