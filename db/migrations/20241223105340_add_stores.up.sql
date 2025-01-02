@@ -20,6 +20,8 @@ CREATE TABLE "categories" (
   "id" bigserial PRIMARY KEY,
   "store_id" bigserial NOT NULL,
   "billboard_id" bigserial NOT NULL,
+  "store_name" VARCHAR UNIQUE NOT NULL,
+  "billboard_label" VARCHAR UNIQUE NOT NULL,
   "name" VARCHAR NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT now(),
   "updated_at" timestamptz NOT NULL DEFAULT now(),

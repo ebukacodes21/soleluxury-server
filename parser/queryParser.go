@@ -19,6 +19,8 @@ func (p *CustomQueryParameterParser) Parse(target proto.Message, values url.Valu
 		return populateGetBillboardsParams(values, req)
 	case *service.GetCategoryRequest:
 		return populateGetCategoryParams(values, req)
+	case *service.GetCategoriesRequest:
+		return populateGetCategoriesParams(values, req)
 	}
 
 	return (*runtime.DefaultQueryParser)(nil).Parse(target, values, filter)
@@ -35,8 +37,17 @@ func populateGetBillboardsParams(values url.Values, r *service.GetBillboardsRequ
 
 func populateGetCategoryParams(values url.Values, r *service.GetCategoryRequest) error {
 	if Id := values.Get("id"); Id != "" {
-		if parsedStoreID, err := strconv.Atoi(Id); err == nil {
-			r.Id = int64(parsedStoreID)
+		if parsedID, err := strconv.Atoi(Id); err == nil {
+			r.Id = int64(parsedID)
+		}
+	}
+	return nil
+}
+
+func populateGetCategoriesParams(values url.Values, r *service.GetCategoriesRequest) error {
+	if storeId := values.Get("store_id"); storeId != "" {
+		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
+			r.StoreId = int64(parsedStoreId)
 		}
 	}
 	return nil

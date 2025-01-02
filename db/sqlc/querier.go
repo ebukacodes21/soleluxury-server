@@ -15,10 +15,12 @@ type Querier interface {
 	CreateStore(ctx context.Context, name string) (Store, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteBillboard(ctx context.Context, id int64) error
+	DeleteCategory(ctx context.Context, id int64) error
 	DeleteSession(ctx context.Context) error
 	DeleteStore(ctx context.Context, id int64) error
 	GetBillboard(ctx context.Context, id int64) (Billboard, error)
 	GetBillboards(ctx context.Context, storeID int64) ([]Billboard, error)
+	GetCategories(ctx context.Context, storeID int64) ([]Category, error)
 	GetCategory(ctx context.Context, id int64) (Category, error)
 	GetFirstStore(ctx context.Context) (Store, error)
 	GetStore(ctx context.Context, id int64) (Store, error)
@@ -26,6 +28,7 @@ type Querier interface {
 	GetUser(ctx context.Context, email string) (User, error)
 	Logout(ctx context.Context, arg LogoutParams) error
 	UpdateBillboard(ctx context.Context, arg UpdateBillboardParams) error
+	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) error
 	UpdateStore(ctx context.Context, arg UpdateStoreParams) error
 }
 
