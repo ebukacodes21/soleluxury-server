@@ -46,6 +46,7 @@ func main() {
 	servers.RunGrpcServer(group, ctx, repository, config, td, tp)
 	servers.RunGrpcGateway(group, ctx, repository, config, td, tp)
 	servers.RunTasks(group, ctx, opt, repository)
+	worker.SetupScheduler(ctx, repository)
 
 	err = group.Wait()
 	if err != nil {

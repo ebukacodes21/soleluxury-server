@@ -1,0 +1,42 @@
+// contains all the models
+
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+message User {
+    int64 id = 1;
+    string username = 2;
+    string password = 3;
+    string email = 4;
+    bool is_verified = 5;
+    string verification_code = 6;
+    string role = 7;
+    google.protobuf.Timestamp created_at = 8;
+}
+
+message Billboard {
+    int64 id = 1;
+    int64 store_id = 2;
+    string label = 3;
+    string image_url = 4;
+    google.protobuf.Timestamp created_at = 5;
+}
+
+message Store {
+    int64 id = 1;
+    string name = 2;
+    google.protobuf.Timestamp created_at = 3;
+}
+
+message Category {
+    int64 id = 1;
+    int64 store_id = 2;
+    int64 billboard_id = 3;
+    string name = 4;
+    google.protobuf.Timestamp created_at = 5;
+}

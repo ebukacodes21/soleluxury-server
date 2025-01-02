@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package pb;
+
+import "general.proto";
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+message CreateBillboardRequest {
+    int64 store_id = 1;
+    string label = 2;
+    string image_url = 3;
+}
+
+message CreateBillboardResponse {
+    Billboard billboard = 1;
+}
+
+message GetBillboardRequest {
+    int64 id = 1;
+}
+
+message GetBillboardResponse {
+    Billboard billboard = 1;
+}
+
+message GetBillboardsRequest {
+    int64 store_id = 1;
+}
+
+message GetBillboardsResponse {
+    repeated Billboard billboards = 1;
+}
+
+message UpdateBillboardRequest {
+    int64 id = 1;
+    int64 store_id = 2;
+    string label = 3;
+    string image_url = 4;
+}
+
+message UpdateBillboardResponse {
+    string message = 1;
+}
+
+message DeleteBillboardRequest {
+    int64 id = 1;
+}
+
+message DeleteBillboardResponse {
+    string message = 1;
+}

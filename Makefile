@@ -37,7 +37,7 @@ server:
 	go run main.go
 
 composeup:
-	docker compose --env-file app.env up -d
+	docker compose --env-file app.env up --build -d
 
 composedown:
 	docker compose --env-file app.env down

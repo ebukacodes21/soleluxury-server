@@ -256,6 +256,39 @@
         ]
       }
     },
+    "/api/get-category": {
+      "get": {
+        "summary": "Get a category",
+        "description": "Use this API to get a category",
+        "operationId": "Soleluxury_GetCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/get-first-store": {
       "get": {
         "summary": "Get first store",
@@ -372,7 +405,7 @@
       }
     },
     "/api/logout-user": {
-      "post": {
+      "get": {
         "summary": "Logout user",
         "description": "Use this API to logout user",
         "operationId": "Soleluxury_LogoutUser",
@@ -390,17 +423,6 @@
             }
           }
         },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {}
-            }
-          }
-        ],
         "tags": [
           "Soleluxury"
         ]
@@ -491,6 +513,30 @@
           "type": "string"
         },
         "imageUrl": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "billboardId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
           "type": "string"
         },
         "createdAt": {
@@ -611,6 +657,14 @@
             "type": "object",
             "$ref": "#/definitions/pbBillboard"
           }
+        }
+      }
+    },
+    "pbGetCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "$ref": "#/definitions/pbCategory"
         }
       }
     },

@@ -10,3 +10,7 @@ RETURNING *;
 DELETE FROM sessions
 WHERE user_id = $1
 AND username = $2;
+
+-- name: DeleteSession :exec 
+DELETE FROM sessions
+WHERE expired_at < NOW();
