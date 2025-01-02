@@ -66,10 +66,28 @@ func convertBillboards(billboards []db.Billboard) []*pb.Billboard {
 
 func convertCategory(category db.Category) *pb.Category {
 	return &pb.Category{
-		Id:          category.ID,
-		Name:        category.Name,
-		BillboardId: category.BillboardID,
-		StoreId:     category.StoreID,
-		CreatedAt:   timestamppb.New(category.CreatedAt),
+		Id:             category.ID,
+		Name:           category.Name,
+		BillboardId:    category.BillboardID,
+		BillboardLabel: category.BillboardLabel,
+		StoreId:        category.StoreID,
+		CreatedAt:      timestamppb.New(category.CreatedAt),
 	}
+}
+
+func convertCategories(categories []db.Category) []*pb.Category {
+	var pbCategories []*pb.Category
+	for _, category := range categories {
+		pbCategories = append(pbCategories, &pb.Category{
+			Id:             category.ID,
+			BillboardId:    category.BillboardID,
+			StoreId:        category.StoreID,
+			StoreName:      category.StoreName,
+			BillboardLabel: category.BillboardLabel,
+			Name:           category.Name,
+			CreatedAt:      timestamppb.New(category.CreatedAt),
+		})
+	}
+
+	return pbCategories
 }

@@ -159,6 +159,16 @@ service Soleluxury {
             summary: "Delete a billboard";
         };
     }
+    rpc CreateCategory (CreateCategoryRequest) returns (CreateCategoryResponse) {
+        option (google.api.http) = {
+            post: "/api/create-category"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to create a category";
+            summary: "Create a category";
+        };
+    }
     rpc GetCategory (GetCategoryRequest) returns (GetCategoryResponse) {
         option (google.api.http) = {
             get: "/api/get-category"
@@ -166,6 +176,35 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to get a category";
             summary: "Get a category";
+        };
+    }
+    rpc GetCategories (GetCategoriesRequest) returns (GetCategoriesResponse) {
+        option (google.api.http) = {
+            get: "/api/get-categories"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a categories to a store";
+            summary: "Get categories to a store";
+        };
+    }
+    rpc UpdateCategory (UpdateCategoryRequest) returns (UpdateCategoryResponse) {
+        option (google.api.http) = {
+            patch: "/api/update-category"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to update a category to a store";
+            summary: "Update category to a store";
+        };
+    }
+    rpc DeleteCategory (DeleteCategoryRequest) returns (DeleteCategoryResponse) {
+        option (google.api.http) = {
+            post: "/api/delete-category"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to delete a category to a store";
+            summary: "Delete category to a store";
         };
     }
 }

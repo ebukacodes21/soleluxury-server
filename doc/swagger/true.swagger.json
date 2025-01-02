@@ -54,6 +54,40 @@
         ]
       }
     },
+    "/api/create-category": {
+      "post": {
+        "summary": "Create a category",
+        "description": "Use this API to create a category",
+        "operationId": "Soleluxury_CreateCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/create-store": {
       "post": {
         "summary": "create a new store",
@@ -156,6 +190,40 @@
         ]
       }
     },
+    "/api/delete-category": {
+      "post": {
+        "summary": "Delete category to a store",
+        "description": "Use this API to delete a category to a store",
+        "operationId": "Soleluxury_DeleteCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDeleteCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/delete-store": {
       "post": {
         "summary": "Delete a store",
@@ -233,6 +301,39 @@
             "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/pbGetBillboardsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
+    "/api/get-categories": {
+      "get": {
+        "summary": "Get categories to a store",
+        "description": "Use this API to get a categories to a store",
+        "operationId": "Soleluxury_GetCategories",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetCategoriesResponse"
             }
           },
           "default": {
@@ -462,6 +563,40 @@
         ]
       }
     },
+    "/api/update-category": {
+      "patch": {
+        "summary": "Update category to a store",
+        "description": "Use this API to update a category to a store",
+        "operationId": "Soleluxury_UpdateCategory",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateCategoryResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/update-store": {
       "patch": {
         "summary": "Update a store",
@@ -532,6 +667,12 @@
           "type": "string",
           "format": "int64"
         },
+        "storeName": {
+          "type": "string"
+        },
+        "billboardLabel": {
+          "type": "string"
+        },
         "billboardId": {
           "type": "string",
           "format": "int64"
@@ -565,6 +706,30 @@
       "properties": {
         "billboard": {
           "$ref": "#/definitions/pbBillboard"
+        }
+      }
+    },
+    "pbCreateCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "billboardId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "$ref": "#/definitions/pbCategory"
         }
       }
     },
@@ -623,6 +788,23 @@
         }
       }
     },
+    "pbDeleteCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbDeleteCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "pbDeleteStoreRequest": {
       "type": "object",
       "properties": {
@@ -656,6 +838,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbBillboard"
+          }
+        }
+      }
+    },
+    "pbGetCategoriesResponse": {
+      "type": "object",
+      "properties": {
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbCategory"
           }
         }
       }
@@ -768,6 +962,33 @@
       }
     },
     "pbUpdateBillboardResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateCategoryRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "billboardLabel": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateCategoryResponse": {
       "type": "object",
       "properties": {
         "message": {

@@ -7,30 +7,41 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const createCategory = `-- name: CreateCategory :one
 INSERT INTO categories (
-  store_id, billboard_id, name
+  store_id, billboard_id, store_name, billboard_label, name
 ) VALUES (
-  $1, $2, $3
+  $1, $2, $3, $4, $5
 )
-RETURNING id, store_id, billboard_id, name, created_at, updated_at
+RETURNING id, store_id, billboard_id, store_name, billboard_label, name, created_at, updated_at
 `
 
 type CreateCategoryParams struct {
-	StoreID     int64  `db:"store_id" json:"store_id"`
-	BillboardID int64  `db:"billboard_id" json:"billboard_id"`
-	Name        string `db:"name" json:"name"`
+	StoreID        int64  `db:"store_id" json:"store_id"`
+	BillboardID    int64  `db:"billboard_id" json:"billboard_id"`
+	StoreName      string `db:"store_name" json:"store_name"`
+	BillboardLabel string `db:"billboard_label" json:"billboard_label"`
+	Name           string `db:"name" json:"name"`
 }
 
 func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error) {
-	row := q.db.QueryRowContext(ctx, createCategory, arg.StoreID, arg.BillboardID, arg.Name)
+	row := q.db.QueryRowContext(ctx, createCategory,
+		arg.StoreID,
+		arg.BillboardID,
+		arg.StoreName,
+		arg.BillboardLabel,
+		arg.Name,
+	)
 	var i Category
 	err := row.Scan(
 		&i.ID,
 		&i.StoreID,
 		&i.BillboardID,
+		&i.StoreName,
+		&i.BillboardLabel,
 		&i.Name,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -38,8 +49,56 @@ func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) 
 	return i, err
 }
 
+const deleteCategory = `-- name: DeleteCategory :exec
+DELETE FROM categories
+WHERE id = $1
+`
+
+func (q *Queries) DeleteCategory(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, deleteCategory, id)
+	return err
+}
+
+const getCategories = `-- name: GetCategories :many
+SELECT id, store_id, billboard_id, store_name, billboard_label, name, created_at, updated_at FROM categories
+WHERE store_id = $1
+ORDER BY id
+`
+
+func (q *Queries) GetCategories(ctx context.Context, storeID int64) ([]Category, error) {
+	rows, err := q.db.QueryContext(ctx, getCategories, storeID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Category{}
+	for rows.Next() {
+		var i Category
+		if err := rows.Scan(
+			&i.ID,
+			&i.StoreID,
+			&i.BillboardID,
+			&i.StoreName,
+			&i.BillboardLabel,
+			&i.Name,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCategory = `-- name: GetCategory :one
-SELECT id, store_id, billboard_id, name, created_at, updated_at FROM categories
+SELECT id, store_id, billboard_id, store_name, billboard_label, name, created_at, updated_at FROM categories
 WHERE id = $1
 LIMIT 1
 `
@@ -51,9 +110,38 @@ func (q *Queries) GetCategory(ctx context.Context, id int64) (Category, error) {
 		&i.ID,
 		&i.StoreID,
 		&i.BillboardID,
+		&i.StoreName,
+		&i.BillboardLabel,
 		&i.Name,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const updateCategory = `-- name: UpdateCategory :exec
+UPDATE categories
+SET
+  name = COALESCE($1, name),
+  billboard_label = COALESCE($2, billboard_label)
+WHERE 
+  id = $3
+  AND store_id = $4
+`
+
+type UpdateCategoryParams struct {
+	Name           sql.NullString `db:"name" json:"name"`
+	BillboardLabel sql.NullString `db:"billboard_label" json:"billboard_label"`
+	ID             int64          `db:"id" json:"id"`
+	StoreID        int64          `db:"store_id" json:"store_id"`
+}
+
+func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) error {
+	_, err := q.db.ExecContext(ctx, updateCategory,
+		arg.Name,
+		arg.BillboardLabel,
+		arg.ID,
+		arg.StoreID,
+	)
+	return err
 }
