@@ -63,3 +63,13 @@ func convertBillboards(billboards []db.Billboard) []*pb.Billboard {
 
 	return pbBillboards
 }
+
+func convertCategory(category db.Category) *pb.Category {
+	return &pb.Category{
+		Id:          category.ID,
+		Name:        category.Name,
+		BillboardId: category.BillboardID,
+		StoreId:     category.StoreID,
+		CreatedAt:   timestamppb.New(category.CreatedAt),
+	}
+}

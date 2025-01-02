@@ -1,3 +1,9 @@
-DROP TABLE IF EXISTS "billboards";
+-- Drop foreign key constraints first
+ALTER TABLE "categories" DROP CONSTRAINT IF EXISTS "fk_category_store";
+ALTER TABLE "categories" DROP CONSTRAINT IF EXISTS "fk_category_billboard";
+ALTER TABLE "billboards" DROP CONSTRAINT IF EXISTS "fk_store";
 
-DROP TABLE IF EXISTS "stores";
+-- Drop the tables in reverse order of dependencies
+DROP TABLE IF EXISTS "categories" CASCADE;
+DROP TABLE IF EXISTS "billboards" CASCADE;
+DROP TABLE IF EXISTS "stores" CASCADE;

@@ -2,10 +2,20 @@ syntax = "proto3";
 
 package pb;
 
+import "general.proto";
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
 
-import "user.proto";
-import "google/protobuf/timestamp.proto";
+message CreateUserRequest {
+    string username = 1;
+    string password = 2;
+    string email = 3;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
 
 message LoginUserRequest {
     string email = 1;
@@ -24,3 +34,7 @@ message LoginUserResponse {
 message LogoutUserResponse {
     string message = 1;
 }
+
+message LogoutResponse {
+    string message = 1;
+ }

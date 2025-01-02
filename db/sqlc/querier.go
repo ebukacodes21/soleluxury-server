@@ -10,13 +10,16 @@ import (
 
 type Querier interface {
 	CreateBillboard(ctx context.Context, arg CreateBillboardParams) (Billboard, error)
+	CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateStore(ctx context.Context, name string) (Store, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteBillboard(ctx context.Context, id int64) error
+	DeleteSession(ctx context.Context) error
 	DeleteStore(ctx context.Context, id int64) error
 	GetBillboard(ctx context.Context, id int64) (Billboard, error)
 	GetBillboards(ctx context.Context, storeID int64) ([]Billboard, error)
+	GetCategory(ctx context.Context, id int64) (Category, error)
 	GetFirstStore(ctx context.Context) (Store, error)
 	GetStore(ctx context.Context, id int64) (Store, error)
 	GetStores(ctx context.Context) ([]Store, error)

@@ -37,6 +37,7 @@ type SoleluxuryClient interface {
 	GetBillboards(ctx context.Context, in *GetBillboardsRequest, opts ...grpc.CallOption) (*GetBillboardsResponse, error)
 	UpdateBillboard(ctx context.Context, in *UpdateBillboardRequest, opts ...grpc.CallOption) (*UpdateBillboardResponse, error)
 	DeleteBillboard(ctx context.Context, in *DeleteBillboardRequest, opts ...grpc.CallOption) (*DeleteBillboardResponse, error)
+	GetCategory(ctx context.Context, in *GetCategoryRequest, opts ...grpc.CallOption) (*GetCategoryResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -173,6 +174,15 @@ func (c *soleluxuryClient) DeleteBillboard(ctx context.Context, in *DeleteBillbo
 	return out, nil
 }
 
+func (c *soleluxuryClient) GetCategory(ctx context.Context, in *GetCategoryRequest, opts ...grpc.CallOption) (*GetCategoryResponse, error) {
+	out := new(GetCategoryResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetCategory", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SoleluxuryServer is the server API for Soleluxury service.
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
@@ -191,6 +201,7 @@ type SoleluxuryServer interface {
 	GetBillboards(context.Context, *GetBillboardsRequest) (*GetBillboardsResponse, error)
 	UpdateBillboard(context.Context, *UpdateBillboardRequest) (*UpdateBillboardResponse, error)
 	DeleteBillboard(context.Context, *DeleteBillboardRequest) (*DeleteBillboardResponse, error)
+	GetCategory(context.Context, *GetCategoryRequest) (*GetCategoryResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -239,6 +250,9 @@ func (UnimplementedSoleluxuryServer) UpdateBillboard(context.Context, *UpdateBil
 }
 func (UnimplementedSoleluxuryServer) DeleteBillboard(context.Context, *DeleteBillboardRequest) (*DeleteBillboardResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteBillboard not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetCategory(context.Context, *GetCategoryRequest) (*GetCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCategory not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -505,6 +519,24 @@ func _Soleluxury_DeleteBillboard_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_GetCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCategoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetCategory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetCategory",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetCategory(ctx, req.(*GetCategoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Soleluxury_ServiceDesc is the grpc.ServiceDesc for Soleluxury service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -567,6 +599,10 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteBillboard",
 			Handler:    _Soleluxury_DeleteBillboard_Handler,
+		},
+		{
+			MethodName: "GetCategory",
+			Handler:    _Soleluxury_GetCategory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

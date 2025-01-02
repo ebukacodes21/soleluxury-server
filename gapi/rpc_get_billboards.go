@@ -27,7 +27,7 @@ func (s *Server) GetBillboards(ctx context.Context, req *pb.GetBillboardsRequest
 
 	billboards, err := s.repository.GetBillboards(ctx, req.GetStoreId())
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "unable to get billboards")
+		return nil, status.Errorf(codes.NotFound, "unable to get billboards %s", err)
 	}
 
 	reversedBillboards := convertBillboards(billboards)

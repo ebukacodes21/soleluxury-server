@@ -4,10 +4,12 @@ package pb;
 
 option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
 
-message DeleteStoreRequest {
+import "general.proto";
+
+message GetCategoryRequest {
     int64 id = 1;
 }
 
-message DeleteStoreResponse {
-    string message = 1;
+message GetCategoryResponse {
+    Category category = 1;
 }

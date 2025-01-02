@@ -18,6 +18,15 @@ type Billboard struct {
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
 
+type Category struct {
+	ID          int64     `db:"id" json:"id"`
+	StoreID     int64     `db:"store_id" json:"store_id"`
+	BillboardID int64     `db:"billboard_id" json:"billboard_id"`
+	Name        string    `db:"name" json:"name"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
+}
+
 type Session struct {
 	ID           uuid.UUID `db:"id" json:"id"`
 	UserID       int64     `db:"user_id" json:"user_id"`

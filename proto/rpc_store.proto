@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+import "general.proto";
+
+message CreateStoreRequest {
+    string name = 1;
+}
+
+message CreateStoreResponse {
+    Store store = 1;
+}
+
+message GetStoreRequest {
+    int64 id = 1;
+}
+
+message GetStoreResponse {
+    Store store = 1;
+}
+
+message GetStoresResponse {
+    repeated Store stores = 1;
+}
+
+message UpdateStoreRequest {
+    int64 id = 1;
+    string name = 2;
+}
+
+message UpdateStoreResponse {
+    string message = 1;
+}
+
+message DeleteStoreRequest {
+    int64 id = 1;
+}
+
+message DeleteStoreResponse {
+    string message = 1;
+}

@@ -7,18 +7,10 @@ option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
 import "google/api/annotations.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 import "google/protobuf/empty.proto"; 
-import "rpc_create_user.proto";
-import "rpc_login_user.proto";
-import "rpc_logout_user.proto";
-import "rpc_create_store.proto";
-import "rpc_get_store.proto";
-import "rpc_get_stores.proto";
-import "rpc_update_store.proto";
-import "rpc_delete_store.proto";
-import "rpc_create_billboard.proto";
-import "rpc_get_billboard.proto";
-import "rpc_update_billboard.proto";
-import "rpc_delete_billboard.proto";
+import "rpc_user.proto";
+import "rpc_billboard.proto";
+import "rpc_category.proto";
+import "rpc_store.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -55,8 +47,7 @@ service Soleluxury {
     }
     rpc LogoutUser (google.protobuf.Empty) returns (LogoutResponse) {
         option (google.api.http) = {
-            post: "/api/logout-user"
-            body: "*"
+            get: "/api/logout-user"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to logout user";
@@ -166,6 +157,15 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a billboard";
             summary: "Delete a billboard";
+        };
+    }
+    rpc GetCategory (GetCategoryRequest) returns (GetCategoryResponse) {
+        option (google.api.http) = {
+            get: "/api/get-category"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a category";
+            summary: "Get a category";
         };
     }
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	_ "github.com/ebukacodes21/soleluxury-server/doc/statik"
+	"github.com/ebukacodes21/soleluxury-server/parser"
 	"github.com/ebukacodes21/soleluxury-server/worker"
 
 	"github.com/rakyll/statik/fs"
@@ -35,7 +36,7 @@ func RunGrpcGateway(group *errgroup.Group, ctx context.Context, repository db.Da
 		},
 	})
 
-	mux := runtime.NewServeMux(options)
+	mux := runtime.NewServeMux(runtime.SetQueryParameterParser(&parser.CustomQueryParameterParser{}), options)
 	err = pb.RegisterSoleluxuryHandlerServer(ctx, mux, server)
 	if err != nil {
 		log.Fatal(err)
