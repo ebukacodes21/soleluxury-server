@@ -47,6 +47,11 @@ type SoleluxuryClient interface {
 	GetSizes(ctx context.Context, in *GetSizesRequest, opts ...grpc.CallOption) (*GetSizesResponse, error)
 	UpdateSize(ctx context.Context, in *UpdateSizeRequest, opts ...grpc.CallOption) (*UpdateSizeResponse, error)
 	DeleteSize(ctx context.Context, in *DeleteSizeRequest, opts ...grpc.CallOption) (*DeleteSizeResponse, error)
+	CreateColor(ctx context.Context, in *CreateColorRequest, opts ...grpc.CallOption) (*CreateColorResponse, error)
+	GetColor(ctx context.Context, in *GetColorRequest, opts ...grpc.CallOption) (*GetColorResponse, error)
+	GetColors(ctx context.Context, in *GetColorsRequest, opts ...grpc.CallOption) (*GetColorsResponse, error)
+	UpdateColor(ctx context.Context, in *UpdateColorRequest, opts ...grpc.CallOption) (*UpdateColorResponse, error)
+	DeleteColor(ctx context.Context, in *DeleteColorRequest, opts ...grpc.CallOption) (*DeleteColorResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -273,6 +278,51 @@ func (c *soleluxuryClient) DeleteSize(ctx context.Context, in *DeleteSizeRequest
 	return out, nil
 }
 
+func (c *soleluxuryClient) CreateColor(ctx context.Context, in *CreateColorRequest, opts ...grpc.CallOption) (*CreateColorResponse, error) {
+	out := new(CreateColorResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/CreateColor", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) GetColor(ctx context.Context, in *GetColorRequest, opts ...grpc.CallOption) (*GetColorResponse, error) {
+	out := new(GetColorResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetColor", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) GetColors(ctx context.Context, in *GetColorsRequest, opts ...grpc.CallOption) (*GetColorsResponse, error) {
+	out := new(GetColorsResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetColors", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) UpdateColor(ctx context.Context, in *UpdateColorRequest, opts ...grpc.CallOption) (*UpdateColorResponse, error) {
+	out := new(UpdateColorResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/UpdateColor", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) DeleteColor(ctx context.Context, in *DeleteColorRequest, opts ...grpc.CallOption) (*DeleteColorResponse, error) {
+	out := new(DeleteColorResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/DeleteColor", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SoleluxuryServer is the server API for Soleluxury service.
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
@@ -301,6 +351,11 @@ type SoleluxuryServer interface {
 	GetSizes(context.Context, *GetSizesRequest) (*GetSizesResponse, error)
 	UpdateSize(context.Context, *UpdateSizeRequest) (*UpdateSizeResponse, error)
 	DeleteSize(context.Context, *DeleteSizeRequest) (*DeleteSizeResponse, error)
+	CreateColor(context.Context, *CreateColorRequest) (*CreateColorResponse, error)
+	GetColor(context.Context, *GetColorRequest) (*GetColorResponse, error)
+	GetColors(context.Context, *GetColorsRequest) (*GetColorsResponse, error)
+	UpdateColor(context.Context, *UpdateColorRequest) (*UpdateColorResponse, error)
+	DeleteColor(context.Context, *DeleteColorRequest) (*DeleteColorResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -379,6 +434,21 @@ func (UnimplementedSoleluxuryServer) UpdateSize(context.Context, *UpdateSizeRequ
 }
 func (UnimplementedSoleluxuryServer) DeleteSize(context.Context, *DeleteSizeRequest) (*DeleteSizeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteSize not implemented")
+}
+func (UnimplementedSoleluxuryServer) CreateColor(context.Context, *CreateColorRequest) (*CreateColorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateColor not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetColor(context.Context, *GetColorRequest) (*GetColorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetColor not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetColors(context.Context, *GetColorsRequest) (*GetColorsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetColors not implemented")
+}
+func (UnimplementedSoleluxuryServer) UpdateColor(context.Context, *UpdateColorRequest) (*UpdateColorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateColor not implemented")
+}
+func (UnimplementedSoleluxuryServer) DeleteColor(context.Context, *DeleteColorRequest) (*DeleteColorResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteColor not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -825,6 +895,96 @@ func _Soleluxury_DeleteSize_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_CreateColor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateColorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).CreateColor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/CreateColor",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).CreateColor(ctx, req.(*CreateColorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_GetColor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetColorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetColor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetColor",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetColor(ctx, req.(*GetColorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_GetColors_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetColorsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetColors(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetColors",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetColors(ctx, req.(*GetColorsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_UpdateColor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateColorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).UpdateColor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/UpdateColor",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).UpdateColor(ctx, req.(*UpdateColorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_DeleteColor_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteColorRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).DeleteColor(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/DeleteColor",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).DeleteColor(ctx, req.(*DeleteColorRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Soleluxury_ServiceDesc is the grpc.ServiceDesc for Soleluxury service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -927,6 +1087,26 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteSize",
 			Handler:    _Soleluxury_DeleteSize_Handler,
+		},
+		{
+			MethodName: "CreateColor",
+			Handler:    _Soleluxury_CreateColor_Handler,
+		},
+		{
+			MethodName: "GetColor",
+			Handler:    _Soleluxury_GetColor_Handler,
+		},
+		{
+			MethodName: "GetColors",
+			Handler:    _Soleluxury_GetColors_Handler,
+		},
+		{
+			MethodName: "UpdateColor",
+			Handler:    _Soleluxury_UpdateColor_Handler,
+		},
+		{
+			MethodName: "DeleteColor",
+			Handler:    _Soleluxury_DeleteColor_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

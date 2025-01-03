@@ -25,6 +25,10 @@ func (p *CustomQueryParameterParser) Parse(target proto.Message, values url.Valu
 		return populateGetSizeParams(values, req)
 	case *service.GetSizesRequest:
 		return populateGetSizesParams(values, req)
+	case *service.GetColorRequest:
+		return populateGetColorParams(values, req)
+	case *service.GetColorsRequest:
+		return populateGetColorsParams(values, req)
 	}
 
 	return (*runtime.DefaultQueryParser)(nil).Parse(target, values, filter)
@@ -67,6 +71,24 @@ func populateGetSizeParams(values url.Values, r *service.GetSizeRequest) error {
 }
 
 func populateGetSizesParams(values url.Values, r *service.GetSizesRequest) error {
+	if storeId := values.Get("store_id"); storeId != "" {
+		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
+			r.StoreId = int64(parsedStoreId)
+		}
+	}
+	return nil
+}
+
+func populateGetColorParams(values url.Values, r *service.GetColorRequest) error {
+	if Id := values.Get("id"); Id != "" {
+		if parsedID, err := strconv.Atoi(Id); err == nil {
+			r.Id = int64(parsedID)
+		}
+	}
+	return nil
+}
+
+func populateGetColorsParams(values url.Values, r *service.GetColorsRequest) error {
 	if storeId := values.Get("store_id"); storeId != "" {
 		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
 			r.StoreId = int64(parsedStoreId)

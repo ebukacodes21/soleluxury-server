@@ -118,3 +118,30 @@ func convertSizes(sizes []db.Size) []*pb.Size {
 
 	return pbSizes
 }
+
+func convertColor(color db.Color) *pb.Color {
+	return &pb.Color{
+		Id:        color.ID,
+		Name:      color.Name,
+		Value:     color.Value,
+		StoreId:   color.StoreID,
+		StoreName: color.StoreName,
+		CreatedAt: timestamppb.New(color.CreatedAt),
+	}
+}
+
+func convertColors(colors []db.Color) []*pb.Color {
+	var pbColors []*pb.Color
+	for _, color := range colors {
+		pbColors = append(pbColors, &pb.Color{
+			Id:        color.ID,
+			StoreId:   color.StoreID,
+			StoreName: color.StoreName,
+			Value:     color.Value,
+			Name:      color.Name,
+			CreatedAt: timestamppb.New(color.CreatedAt),
+		})
+	}
+
+	return pbColors
+}
