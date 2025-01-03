@@ -91,3 +91,30 @@ func convertCategories(categories []db.Category) []*pb.Category {
 
 	return pbCategories
 }
+
+func convertSize(size db.Size) *pb.Size {
+	return &pb.Size{
+		Id:        size.ID,
+		Name:      size.Name,
+		Value:     size.Value,
+		StoreId:   size.StoreID,
+		StoreName: size.StoreName,
+		CreatedAt: timestamppb.New(size.CreatedAt),
+	}
+}
+
+func convertSizes(sizes []db.Size) []*pb.Size {
+	var pbSizes []*pb.Size
+	for _, size := range sizes {
+		pbSizes = append(pbSizes, &pb.Size{
+			Id:        size.ID,
+			StoreId:   size.StoreID,
+			StoreName: size.StoreName,
+			Value:     size.Value,
+			Name:      size.Name,
+			CreatedAt: timestamppb.New(size.CreatedAt),
+		})
+	}
+
+	return pbSizes
+}

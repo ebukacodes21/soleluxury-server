@@ -20,8 +20,8 @@ CREATE TABLE "categories" (
   "id" bigserial PRIMARY KEY,
   "store_id" bigserial NOT NULL,
   "billboard_id" bigserial NOT NULL,
-  "store_name" VARCHAR UNIQUE NOT NULL,
-  "billboard_label" VARCHAR UNIQUE NOT NULL,
+  "store_name" VARCHAR NOT NULL,
+  "billboard_label" VARCHAR NOT NULL,
   "name" VARCHAR NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT now(),
   "updated_at" timestamptz NOT NULL DEFAULT now(),
@@ -29,3 +29,14 @@ CREATE TABLE "categories" (
   CONSTRAINT "fk_category_billboard" FOREIGN KEY ("billboard_id") REFERENCES "billboards" ("id") ON DELETE CASCADE
 );
 
+-- Creating the "sizes" table with foreign keys
+CREATE TABLE "sizes" (
+  "id" bigserial PRIMARY KEY,
+  "store_id" bigserial NOT NULL,
+  "store_name" VARCHAR NOT NULL,
+  "name" VARCHAR NOT NULL,
+  "value" VARCHAR NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT now(),
+  "updated_at" timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT "fk_size_store" FOREIGN KEY ("store_id") REFERENCES "stores" ("id") ON DELETE CASCADE
+);

@@ -88,6 +88,40 @@
         ]
       }
     },
+    "/api/create-size": {
+      "post": {
+        "summary": "Create a size",
+        "description": "Use this API to create a size",
+        "operationId": "Soleluxury_CreateSize",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateSizeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateSizeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/create-store": {
       "post": {
         "summary": "create a new store",
@@ -216,6 +250,40 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbDeleteCategoryRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
+    "/api/delete-size": {
+      "post": {
+        "summary": "Delete size to a store",
+        "description": "Use this API to delete a size to a store",
+        "operationId": "Soleluxury_DeleteSize",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteSizeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDeleteSizeRequest"
             }
           }
         ],
@@ -414,6 +482,72 @@
         ]
       }
     },
+    "/api/get-size": {
+      "get": {
+        "summary": "Get a size",
+        "description": "Use this API to get a size",
+        "operationId": "Soleluxury_GetSize",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetSizeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
+    "/api/get-sizes": {
+      "get": {
+        "summary": "Get sizes to a store",
+        "description": "Use this API to get a sizes to a store",
+        "operationId": "Soleluxury_GetSizes",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetSizesResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/get-store": {
       "get": {
         "summary": "Get a store",
@@ -597,6 +731,40 @@
         ]
       }
     },
+    "/api/update-size": {
+      "patch": {
+        "summary": "Update size to a store",
+        "description": "Use this API to update a size to a store",
+        "operationId": "Soleluxury_UpdateSize",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateSizeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateSizeRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/update-store": {
       "patch": {
         "summary": "Update a store",
@@ -733,6 +901,29 @@
         }
       }
     },
+    "pbCreateSizeRequest": {
+      "type": "object",
+      "properties": {
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateSizeResponse": {
+      "type": "object",
+      "properties": {
+        "size": {
+          "$ref": "#/definitions/pbSize"
+        }
+      }
+    },
     "pbCreateStoreRequest": {
       "type": "object",
       "properties": {
@@ -805,6 +996,23 @@
         }
       }
     },
+    "pbDeleteSizeRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbDeleteSizeResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "pbDeleteStoreRequest": {
       "type": "object",
       "properties": {
@@ -859,6 +1067,26 @@
       "properties": {
         "category": {
           "$ref": "#/definitions/pbCategory"
+        }
+      }
+    },
+    "pbGetSizeResponse": {
+      "type": "object",
+      "properties": {
+        "size": {
+          "$ref": "#/definitions/pbSize"
+        }
+      }
+    },
+    "pbGetSizesResponse": {
+      "type": "object",
+      "properties": {
+        "sizes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbSize"
+          }
         }
       }
     },
@@ -926,6 +1154,32 @@
         }
       }
     },
+    "pbSize": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "storeName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "pbStore": {
       "type": "object",
       "properties": {
@@ -989,6 +1243,33 @@
       }
     },
     "pbUpdateCategoryResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateSizeRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateSizeResponse": {
       "type": "object",
       "properties": {
         "message": {

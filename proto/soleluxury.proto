@@ -11,6 +11,7 @@ import "rpc_user.proto";
 import "rpc_billboard.proto";
 import "rpc_category.proto";
 import "rpc_store.proto";
+import "rpc_size.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -205,6 +206,54 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a category to a store";
             summary: "Delete category to a store";
+        };
+    }
+    rpc CreateSize (CreateSizeRequest) returns (CreateSizeResponse) {
+        option (google.api.http) = {
+            post: "/api/create-size"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to create a size";
+            summary: "Create a size";
+        };
+    }
+    rpc GetSize (GetSizeRequest) returns (GetSizeResponse) {
+        option (google.api.http) = {
+            get: "/api/get-size"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a size";
+            summary: "Get a size";
+        };
+    }
+    rpc GetSizes (GetSizesRequest) returns (GetSizesResponse) {
+        option (google.api.http) = {
+            get: "/api/get-sizes"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a sizes to a store";
+            summary: "Get sizes to a store";
+        };
+    }
+    rpc UpdateSize (UpdateSizeRequest) returns (UpdateSizeResponse) {
+        option (google.api.http) = {
+            patch: "/api/update-size"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to update a size to a store";
+            summary: "Update size to a store";
+        };
+    }
+    rpc DeleteSize (DeleteSizeRequest) returns (DeleteSizeResponse) {
+        option (google.api.http) = {
+            post: "/api/delete-size"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to delete a size to a store";
+            summary: "Delete size to a store";
         };
     }
 }

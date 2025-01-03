@@ -53,6 +53,10 @@ func ValidateStoreName(value string) error {
 	return ValidateString(value, 3, 100)
 }
 
+func ValidateValue(value string) error {
+	return ValidateString(value, 1, 1)
+}
+
 func RandomString(n int) string {
 	var sb strings.Builder
 
