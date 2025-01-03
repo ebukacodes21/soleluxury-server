@@ -5,6 +5,6 @@ CREATE TABLE "users" (
   "email" varchar UNIQUE NOT NULL,
   "is_verified" bool NOT NULL DEFAULT false,
   "verification_code" varchar UNIQUE NOT NULL,
-  "role" varchar NOT NULL DEFAULT 'user',
+  "role" varchar NOT NULL DEFAULT 'admin',
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );

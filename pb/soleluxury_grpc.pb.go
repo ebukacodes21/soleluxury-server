@@ -42,6 +42,11 @@ type SoleluxuryClient interface {
 	GetCategories(ctx context.Context, in *GetCategoriesRequest, opts ...grpc.CallOption) (*GetCategoriesResponse, error)
 	UpdateCategory(ctx context.Context, in *UpdateCategoryRequest, opts ...grpc.CallOption) (*UpdateCategoryResponse, error)
 	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error)
+	CreateSize(ctx context.Context, in *CreateSizeRequest, opts ...grpc.CallOption) (*CreateSizeResponse, error)
+	GetSize(ctx context.Context, in *GetSizeRequest, opts ...grpc.CallOption) (*GetSizeResponse, error)
+	GetSizes(ctx context.Context, in *GetSizesRequest, opts ...grpc.CallOption) (*GetSizesResponse, error)
+	UpdateSize(ctx context.Context, in *UpdateSizeRequest, opts ...grpc.CallOption) (*UpdateSizeResponse, error)
+	DeleteSize(ctx context.Context, in *DeleteSizeRequest, opts ...grpc.CallOption) (*DeleteSizeResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -223,6 +228,51 @@ func (c *soleluxuryClient) DeleteCategory(ctx context.Context, in *DeleteCategor
 	return out, nil
 }
 
+func (c *soleluxuryClient) CreateSize(ctx context.Context, in *CreateSizeRequest, opts ...grpc.CallOption) (*CreateSizeResponse, error) {
+	out := new(CreateSizeResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/CreateSize", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) GetSize(ctx context.Context, in *GetSizeRequest, opts ...grpc.CallOption) (*GetSizeResponse, error) {
+	out := new(GetSizeResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetSize", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) GetSizes(ctx context.Context, in *GetSizesRequest, opts ...grpc.CallOption) (*GetSizesResponse, error) {
+	out := new(GetSizesResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetSizes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) UpdateSize(ctx context.Context, in *UpdateSizeRequest, opts ...grpc.CallOption) (*UpdateSizeResponse, error) {
+	out := new(UpdateSizeResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/UpdateSize", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *soleluxuryClient) DeleteSize(ctx context.Context, in *DeleteSizeRequest, opts ...grpc.CallOption) (*DeleteSizeResponse, error) {
+	out := new(DeleteSizeResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/DeleteSize", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SoleluxuryServer is the server API for Soleluxury service.
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
@@ -246,6 +296,11 @@ type SoleluxuryServer interface {
 	GetCategories(context.Context, *GetCategoriesRequest) (*GetCategoriesResponse, error)
 	UpdateCategory(context.Context, *UpdateCategoryRequest) (*UpdateCategoryResponse, error)
 	DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error)
+	CreateSize(context.Context, *CreateSizeRequest) (*CreateSizeResponse, error)
+	GetSize(context.Context, *GetSizeRequest) (*GetSizeResponse, error)
+	GetSizes(context.Context, *GetSizesRequest) (*GetSizesResponse, error)
+	UpdateSize(context.Context, *UpdateSizeRequest) (*UpdateSizeResponse, error)
+	DeleteSize(context.Context, *DeleteSizeRequest) (*DeleteSizeResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -309,6 +364,21 @@ func (UnimplementedSoleluxuryServer) UpdateCategory(context.Context, *UpdateCate
 }
 func (UnimplementedSoleluxuryServer) DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCategory not implemented")
+}
+func (UnimplementedSoleluxuryServer) CreateSize(context.Context, *CreateSizeRequest) (*CreateSizeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSize not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetSize(context.Context, *GetSizeRequest) (*GetSizeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSize not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetSizes(context.Context, *GetSizesRequest) (*GetSizesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSizes not implemented")
+}
+func (UnimplementedSoleluxuryServer) UpdateSize(context.Context, *UpdateSizeRequest) (*UpdateSizeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSize not implemented")
+}
+func (UnimplementedSoleluxuryServer) DeleteSize(context.Context, *DeleteSizeRequest) (*DeleteSizeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSize not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -665,6 +735,96 @@ func _Soleluxury_DeleteCategory_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_CreateSize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSizeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).CreateSize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/CreateSize",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).CreateSize(ctx, req.(*CreateSizeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_GetSize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSizeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetSize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetSize",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetSize(ctx, req.(*GetSizeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_GetSizes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSizesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetSizes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetSizes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetSizes(ctx, req.(*GetSizesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_UpdateSize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSizeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).UpdateSize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/UpdateSize",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).UpdateSize(ctx, req.(*UpdateSizeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Soleluxury_DeleteSize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSizeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).DeleteSize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/DeleteSize",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).DeleteSize(ctx, req.(*DeleteSizeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Soleluxury_ServiceDesc is the grpc.ServiceDesc for Soleluxury service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -747,6 +907,26 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteCategory",
 			Handler:    _Soleluxury_DeleteCategory_Handler,
+		},
+		{
+			MethodName: "CreateSize",
+			Handler:    _Soleluxury_CreateSize_Handler,
+		},
+		{
+			MethodName: "GetSize",
+			Handler:    _Soleluxury_GetSize_Handler,
+		},
+		{
+			MethodName: "GetSizes",
+			Handler:    _Soleluxury_GetSizes_Handler,
+		},
+		{
+			MethodName: "UpdateSize",
+			Handler:    _Soleluxury_UpdateSize_Handler,
+		},
+		{
+			MethodName: "DeleteSize",
+			Handler:    _Soleluxury_DeleteSize_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

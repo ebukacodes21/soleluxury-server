@@ -41,6 +41,16 @@ type Session struct {
 	CreatedAt    time.Time `db:"created_at" json:"created_at"`
 }
 
+type Size struct {
+	ID        int64     `db:"id" json:"id"`
+	StoreID   int64     `db:"store_id" json:"store_id"`
+	StoreName string    `db:"store_name" json:"store_name"`
+	Name      string    `db:"name" json:"name"`
+	Value     string    `db:"value" json:"value"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
+}
+
 type Store struct {
 	ID        int64     `db:"id" json:"id"`
 	Name      string    `db:"name" json:"name"`
