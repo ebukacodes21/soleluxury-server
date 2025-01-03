@@ -11,12 +11,14 @@ import (
 type Querier interface {
 	CreateBillboard(ctx context.Context, arg CreateBillboardParams) (Billboard, error)
 	CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error)
+	CreateColor(ctx context.Context, arg CreateColorParams) (Color, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateSize(ctx context.Context, arg CreateSizeParams) (Size, error)
 	CreateStore(ctx context.Context, name string) (Store, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteBillboard(ctx context.Context, id int64) error
 	DeleteCategory(ctx context.Context, id int64) error
+	DeleteColor(ctx context.Context, id int64) error
 	DeleteSession(ctx context.Context) error
 	DeleteSize(ctx context.Context, id int64) error
 	DeleteStore(ctx context.Context, id int64) error
@@ -24,6 +26,8 @@ type Querier interface {
 	GetBillboards(ctx context.Context, storeID int64) ([]Billboard, error)
 	GetCategories(ctx context.Context, storeID int64) ([]Category, error)
 	GetCategory(ctx context.Context, id int64) (Category, error)
+	GetColor(ctx context.Context, id int64) (Color, error)
+	GetColors(ctx context.Context, storeID int64) ([]Color, error)
 	GetFirstStore(ctx context.Context) (Store, error)
 	GetSize(ctx context.Context, id int64) (Size, error)
 	GetSizes(ctx context.Context, storeID int64) ([]Size, error)
@@ -33,6 +37,7 @@ type Querier interface {
 	Logout(ctx context.Context, arg LogoutParams) error
 	UpdateBillboard(ctx context.Context, arg UpdateBillboardParams) error
 	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) error
+	UpdateColor(ctx context.Context, arg UpdateColorParams) error
 	UpdateSize(ctx context.Context, arg UpdateSizeParams) error
 	UpdateStore(ctx context.Context, arg UpdateStoreParams) error
 }

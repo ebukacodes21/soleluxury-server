@@ -57,6 +57,10 @@ func ValidateValue(value string) error {
 	return ValidateString(value, 1, 1)
 }
 
+func ValidateColorValue(value string) error {
+	return ValidateString(value, 1, 50)
+}
+
 func RandomString(n int) string {
 	var sb strings.Builder
 

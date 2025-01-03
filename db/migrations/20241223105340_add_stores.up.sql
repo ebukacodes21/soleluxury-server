@@ -40,3 +40,15 @@ CREATE TABLE "sizes" (
   "updated_at" timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT "fk_size_store" FOREIGN KEY ("store_id") REFERENCES "stores" ("id") ON DELETE CASCADE
 );
+
+-- Creating the "colors" table with foreign keys
+CREATE TABLE "colors" (
+  "id" bigserial PRIMARY KEY,
+  "store_id" bigserial NOT NULL,
+  "store_name" VARCHAR NOT NULL,
+  "name" VARCHAR NOT NULL,
+  "value" VARCHAR NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT now(),
+  "updated_at" timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT "fk_color_store" FOREIGN KEY ("store_id") REFERENCES "stores" ("id") ON DELETE CASCADE
+);

@@ -12,6 +12,7 @@ import "rpc_billboard.proto";
 import "rpc_category.proto";
 import "rpc_store.proto";
 import "rpc_size.proto";
+import "rpc_color.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -254,6 +255,54 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a size to a store";
             summary: "Delete size to a store";
+        };
+    }
+    rpc CreateColor (CreateColorRequest) returns (CreateColorResponse) {
+        option (google.api.http) = {
+            post: "/api/create-color"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to create a color";
+            summary: "Create a color";
+        };
+    }
+    rpc GetColor (GetColorRequest) returns (GetColorResponse) {
+        option (google.api.http) = {
+            get: "/api/get-color"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a color";
+            summary: "Get a color";
+        };
+    }
+    rpc GetColors (GetColorsRequest) returns (GetColorsResponse) {
+        option (google.api.http) = {
+            get: "/api/get-colors"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a colors to a store";
+            summary: "Get colors to a store";
+        };
+    }
+    rpc UpdateColor (UpdateColorRequest) returns (UpdateColorResponse) {
+        option (google.api.http) = {
+            patch: "/api/update-color"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to update a color to a store";
+            summary: "Update color to a store";
+        };
+    }
+    rpc DeleteColor (DeleteColorRequest) returns (DeleteColorResponse) {
+        option (google.api.http) = {
+            post: "/api/delete-color"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to delete a color to a store";
+            summary: "Delete color to a store";
         };
     }
 }
