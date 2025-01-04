@@ -52,3 +52,61 @@ CREATE TABLE "colors" (
   "updated_at" timestamptz NOT NULL DEFAULT now(),
   CONSTRAINT "fk_color_store" FOREIGN KEY ("store_id") REFERENCES "stores" ("id") ON DELETE CASCADE
 );
+
+-- Creating the "products" table (this must be created before the other tables referencing it)
+CREATE TABLE "products" (
+  "id" bigserial PRIMARY KEY,
+  "name" VARCHAR NOT NULL,
+  "price" double precision NOT NULL,
+  "is_featured" BOOLEAN NOT NULL DEFAULT false,
+  "is_archived" BOOLEAN NOT NULL DEFAULT false,
+  "description" TEXT,
+  "created_at" timestamptz NOT NULL DEFAULT now(),
+  "updated_at" timestamptz NOT NULL DEFAULT now()
+);
+
+-- Creating the "images" table 
+CREATE TABLE "images" (
+  "id" bigserial PRIMARY KEY,
+  "product_id" bigserial NOT NULL,
+  "urls" JSONB NOT NULL,  -- Storing URLs as a JSON array
+  "created_at" timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT "fk_image_product" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE CASCADE
+);
+
+
+-- Creating the "product_colors" table
+CREATE TABLE "product_colors" (
+  "product_id" bigserial NOT NULL,
+  "color_id" bigserial NOT NULL,
+  CONSTRAINT "fk_product_color" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE CASCADE,
+  CONSTRAINT "fk_color_product" FOREIGN KEY ("color_id") REFERENCES "colors" ("id") ON DELETE CASCADE,
+  PRIMARY KEY ("product_id", "color_id")
+);
+
+-- Creating the "product_sizes" table
+CREATE TABLE "product_sizes" (
+  "product_id" bigserial NOT NULL,
+  "size_id" bigserial NOT NULL,
+  CONSTRAINT "fk_product_size" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE CASCADE,
+  CONSTRAINT "fk_size_product" FOREIGN KEY ("size_id") REFERENCES "sizes" ("id") ON DELETE CASCADE,
+  PRIMARY KEY ("product_id", "size_id")
+);
+
+-- Creating the "product_stores" table
+CREATE TABLE "product_stores" (
+  "product_id" bigserial NOT NULL,
+  "store_id" bigserial NOT NULL,
+  CONSTRAINT "fk_product_store" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE CASCADE,
+  CONSTRAINT "fk_store_product" FOREIGN KEY ("store_id") REFERENCES "stores" ("id") ON DELETE CASCADE,
+  PRIMARY KEY ("product_id", "store_id")
+);
+
+-- Creating the "product_categories" table
+CREATE TABLE "product_categories" (
+  "product_id" bigserial NOT NULL,
+  "category_id" bigserial NOT NULL,
+  CONSTRAINT "fk_product_category" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE CASCADE,
+  CONSTRAINT "fk_category_product" FOREIGN KEY ("category_id") REFERENCES "categories" ("id") ON DELETE CASCADE,
+  PRIMARY KEY ("product_id", "category_id")
+);

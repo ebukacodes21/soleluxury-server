@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	grpcGatewayUserAgentHeader = "grpc-gateway-user-agent"
+	grpcGatewayUserAgentHeader = "grpcgateway-user-agent"
 	userAgentHeader            = "user-agent"
 	xForwardedForHeader        = "x-forwarded-for"
 )
@@ -35,8 +35,8 @@ func (s *Server) extractMetaData(ctx context.Context) *MetaData {
 		}
 	}
 
-	if md, ok := peer.FromContext(ctx); ok {
-		metaData.ClientIp = md.Addr.String()
+	if p, ok := peer.FromContext(ctx); ok {
+		metaData.ClientIp = p.Addr.String()
 	}
 
 	return metaData

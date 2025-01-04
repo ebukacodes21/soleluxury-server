@@ -52,6 +52,7 @@ type SoleluxuryClient interface {
 	GetColors(ctx context.Context, in *GetColorsRequest, opts ...grpc.CallOption) (*GetColorsResponse, error)
 	UpdateColor(ctx context.Context, in *UpdateColorRequest, opts ...grpc.CallOption) (*UpdateColorResponse, error)
 	DeleteColor(ctx context.Context, in *DeleteColorRequest, opts ...grpc.CallOption) (*DeleteColorResponse, error)
+	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -323,6 +324,15 @@ func (c *soleluxuryClient) DeleteColor(ctx context.Context, in *DeleteColorReque
 	return out, nil
 }
 
+func (c *soleluxuryClient) CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error) {
+	out := new(CreateProductResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/CreateProduct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SoleluxuryServer is the server API for Soleluxury service.
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
@@ -356,6 +366,7 @@ type SoleluxuryServer interface {
 	GetColors(context.Context, *GetColorsRequest) (*GetColorsResponse, error)
 	UpdateColor(context.Context, *UpdateColorRequest) (*UpdateColorResponse, error)
 	DeleteColor(context.Context, *DeleteColorRequest) (*DeleteColorResponse, error)
+	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -449,6 +460,9 @@ func (UnimplementedSoleluxuryServer) UpdateColor(context.Context, *UpdateColorRe
 }
 func (UnimplementedSoleluxuryServer) DeleteColor(context.Context, *DeleteColorRequest) (*DeleteColorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteColor not implemented")
+}
+func (UnimplementedSoleluxuryServer) CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -985,6 +999,24 @@ func _Soleluxury_DeleteColor_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_CreateProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).CreateProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/CreateProduct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).CreateProduct(ctx, req.(*CreateProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Soleluxury_ServiceDesc is the grpc.ServiceDesc for Soleluxury service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1107,6 +1139,10 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteColor",
 			Handler:    _Soleluxury_DeleteColor_Handler,
+		},
+		{
+			MethodName: "CreateProduct",
+			Handler:    _Soleluxury_CreateProduct_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

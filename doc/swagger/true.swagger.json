@@ -122,6 +122,40 @@
         ]
       }
     },
+    "/api/create-product": {
+      "post": {
+        "summary": "Create a product",
+        "description": "Use this API to create a product",
+        "operationId": "Soleluxury_CreateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/create-size": {
       "post": {
         "summary": "Create a size",
@@ -1118,6 +1152,57 @@
         }
       }
     },
+    "pbCreateProductRequest": {
+      "type": "object",
+      "properties": {
+        "storeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "categoryId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "sizeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "colorId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
+        "isFeatured": {
+          "type": "boolean"
+        },
+        "isArchived": {
+          "type": "boolean"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbCreateProductResponse": {
+      "type": "object",
+      "properties": {
+        "product": {
+          "$ref": "#/definitions/pbProduct"
+        }
+      }
+    },
     "pbCreateSizeRequest": {
       "type": "object",
       "properties": {
@@ -1364,6 +1449,29 @@
         }
       }
     },
+    "pbImage": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "productId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "pbLoginUserRequest": {
       "type": "object",
       "properties": {
@@ -1405,6 +1513,47 @@
       "properties": {
         "message": {
           "type": "string"
+        }
+      }
+    },
+    "pbProduct": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "double"
+        },
+        "isFeatured": {
+          "type": "boolean"
+        },
+        "isArchived": {
+          "type": "boolean"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/definitions/pbCategory"
+        },
+        "size": {
+          "$ref": "#/definitions/pbSize"
+        },
+        "color": {
+          "$ref": "#/definitions/pbColor"
+        },
+        "image": {
+          "$ref": "#/definitions/pbImage"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
         }
       }
     },

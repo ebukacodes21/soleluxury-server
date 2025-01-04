@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
+
+import "general.proto";
+
+message CreateProductRequest {
+    int64 store_id = 1;
+    int64 category_id = 2;
+    int64 size_id = 3;
+    int64 color_id = 4;
+    string name = 5;
+    string description = 6;
+    double price = 7;
+    bool is_featured = 8;
+    bool is_archived = 9;
+    repeated string images = 10;
+}
+
+message CreateProductResponse {
+    Product product = 1;
+}

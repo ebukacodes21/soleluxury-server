@@ -13,6 +13,7 @@ import "rpc_category.proto";
 import "rpc_store.proto";
 import "rpc_size.proto";
 import "rpc_color.proto";
+import "rpc_product.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -303,6 +304,16 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a color to a store";
             summary: "Delete color to a store";
+        };
+    }
+    rpc CreateProduct (CreateProductRequest) returns (CreateProductResponse) {
+        option (google.api.http) = {
+            post: "/api/create-product"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to create a product";
+            summary: "Create a product";
         };
     }
 }
