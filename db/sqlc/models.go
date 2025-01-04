@@ -5,6 +5,8 @@
 package db
 
 import (
+	"database/sql"
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -37,6 +39,44 @@ type Color struct {
 	Value     string    `db:"value" json:"value"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
+}
+
+type Image struct {
+	ID        int64           `db:"id" json:"id"`
+	ProductID int64           `db:"product_id" json:"product_id"`
+	Urls      json.RawMessage `db:"urls" json:"urls"`
+	CreatedAt time.Time       `db:"created_at" json:"created_at"`
+}
+
+type Product struct {
+	ID          int64          `db:"id" json:"id"`
+	Name        string         `db:"name" json:"name"`
+	Price       float64        `db:"price" json:"price"`
+	IsFeatured  bool           `db:"is_featured" json:"is_featured"`
+	IsArchived  bool           `db:"is_archived" json:"is_archived"`
+	Description sql.NullString `db:"description" json:"description"`
+	CreatedAt   time.Time      `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time      `db:"updated_at" json:"updated_at"`
+}
+
+type ProductCategory struct {
+	ProductID  int64 `db:"product_id" json:"product_id"`
+	CategoryID int64 `db:"category_id" json:"category_id"`
+}
+
+type ProductColor struct {
+	ProductID int64 `db:"product_id" json:"product_id"`
+	ColorID   int64 `db:"color_id" json:"color_id"`
+}
+
+type ProductSize struct {
+	ProductID int64 `db:"product_id" json:"product_id"`
+	SizeID    int64 `db:"size_id" json:"size_id"`
+}
+
+type ProductStore struct {
+	ProductID int64 `db:"product_id" json:"product_id"`
+	StoreID   int64 `db:"store_id" json:"store_id"`
 }
 
 type Session struct {
