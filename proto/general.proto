@@ -8,6 +8,10 @@ import "google/protobuf/timestamp.proto";
 
 option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
 
+message Item {
+    string url = 1;
+}
+
 message User {
     int64 id = 1;
     string username = 2;
@@ -71,13 +75,27 @@ message Image {
 message Product {
     int64 id = 1;
     string name = 2;
-    double price = 3;
+    float price = 3;
     bool is_featured = 4;
     bool is_archived = 5;
     string description = 6;
-    Category category = 7;
-    Size size = 8;
-    Color color = 9;
-    Image image = 10;
-    google.protobuf.Timestamp created_at = 11;
+    repeated string images = 7;
+    google.protobuf.Timestamp created_at = 8;
+}
+
+message ProductResponse {
+    int64 id = 1;
+    string name = 2;
+    string description = 3;
+    float price = 4;
+    bool is_featured = 5;
+    bool is_archived = 6;
+    repeated Item images = 7;
+    int64 category_id = 8;
+    string category_name = 9;
+    int64 size_id = 10; 
+    string size_value = 11;
+    int64 color_id = 12;
+    string color_value = 13;
+    google.protobuf.Timestamp created_at = 14;
 }

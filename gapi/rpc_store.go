@@ -181,7 +181,7 @@ func (s *Server) DeleteStore(ctx context.Context, req *pb.DeleteStoreRequest) (*
 }
 
 func validateCreateStoreRequest(req *pb.CreateStoreRequest) (violations []*errdetails.BadRequest_FieldViolation) {
-	if err := validate.ValidateStoreName(req.GetName()); err != nil {
+	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
 
@@ -201,7 +201,7 @@ func validateUpdateStoreRequest(req *pb.UpdateStoreRequest) (violations []*errde
 		violations = append(violations, fieldViolation("id", err))
 	}
 
-	if err := validate.ValidateStoreName(req.GetName()); err != nil {
+	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
 	return violations

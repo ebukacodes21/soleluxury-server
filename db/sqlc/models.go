@@ -5,7 +5,6 @@
 package db
 
 import (
-	"database/sql"
 	"encoding/json"
 	"time"
 
@@ -41,22 +40,27 @@ type Color struct {
 	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 }
 
-type Image struct {
+type Order struct {
 	ID        int64           `db:"id" json:"id"`
-	ProductID int64           `db:"product_id" json:"product_id"`
-	Urls      json.RawMessage `db:"urls" json:"urls"`
+	StoreID   int64           `db:"store_id" json:"store_id"`
+	Items     json.RawMessage `db:"items" json:"items"`
+	IsPaid    bool            `db:"is_paid" json:"is_paid"`
+	Phone     string          `db:"phone" json:"phone"`
+	Address   string          `db:"address" json:"address"`
 	CreatedAt time.Time       `db:"created_at" json:"created_at"`
+	UpdatedAt time.Time       `db:"updated_at" json:"updated_at"`
 }
 
 type Product struct {
-	ID          int64          `db:"id" json:"id"`
-	Name        string         `db:"name" json:"name"`
-	Price       float64        `db:"price" json:"price"`
-	IsFeatured  bool           `db:"is_featured" json:"is_featured"`
-	IsArchived  bool           `db:"is_archived" json:"is_archived"`
-	Description sql.NullString `db:"description" json:"description"`
-	CreatedAt   time.Time      `db:"created_at" json:"created_at"`
-	UpdatedAt   time.Time      `db:"updated_at" json:"updated_at"`
+	ID          int64           `db:"id" json:"id"`
+	Name        string          `db:"name" json:"name"`
+	Price       float64         `db:"price" json:"price"`
+	IsFeatured  bool            `db:"is_featured" json:"is_featured"`
+	IsArchived  bool            `db:"is_archived" json:"is_archived"`
+	Description string          `db:"description" json:"description"`
+	Images      json.RawMessage `db:"images" json:"images"`
+	CreatedAt   time.Time       `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time       `db:"updated_at" json:"updated_at"`
 }
 
 type ProductCategory struct {

@@ -7,6 +7,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.25.1
 	github.com/robfig/cron/v3 v3.0.1
+	github.com/sqlc-dev/pqtype v0.3.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20241219192143-6b3ec007d9bb
 	google.golang.org/grpc v1.69.2
 	google.golang.org/protobuf v1.36.1

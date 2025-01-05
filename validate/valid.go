@@ -3,11 +3,14 @@ package validate
 import (
 	"errors"
 	"fmt"
+	"math"
 	"math/rand"
 	"net/mail"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"github.com/ebukacodes21/soleluxury-server/pb"
 )
 
 const alpha = "abcdefghijklmnopqrstuvwxyz"
@@ -49,8 +52,22 @@ func ValidateEmail(value string) error {
 	return nil
 }
 
-func ValidateStoreName(value string) error {
+func ValidateName(value string) error {
 	return ValidateString(value, 3, 100)
+}
+
+func ValidateDescription(value string) error {
+	return ValidateString(value, 3, 100)
+}
+
+func ValidatePrice(value float32) error {
+	if math.IsNaN(float64(value)) {
+		return fmt.Errorf("value cannot be NaN")
+	}
+	if math.IsInf(float64(value), 0) {
+		return fmt.Errorf("value cannot be infinity")
+	}
+	return nil
 }
 
 func ValidateValue(value string) error {
@@ -84,5 +101,27 @@ func ValidateUrl(value string) error {
 	if err != nil {
 		return errors.New("invalid URL")
 	}
+	return nil
+}
+
+func ValidateUrls(values []*pb.Item) error {
+	if len(values) == 0 {
+		return errors.New("no URLs provided")
+	}
+
+	for _, value := range values {
+		if value == nil || value.Url == "" {
+			return errors.New("URL is empty")
+		}
+
+		_, err := url.ParseRequestURI(value.Url)
+		if err != nil {
+			return errors.New("invalid URL: " + value.Url)
+		}
+	}
+	return nil
+}
+
+func ValidateBool(value bool) error {
 	return nil
 }

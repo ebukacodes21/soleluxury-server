@@ -12,7 +12,6 @@ type Querier interface {
 	CreateBillboard(ctx context.Context, arg CreateBillboardParams) (Billboard, error)
 	CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error)
 	CreateColor(ctx context.Context, arg CreateColorParams) (Color, error)
-	CreateImage(ctx context.Context, arg CreateImageParams) (Image, error)
 	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
 	CreateProductCategory(ctx context.Context, arg CreateProductCategoryParams) (ProductCategory, error)
 	CreateProductColor(ctx context.Context, arg CreateProductColorParams) (ProductColor, error)
@@ -25,6 +24,11 @@ type Querier interface {
 	DeleteBillboard(ctx context.Context, id int64) error
 	DeleteCategory(ctx context.Context, id int64) error
 	DeleteColor(ctx context.Context, id int64) error
+	DeleteProduct(ctx context.Context, id int64) error
+	DeleteProductCategory(ctx context.Context, productID int64) error
+	DeleteProductColor(ctx context.Context, productID int64) error
+	DeleteProductSize(ctx context.Context, productID int64) error
+	DeleteProductStore(ctx context.Context, productID int64) error
 	DeleteSession(ctx context.Context) error
 	DeleteSize(ctx context.Context, id int64) error
 	DeleteStore(ctx context.Context, id int64) error
@@ -35,6 +39,8 @@ type Querier interface {
 	GetColor(ctx context.Context, id int64) (Color, error)
 	GetColors(ctx context.Context, storeID int64) ([]Color, error)
 	GetFirstStore(ctx context.Context) (Store, error)
+	GetProduct(ctx context.Context, arg GetProductParams) (GetProductRow, error)
+	GetProducts(ctx context.Context, storeID int64) ([]GetProductsRow, error)
 	GetSize(ctx context.Context, id int64) (Size, error)
 	GetSizes(ctx context.Context, storeID int64) ([]Size, error)
 	GetStore(ctx context.Context, id int64) (Store, error)
@@ -44,6 +50,10 @@ type Querier interface {
 	UpdateBillboard(ctx context.Context, arg UpdateBillboardParams) error
 	UpdateCategory(ctx context.Context, arg UpdateCategoryParams) error
 	UpdateColor(ctx context.Context, arg UpdateColorParams) error
+	UpdateProduct(ctx context.Context, arg UpdateProductParams) error
+	UpdateProductCategory(ctx context.Context, arg UpdateProductCategoryParams) error
+	UpdateProductColor(ctx context.Context, arg UpdateProductColorParams) error
+	UpdateProductSize(ctx context.Context, arg UpdateProductSizeParams) error
 	UpdateSize(ctx context.Context, arg UpdateSizeParams) error
 	UpdateStore(ctx context.Context, arg UpdateStoreParams) error
 }
