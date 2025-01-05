@@ -1,6 +1,9 @@
 package gapi
 
 import (
+	"encoding/json"
+	"fmt"
+
 	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
 	"github.com/ebukacodes21/soleluxury-server/pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -144,4 +147,96 @@ func convertColors(colors []db.Color) []*pb.Color {
 	}
 
 	return pbColors
+}
+
+func convertProduct(product db.Product) (*pb.Product, error) {
+	var images []Image
+	if len(product.Images) > 0 {
+		err := json.Unmarshal(product.Images, &images)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshal images: %v", err)
+		}
+	}
+
+	var imageUrls []string
+	for _, img := range images {
+		imageUrls = append(imageUrls, img.URL)
+	}
+
+	return &pb.Product{
+		Id:          product.ID,
+		Name:        product.Name,
+		Price:       float32(product.Price),
+		Description: product.Description,
+		IsFeatured:  product.IsFeatured,
+		IsArchived:  product.IsArchived,
+		Images:      imageUrls,
+		CreatedAt:   timestamppb.New(product.CreatedAt),
+	}, nil
+}
+
+func convertProductsRow(pr []db.GetProductsRow) []*pb.ProductResponse {
+	var productResponses []*pb.ProductResponse
+
+	for _, row := range pr {
+		product := &pb.ProductResponse{
+			Id:           row.ProductID,
+			Name:         row.ProductName,
+			Description:  row.ProductDescription,
+			Price:        float32(row.ProductPrice),
+			IsFeatured:   row.IsFeatured,
+			IsArchived:   row.IsArchived,
+			Images:       mapImages(row.ProductImages),
+			CategoryId:   row.CategoryID.Int64,
+			CategoryName: row.CategoryName.String,
+			ColorId:      row.ColorID.Int64,
+			ColorValue:   row.ColorValue.String,
+			SizeId:       row.SizeID.Int64,
+			SizeValue:    row.SizeValue.String,
+			CreatedAt:    timestamppb.New(row.ProductCreatedAt),
+		}
+
+		productResponses = append(productResponses, product)
+	}
+
+	return productResponses
+}
+
+func convertProductRow(product db.GetProductRow) *pb.ProductResponse {
+	return &pb.ProductResponse{
+		Id:           product.ProductID,
+		Name:         product.ProductName,
+		Description:  product.ProductDescription,
+		Price:        float32(product.ProductPrice),
+		IsFeatured:   product.IsFeatured,
+		IsArchived:   product.IsArchived,
+		Images:       mapImages(product.ProductImages),
+		CategoryId:   product.CategoryID.Int64,
+		CategoryName: product.CategoryName.String,
+		ColorId:      product.ColorID.Int64,
+		ColorValue:   product.ColorValue.String,
+		SizeId:       product.SizeID.Int64,
+		SizeValue:    product.SizeValue.String,
+		CreatedAt:    timestamppb.New(product.ProductCreatedAt),
+	}
+}
+
+func mapImages(images json.RawMessage) []*pb.Item {
+	var rawImages []struct {
+		Url string `json:"url"`
+	}
+
+	if err := json.Unmarshal(images, &rawImages); err != nil {
+		return nil
+	}
+
+	var pbItems []*pb.Item
+	for _, img := range rawImages {
+		pbItem := &pb.Item{
+			Url: img.Url,
+		}
+		pbItems = append(pbItems, pbItem)
+	}
+
+	return pbItems
 }

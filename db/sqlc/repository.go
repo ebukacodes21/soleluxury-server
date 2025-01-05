@@ -10,6 +10,8 @@ type DatabaseContract interface {
 	Querier
 	CreateUserTx(ctx context.Context, args CreateUserTxParams) (CreateUserTxResponse, error)
 	CreateProductTx(ctx context.Context, args CreateProductTxParams) (CreateProductTxResponse, error)
+	UpdateProductTx(ctx context.Context, args UpdateProductTxParams) error
+	DeleteProductTx(ctx context.Context, arg int64) error
 }
 
 type SoleluxuryRepository struct {

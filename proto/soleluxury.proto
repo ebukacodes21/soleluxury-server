@@ -316,4 +316,42 @@ service Soleluxury {
             summary: "Create a product";
         };
     }
+    rpc GetProducts (GetProductsRequest) returns (GetProductsResponse) {
+        option (google.api.http) = {
+            get: "/api/get-products"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get products";
+            summary: "Get products";
+        };
+    }
+    rpc GetProduct (GetProductRequest) returns (GetProductResponse) {
+        option (google.api.http) = {
+            get: "/api/get-product"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a product";
+            summary: "Get a product";
+        };
+    }
+    rpc UpdateProduct (UpdateProductRequest) returns (UpdateProductResponse) {
+        option (google.api.http) = {
+            patch: "/api/update-product"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to update a product";
+            summary: "Update a product";
+        };
+    }
+    rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse) {
+        option (google.api.http) = {
+            post: "/api/delete-product"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to delete a product";
+            summary: "Delete product";
+        };
+    }
 }

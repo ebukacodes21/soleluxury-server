@@ -187,7 +187,7 @@ func validateCreateBillboardRequest(req *pb.CreateBillboardRequest) (violations 
 		violations = append(violations, fieldViolation("store_id", err))
 	}
 
-	if err := validate.ValidateStoreName(req.GetLabel()); err != nil {
+	if err := validate.ValidateName(req.GetLabel()); err != nil {
 		violations = append(violations, fieldViolation("label", err))
 	}
 
@@ -219,7 +219,7 @@ func validateUpdateBillboardRequest(req *pb.UpdateBillboardRequest) (violations 
 		violations = append(violations, fieldViolation("store_id", err))
 	}
 
-	if err := validate.ValidateStoreName(req.GetLabel()); err != nil {
+	if err := validate.ValidateName(req.GetLabel()); err != nil {
 		violations = append(violations, fieldViolation("label", err))
 	}
 

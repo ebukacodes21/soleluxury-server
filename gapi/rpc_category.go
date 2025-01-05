@@ -196,7 +196,7 @@ func validateCreateCategoryRequest(req *pb.CreateCategoryRequest) (violations []
 		violations = append(violations, fieldViolation("billboard_id", err))
 	}
 
-	if err := validate.ValidateStoreName(req.GetName()); err != nil {
+	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
 
@@ -226,10 +226,10 @@ func validateUpdateCategoryRequest(req *pb.UpdateCategoryRequest) (violations []
 	if err := validate.ValidateId(req.GetStoreId()); err != nil {
 		violations = append(violations, fieldViolation("store_id", err))
 	}
-	if err := validate.ValidateStoreName(req.GetName()); err != nil {
+	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
-	if err := validate.ValidateStoreName(req.GetBillboardLabel()); err != nil {
+	if err := validate.ValidateName(req.GetBillboardLabel()); err != nil {
 		violations = append(violations, fieldViolation("billboard_label", err))
 	}
 

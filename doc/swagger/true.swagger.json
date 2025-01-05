@@ -360,6 +360,40 @@
         ]
       }
     },
+    "/api/delete-product": {
+      "post": {
+        "summary": "Delete product to a store",
+        "description": "Use this API to delete a product to a store",
+        "operationId": "Soleluxury_DeleteProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDeleteProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/delete-size": {
       "post": {
         "summary": "Delete size to a store",
@@ -650,6 +684,79 @@
         ]
       }
     },
+    "/api/get-product": {
+      "get": {
+        "summary": "Get a product",
+        "description": "Use this API to get a product",
+        "operationId": "Soleluxury_GetProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "productId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
+    "/api/get-products": {
+      "get": {
+        "summary": "Get products",
+        "description": "Use this API to get products",
+        "operationId": "Soleluxury_GetProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetProductsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/get-size": {
       "get": {
         "summary": "Get a size",
@@ -933,6 +1040,40 @@
         ]
       }
     },
+    "/api/update-product": {
+      "patch": {
+        "summary": "Update a product",
+        "description": "Use this API to update a product",
+        "operationId": "Soleluxury_UpdateProduct",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateProductResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateProductRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/update-size": {
       "patch": {
         "summary": "Update size to a store",
@@ -1179,7 +1320,7 @@
         },
         "price": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "isFeatured": {
           "type": "boolean"
@@ -1190,7 +1331,8 @@
         "images": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "$ref": "#/definitions/pbItem"
           }
         }
       }
@@ -1315,6 +1457,23 @@
         }
       }
     },
+    "pbDeleteProductRequest": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pbDeleteProductResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
     "pbDeleteSizeRequest": {
       "type": "object",
       "properties": {
@@ -1409,6 +1568,26 @@
         }
       }
     },
+    "pbGetProductResponse": {
+      "type": "object",
+      "properties": {
+        "productRes": {
+          "$ref": "#/definitions/pbProductResponse"
+        }
+      }
+    },
+    "pbGetProductsResponse": {
+      "type": "object",
+      "properties": {
+        "productRes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbProductResponse"
+          }
+        }
+      }
+    },
     "pbGetSizeResponse": {
       "type": "object",
       "properties": {
@@ -1449,26 +1628,11 @@
         }
       }
     },
-    "pbImage": {
+    "pbItem": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "string",
-          "format": "int64"
-        },
-        "productId": {
-          "type": "string",
-          "format": "int64"
-        },
-        "urls": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -1528,7 +1692,7 @@
         },
         "price": {
           "type": "number",
-          "format": "double"
+          "format": "float"
         },
         "isFeatured": {
           "type": "boolean"
@@ -1539,17 +1703,68 @@
         "description": {
           "type": "string"
         },
-        "category": {
-          "$ref": "#/definitions/pbCategory"
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "size": {
-          "$ref": "#/definitions/pbSize"
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbProductResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
         },
-        "color": {
-          "$ref": "#/definitions/pbColor"
+        "name": {
+          "type": "string"
         },
-        "image": {
-          "$ref": "#/definitions/pbImage"
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "isFeatured": {
+          "type": "boolean"
+        },
+        "isArchived": {
+          "type": "boolean"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbItem"
+          }
+        },
+        "categoryId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "categoryName": {
+          "type": "string"
+        },
+        "sizeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "sizeValue": {
+          "type": "string"
+        },
+        "colorId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "colorValue": {
+          "type": "string"
         },
         "createdAt": {
           "type": "string",
@@ -1673,6 +1888,58 @@
       }
     },
     "pbUpdateColorResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateProductRequest": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "categoryId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "sizeId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "colorId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number",
+          "format": "float"
+        },
+        "isFeatured": {
+          "type": "boolean"
+        },
+        "isArchived": {
+          "type": "boolean"
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbItem"
+          }
+        }
+      }
+    },
+    "pbUpdateProductResponse": {
       "type": "object",
       "properties": {
         "message": {

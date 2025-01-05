@@ -187,7 +187,7 @@ func validateCreateSizeRequest(req *pb.CreateSizeRequest) (violations []*errdeta
 		violations = append(violations, fieldViolation("store_id", err))
 	}
 
-	if err := validate.ValidateStoreName(req.GetName()); err != nil {
+	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
 	if err := validate.ValidateValue(req.GetValue()); err != nil {
@@ -220,7 +220,7 @@ func validateUpdateSizeRequest(req *pb.UpdateSizeRequest) (violations []*errdeta
 	if err := validate.ValidateId(req.GetStoreId()); err != nil {
 		violations = append(violations, fieldViolation("store_id", err))
 	}
-	if err := validate.ValidateStoreName(req.GetName()); err != nil {
+	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
 	if err := validate.ValidateValue(req.GetValue()); err != nil {

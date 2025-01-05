@@ -3,17 +3,13 @@ package db
 import "context"
 
 type CreateProductTxParams struct {
-	CreateProductParams
-	CreateImageParams
-	*CreateProductColorParams
+	CreateProductColorParams
 	*CreateProductSizeParams
 	*CreateProductStoreParams
 	*CreateProductCategoryParams
 }
 
 type CreateProductTxResponse struct {
-	Product         Product
-	Image           Image
 	ProductColor    ProductColor
 	ProductSize     ProductSize
 	ProductStore    ProductStore
@@ -25,17 +21,7 @@ func (sr *SoleluxuryRepository) CreateProductTx(ctx context.Context, args Create
 
 	err := sr.execTx(ctx, func(queries *Queries) error {
 		var err error
-		result.Product, err = sr.CreateProduct(ctx, args.CreateProductParams)
-		if err != nil {
-			return err
-		}
-
-		result.Image, err = sr.CreateImage(ctx, args.CreateImageParams)
-		if err != nil {
-			return err
-		}
-
-		result.ProductColor, err = sr.CreateProductColor(ctx, *args.CreateProductColorParams)
+		result.ProductColor, err = sr.CreateProductColor(ctx, args.CreateProductColorParams)
 		if err != nil {
 			return err
 		}

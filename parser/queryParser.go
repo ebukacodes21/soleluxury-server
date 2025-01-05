@@ -29,6 +29,10 @@ func (p *CustomQueryParameterParser) Parse(target proto.Message, values url.Valu
 		return populateGetColorParams(values, req)
 	case *service.GetColorsRequest:
 		return populateGetColorsParams(values, req)
+	case *service.GetProductsRequest:
+		return populateGetProductsParams(values, req)
+	case *service.GetProductRequest:
+		return populateGetProductParams(values, req)
 	}
 
 	return (*runtime.DefaultQueryParser)(nil).Parse(target, values, filter)
@@ -92,6 +96,30 @@ func populateGetColorsParams(values url.Values, r *service.GetColorsRequest) err
 	if storeId := values.Get("store_id"); storeId != "" {
 		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
 			r.StoreId = int64(parsedStoreId)
+		}
+	}
+	return nil
+}
+
+func populateGetProductsParams(values url.Values, r *service.GetProductsRequest) error {
+	if storeId := values.Get("store_id"); storeId != "" {
+		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
+			r.StoreId = int64(parsedStoreId)
+		}
+	}
+	return nil
+}
+
+func populateGetProductParams(values url.Values, r *service.GetProductRequest) error {
+	if storeId := values.Get("store_id"); storeId != "" {
+		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
+			r.StoreId = int64(parsedStoreId)
+		}
+	}
+
+	if pId := values.Get("product_id"); pId != "" {
+		if parsedPId, err := strconv.Atoi(pId); err == nil {
+			r.ProductId = int64(parsedPId)
 		}
 	}
 	return nil

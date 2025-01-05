@@ -60,20 +60,24 @@ CREATE TABLE "products" (
   "price" double precision NOT NULL,
   "is_featured" BOOLEAN NOT NULL DEFAULT false,
   "is_archived" BOOLEAN NOT NULL DEFAULT false,
-  "description" TEXT,
+  "description" VARCHAR NOT NULL,
+  "images" JSONB NOT NULL, 
   "created_at" timestamptz NOT NULL DEFAULT now(),
   "updated_at" timestamptz NOT NULL DEFAULT now()
 );
 
--- Creating the "images" table 
-CREATE TABLE "images" (
+-- Creating the "orders" table with store_id
+CREATE TABLE "orders" (
   "id" bigserial PRIMARY KEY,
-  "product_id" bigserial NOT NULL,
-  "urls" JSONB NOT NULL,  -- Storing URLs as a JSON array
+  "store_id" bigserial NOT NULL, 
+  "items" JSONB NOT NULL, 
+  "is_paid" BOOLEAN NOT NULL DEFAULT false,
+  "phone" VARCHAR NOT NULL,
+  "address" VARCHAR NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT "fk_image_product" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE CASCADE
+  "updated_at" timestamptz NOT NULL DEFAULT now(),
+  CONSTRAINT "fk_order_store" FOREIGN KEY ("store_id") REFERENCES "stores" ("id") ON DELETE CASCADE
 );
-
 
 -- Creating the "product_colors" table
 CREATE TABLE "product_colors" (

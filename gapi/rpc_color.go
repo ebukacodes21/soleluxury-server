@@ -186,7 +186,7 @@ func validateCreateColorRequest(req *pb.CreateColorRequest) (violations []*errde
 		violations = append(violations, fieldViolation("store_id", err))
 	}
 
-	if err := validate.ValidateStoreName(req.GetName()); err != nil {
+	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
 	if err := validate.ValidateColorValue(req.GetValue()); err != nil {
@@ -219,7 +219,7 @@ func validateUpdateColorRequest(req *pb.UpdateColorRequest) (violations []*errde
 	if err := validate.ValidateId(req.GetStoreId()); err != nil {
 		violations = append(violations, fieldViolation("store_id", err))
 	}
-	if err := validate.ValidateStoreName(req.GetName()); err != nil {
+	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
 	}
 	if err := validate.ValidateColorValue(req.GetValue()); err != nil {
