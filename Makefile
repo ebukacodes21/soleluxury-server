@@ -34,7 +34,7 @@ evans:
     repl
 
 server:
-	go run main.go
+	air
 
 composeup:
 	docker compose --env-file app.env up --build -d

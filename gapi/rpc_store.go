@@ -3,7 +3,6 @@ package gapi
 import (
 	"context"
 	"database/sql"
-	"log"
 
 	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
 	"github.com/ebukacodes21/soleluxury-server/pb"
@@ -57,12 +56,13 @@ func (s *Server) GetStore(ctx context.Context, req *pb.GetStoreRequest) (*pb.Get
 	}
 
 	store, err := s.repository.GetStore(ctx, req.GetId())
+
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "unable to get store")
+		return nil, status.Errorf(codes.NotFound, "unable to get store %s", err)
 	}
 
 	resp := &pb.GetStoreResponse{
-		Store: convertStore(store),
+		Store: convertStoreRow(store),
 	}
 
 	return resp, nil
@@ -78,12 +78,12 @@ func (s *Server) GetStores(ctx context.Context, _ *emptypb.Empty) (*pb.GetStores
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get stores")
 	}
 
-	stores, err := s.repository.GetStores(ctx)
+	stores, err := s.repository.GetStores(ctx, 10)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "unable to get store")
+		return nil, status.Errorf(codes.NotFound, "unable to get stores %s", err)
 	}
 
-	reversedStores := convertStores(stores)
+	reversedStores := convertStoresRow(stores)
 	for i, j := 0, len(reversedStores)-1; i < j; i, j = i+1, j-1 {
 		reversedStores[i], reversedStores[j] = reversedStores[j], reversedStores[i]
 	}
@@ -107,11 +107,11 @@ func (s *Server) GetFirstStore(ctx context.Context, _ *emptypb.Empty) (*pb.GetSt
 
 	store, err := s.repository.GetFirstStore(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "unable to get store")
+		return nil, status.Errorf(codes.NotFound, "unable to get store %s", err)
 	}
 
 	resp := &pb.GetStoreResponse{
-		Store: convertStore(store),
+		Store: convertFirstStoreRow(store),
 	}
 
 	return resp, nil
@@ -128,7 +128,6 @@ func (s *Server) UpdateStore(ctx context.Context, req *pb.UpdateStoreRequest) (*
 		return nil, invalidArgs(violations)
 	}
 
-	log.Print(req)
 	if payload.Role == "user" {
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to update store")
 	}
@@ -201,8 +200,10 @@ func validateUpdateStoreRequest(req *pb.UpdateStoreRequest) (violations []*errde
 		violations = append(violations, fieldViolation("id", err))
 	}
 
-	if err := validate.ValidateName(req.GetName()); err != nil {
-		violations = append(violations, fieldViolation("name", err))
+	if req.Name != nil {
+		if err := validate.ValidateName(req.GetName()); err != nil {
+			violations = append(violations, fieldViolation("name", err))
+		}
 	}
 	return violations
 }

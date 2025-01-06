@@ -12,6 +12,11 @@ message Item {
     string url = 1;
 }
 
+message OrderItem {
+    string name = 1;
+    int64 qty = 2;
+}
+
 message User {
     int64 id = 1;
     string username = 2;
@@ -32,9 +37,15 @@ message Billboard {
 }
 
 message Store {
-    int64 id = 1;
-    string name = 2;
-    google.protobuf.Timestamp created_at = 3;
+    int64 store_id = 1; 
+    string store_name = 2;  
+    google.protobuf.Timestamp store_created_at = 3;  
+    repeated Billboard billboards = 4;  
+    repeated Category categories = 5;   
+    repeated Size sizes = 6; 
+    repeated Color colors = 7;
+    repeated Order orders = 8; 
+    repeated Product products = 9;
 }
 
 message Category {
@@ -65,13 +76,6 @@ message Color {
     google.protobuf.Timestamp created_at = 7;
 }
 
-message Image {
-    int64 id = 1;
-    int64 product_id = 2;
-    repeated string urls = 3;
-    google.protobuf.Timestamp created_at = 4;
-}
-
 message Product {
     int64 id = 1;
     string name = 2;
@@ -79,8 +83,18 @@ message Product {
     bool is_featured = 4;
     bool is_archived = 5;
     string description = 6;
-    repeated string images = 7;
+    repeated Item images = 7;
     google.protobuf.Timestamp created_at = 8;
+}
+
+message Order {
+    int64 id = 1;  
+    repeated OrderItem order_items = 2;  
+    bool order_is_paid = 3;  
+    string order_phone = 4;  
+    string order_address = 5;  
+    google.protobuf.Timestamp order_created_at = 6;  
+    google.protobuf.Timestamp order_updated_at = 7; 
 }
 
 message ProductResponse {

@@ -33,8 +33,8 @@ func (s *Server) CreateColor(ctx context.Context, req *pb.CreateColorRequest) (*
 	}
 
 	args := db.CreateColorParams{
-		StoreID:   store.ID,
-		StoreName: store.Name,
+		StoreID:   store.StoreID,
+		StoreName: store.StoreName,
 		Name:      req.GetName(),
 		Value:     req.GetValue(),
 	}

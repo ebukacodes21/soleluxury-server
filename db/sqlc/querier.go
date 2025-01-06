@@ -38,13 +38,13 @@ type Querier interface {
 	GetCategory(ctx context.Context, id int64) (Category, error)
 	GetColor(ctx context.Context, id int64) (Color, error)
 	GetColors(ctx context.Context, storeID int64) ([]Color, error)
-	GetFirstStore(ctx context.Context) (Store, error)
+	GetFirstStore(ctx context.Context) (GetFirstStoreRow, error)
 	GetProduct(ctx context.Context, arg GetProductParams) (GetProductRow, error)
 	GetProducts(ctx context.Context, storeID int64) ([]GetProductsRow, error)
 	GetSize(ctx context.Context, id int64) (Size, error)
 	GetSizes(ctx context.Context, storeID int64) ([]Size, error)
-	GetStore(ctx context.Context, id int64) (Store, error)
-	GetStores(ctx context.Context) ([]Store, error)
+	GetStore(ctx context.Context, id int64) (GetStoreRow, error)
+	GetStores(ctx context.Context, limit int32) ([]GetStoresRow, error)
 	GetUser(ctx context.Context, email string) (User, error)
 	Logout(ctx context.Context, arg LogoutParams) error
 	UpdateBillboard(ctx context.Context, arg UpdateBillboardParams) error
@@ -55,6 +55,7 @@ type Querier interface {
 	UpdateProductColor(ctx context.Context, arg UpdateProductColorParams) error
 	UpdateProductSize(ctx context.Context, arg UpdateProductSizeParams) error
 	UpdateSize(ctx context.Context, arg UpdateSizeParams) error
+	// Here $1 is the limit passed (number of stores to fetch)
 	UpdateStore(ctx context.Context, arg UpdateStoreParams) error
 }
 
