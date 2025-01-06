@@ -28,7 +28,7 @@ message GetStoresResponse {
 
 message UpdateStoreRequest {
     int64 id = 1;
-    string name = 2;
+    optional string name = 2;
 }
 
 message UpdateStoreResponse {

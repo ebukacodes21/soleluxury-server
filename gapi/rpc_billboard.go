@@ -33,7 +33,7 @@ func (s *Server) CreateBillboard(ctx context.Context, req *pb.CreateBillboardReq
 	}
 
 	args := db.CreateBillboardParams{
-		StoreID:  store.ID,
+		StoreID:  store.StoreID,
 		Label:    req.GetLabel(),
 		ImageUrl: req.GetImageUrl(),
 	}
@@ -131,7 +131,7 @@ func (s *Server) UpdateBillboard(ctx context.Context, req *pb.UpdateBillboardReq
 
 	args := db.UpdateBillboardParams{
 		ID:      req.GetId(),
-		StoreID: store.ID,
+		StoreID: store.StoreID,
 		Label: sql.NullString{
 			Valid:  true,
 			String: req.GetLabel(),

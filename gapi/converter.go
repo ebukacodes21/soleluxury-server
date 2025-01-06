@@ -9,14 +9,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func convertStore(store db.Store) *pb.Store {
-	return &pb.Store{
-		Id:        store.ID,
-		Name:      store.Name,
-		CreatedAt: timestamppb.New(store.CreatedAt),
-	}
-}
-
 func convertUser(user db.User) *pb.User {
 	return &pb.User{
 		Id:               user.ID,
@@ -29,13 +21,223 @@ func convertUser(user db.User) *pb.User {
 	}
 }
 
-func convertStores(stores []db.Store) []*pb.Store {
+func convertStore(store db.Store) *pb.Store {
+	return &pb.Store{
+		StoreId:        store.ID,
+		StoreName:      store.Name,
+		StoreCreatedAt: timestamppb.New(store.CreatedAt),
+	}
+}
+
+func convertFirstStoreRow(store db.GetFirstStoreRow) *pb.Store {
+	return &pb.Store{
+		StoreId:        store.StoreID,
+		StoreName:      store.StoreName,
+		StoreCreatedAt: timestamppb.New(store.StoreCreatedAt),
+		Billboards: []*pb.Billboard{
+			{
+				Id:        store.BillboardID.Int64,
+				StoreId:   store.StoreID,
+				Label:     store.BillboardLabel.String,
+				ImageUrl:  store.BillboardImageUrl.String,
+				CreatedAt: timestamppb.New(store.BillboardCreatedAt.Time),
+			},
+		},
+		Categories: []*pb.Category{
+			{
+				Id:             store.CategoryID.Int64,
+				BillboardId:    store.BillboardID.Int64,
+				BillboardLabel: store.BillboardLabel.String,
+				StoreId:        store.StoreID,
+				StoreName:      store.StoreName,
+				Name:           store.CategoryName.String,
+				CreatedAt:      timestamppb.New(store.CategoryCreatedAt.Time),
+			},
+		},
+		Sizes: []*pb.Size{
+			{
+				Id:        store.SizeID.Int64,
+				StoreId:   store.StoreID,
+				StoreName: store.StoreName,
+				Name:      store.SizeName.String,
+				Value:     store.SizeValue.String,
+				CreatedAt: timestamppb.New(store.SizeCreatedAt.Time),
+			},
+		},
+		Colors: []*pb.Color{
+			{
+				Id:        store.ColorID.Int64,
+				StoreId:   store.StoreID,
+				StoreName: store.StoreName,
+				Name:      store.ColorName.String,
+				Value:     store.ColorValue.String,
+				CreatedAt: timestamppb.New(store.ColorCreatedAt.Time),
+			},
+		},
+		Orders: []*pb.Order{
+			{
+				Id:             store.OrderID.Int64,
+				OrderItems:     mapItems(store.OrderItems.RawMessage),
+				OrderIsPaid:    store.OrderIsPaid.Bool,
+				OrderPhone:     store.OrderPhone.String,
+				OrderAddress:   store.OrderAddress.String,
+				OrderCreatedAt: timestamppb.New(store.OrderCreatedAt.Time),
+			},
+		},
+		Products: []*pb.Product{
+			{
+				Id:          store.ProductID.Int64,
+				Name:        store.ProductName.String,
+				Description: store.ProductDescription.String,
+				Price:       float32(store.ProductPrice.Float64),
+				Images:      mapImages(store.ProductImages.RawMessage),
+				IsFeatured:  store.ProductIsFeatured.Bool,
+				IsArchived:  store.ProductIsArchived.Bool,
+				CreatedAt:   timestamppb.New(store.ProductCreatedAt.Time),
+			},
+		},
+	}
+}
+
+func convertStoreRow(store db.GetStoreRow) *pb.Store {
+	return &pb.Store{
+		StoreId:        store.StoreID,
+		StoreName:      store.StoreName,
+		StoreCreatedAt: timestamppb.New(store.StoreCreatedAt),
+		Billboards: []*pb.Billboard{
+			{
+				Id:        store.BillboardID.Int64,
+				StoreId:   store.StoreID,
+				Label:     store.BillboardLabel.String,
+				ImageUrl:  store.BillboardImageUrl.String,
+				CreatedAt: timestamppb.New(store.BillboardCreatedAt.Time),
+			},
+		},
+		Categories: []*pb.Category{
+			{
+				Id:             store.CategoryID.Int64,
+				BillboardId:    store.BillboardID.Int64,
+				BillboardLabel: store.BillboardLabel.String,
+				StoreId:        store.StoreID,
+				StoreName:      store.StoreName,
+				Name:           store.CategoryName.String,
+				CreatedAt:      timestamppb.New(store.CategoryCreatedAt.Time),
+			},
+		},
+		Sizes: []*pb.Size{
+			{
+				Id:        store.SizeID.Int64,
+				StoreId:   store.StoreID,
+				StoreName: store.StoreName,
+				Name:      store.SizeName.String,
+				Value:     store.SizeValue.String,
+				CreatedAt: timestamppb.New(store.SizeCreatedAt.Time),
+			},
+		},
+		Colors: []*pb.Color{
+			{
+				Id:        store.ColorID.Int64,
+				StoreId:   store.StoreID,
+				StoreName: store.StoreName,
+				Name:      store.ColorName.String,
+				Value:     store.ColorValue.String,
+				CreatedAt: timestamppb.New(store.ColorCreatedAt.Time),
+			},
+		},
+		Orders: []*pb.Order{
+			{
+				Id:             store.OrderID.Int64,
+				OrderItems:     mapItems(store.OrderItems.RawMessage),
+				OrderIsPaid:    store.OrderIsPaid.Bool,
+				OrderPhone:     store.OrderPhone.String,
+				OrderAddress:   store.OrderAddress.String,
+				OrderCreatedAt: timestamppb.New(store.OrderCreatedAt.Time),
+			},
+		},
+		Products: []*pb.Product{
+			{
+				Id:          store.ProductID.Int64,
+				Name:        store.ProductName.String,
+				Description: store.ProductDescription.String,
+				Price:       float32(store.ProductPrice.Float64),
+				Images:      mapImages(store.ProductImages.RawMessage),
+				IsFeatured:  store.ProductIsFeatured.Bool,
+				IsArchived:  store.ProductIsArchived.Bool,
+				CreatedAt:   timestamppb.New(store.ProductCreatedAt.Time),
+			},
+		},
+	}
+}
+
+func convertStoresRow(stores []db.GetStoresRow) []*pb.Store {
 	var pbStores []*pb.Store
 	for _, store := range stores {
 		pbStores = append(pbStores, &pb.Store{
-			Id:        store.ID,
-			Name:      store.Name,
-			CreatedAt: timestamppb.New(store.CreatedAt),
+			StoreId:        store.StoreID,
+			StoreName:      store.StoreName,
+			StoreCreatedAt: timestamppb.New(store.StoreCreatedAt),
+			Billboards: []*pb.Billboard{
+				{
+					Id:        store.BillboardID.Int64,
+					StoreId:   store.StoreID,
+					Label:     store.BillboardLabel.String,
+					ImageUrl:  store.BillboardImageUrl.String,
+					CreatedAt: timestamppb.New(store.BillboardCreatedAt.Time),
+				},
+			},
+			Categories: []*pb.Category{
+				{
+					Id:             store.CategoryID.Int64,
+					BillboardId:    store.BillboardID.Int64,
+					BillboardLabel: store.BillboardLabel.String,
+					StoreId:        store.StoreID,
+					StoreName:      store.StoreName,
+					Name:           store.CategoryName.String,
+					CreatedAt:      timestamppb.New(store.CategoryCreatedAt.Time),
+				},
+			},
+			Sizes: []*pb.Size{
+				{
+					Id:        store.SizeID.Int64,
+					StoreId:   store.StoreID,
+					StoreName: store.StoreName,
+					Name:      store.SizeName.String,
+					Value:     store.SizeValue.String,
+					CreatedAt: timestamppb.New(store.SizeCreatedAt.Time),
+				},
+			},
+			Colors: []*pb.Color{
+				{
+					Id:        store.ColorID.Int64,
+					StoreId:   store.StoreID,
+					StoreName: store.StoreName,
+					Name:      store.ColorName.String,
+					Value:     store.ColorValue.String,
+					CreatedAt: timestamppb.New(store.ColorCreatedAt.Time),
+				},
+			},
+			Orders: []*pb.Order{
+				{
+					Id:             store.OrderID.Int64,
+					OrderItems:     mapItems(store.OrderItems.RawMessage),
+					OrderIsPaid:    store.OrderIsPaid.Bool,
+					OrderPhone:     store.OrderPhone.String,
+					OrderAddress:   store.OrderAddress.String,
+					OrderCreatedAt: timestamppb.New(store.OrderCreatedAt.Time),
+				},
+			},
+			Products: []*pb.Product{
+				{
+					Id:          store.ProductID.Int64,
+					Name:        store.ProductName.String,
+					Description: store.ProductDescription.String,
+					Price:       float32(store.ProductPrice.Float64),
+					Images:      mapImages(store.ProductImages.RawMessage),
+					IsFeatured:  store.ProductIsFeatured.Bool,
+					IsArchived:  store.ProductIsArchived.Bool,
+					CreatedAt:   timestamppb.New(store.ProductCreatedAt.Time),
+				},
+			},
 		})
 	}
 
@@ -170,7 +372,7 @@ func convertProduct(product db.Product) (*pb.Product, error) {
 		Description: product.Description,
 		IsFeatured:  product.IsFeatured,
 		IsArchived:  product.IsArchived,
-		Images:      imageUrls,
+		Images:      mapImages(product.Images),
 		CreatedAt:   timestamppb.New(product.CreatedAt),
 	}, nil
 }
@@ -236,6 +438,26 @@ func mapImages(images json.RawMessage) []*pb.Item {
 			Url: img.Url,
 		}
 		pbItems = append(pbItems, pbItem)
+	}
+
+	return pbItems
+}
+
+func mapItems(items json.RawMessage) []*pb.OrderItem {
+	var rawItems []struct {
+		Url string `json:"url"`
+	}
+
+	if err := json.Unmarshal(items, &rawItems); err != nil {
+		return nil
+	}
+
+	var pbItems []*pb.OrderItem
+	for _, img := range rawItems {
+		pbOrderItem := &pb.OrderItem{
+			Name: img.Url,
+		}
+		pbItems = append(pbItems, pbOrderItem)
 	}
 
 	return pbItems

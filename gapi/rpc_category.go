@@ -38,10 +38,10 @@ func (s *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 	}
 
 	args := db.CreateCategoryParams{
-		StoreID:        store.ID,
+		StoreID:        store.StoreID,
 		BillboardID:    billboard.ID,
 		BillboardLabel: billboard.Label,
-		StoreName:      store.Name,
+		StoreName:      store.StoreName,
 		Name:           req.GetName(),
 	}
 

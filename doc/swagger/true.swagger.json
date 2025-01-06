@@ -362,8 +362,8 @@
     },
     "/api/delete-product": {
       "post": {
-        "summary": "Delete product to a store",
-        "description": "Use this API to delete a product to a store",
+        "summary": "Delete product",
+        "description": "Use this API to delete a product",
         "operationId": "Soleluxury_DeleteProduct",
         "responses": {
           "200": {
@@ -1680,6 +1680,51 @@
         }
       }
     },
+    "pbOrder": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "orderItems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbOrderItem"
+          }
+        },
+        "orderIsPaid": {
+          "type": "boolean"
+        },
+        "orderPhone": {
+          "type": "string"
+        },
+        "orderAddress": {
+          "type": "string"
+        },
+        "orderCreatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "orderUpdatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbOrderItem": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "qty": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
     "pbProduct": {
       "type": "object",
       "properties": {
@@ -1706,7 +1751,8 @@
         "images": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "$ref": "#/definitions/pbItem"
           }
         },
         "createdAt": {
@@ -1801,16 +1847,58 @@
     "pbStore": {
       "type": "object",
       "properties": {
-        "id": {
+        "storeId": {
           "type": "string",
           "format": "int64"
         },
-        "name": {
+        "storeName": {
           "type": "string"
         },
-        "createdAt": {
+        "storeCreatedAt": {
           "type": "string",
           "format": "date-time"
+        },
+        "billboards": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBillboard"
+          }
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbCategory"
+          }
+        },
+        "sizes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbSize"
+          }
+        },
+        "colors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbColor"
+          }
+        },
+        "orders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbOrder"
+          }
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbProduct"
+          }
         }
       }
     },

@@ -33,8 +33,8 @@ func (s *Server) CreateSize(ctx context.Context, req *pb.CreateSizeRequest) (*pb
 	}
 
 	args := db.CreateSizeParams{
-		StoreID:   store.ID,
-		StoreName: store.Name,
+		StoreID:   store.StoreID,
+		StoreName: store.StoreName,
 		Name:      req.GetName(),
 		Value:     req.GetValue(),
 	}
