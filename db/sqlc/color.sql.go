@@ -12,32 +12,25 @@ import (
 
 const createColor = `-- name: CreateColor :one
 INSERT INTO colors (
-  store_id, store_name, name, value
+  store_id, name, value
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3
 )
-RETURNING id, store_id, store_name, name, value, created_at, updated_at
+RETURNING id, store_id, name, value, created_at, updated_at
 `
 
 type CreateColorParams struct {
-	StoreID   int64  `db:"store_id" json:"store_id"`
-	StoreName string `db:"store_name" json:"store_name"`
-	Name      string `db:"name" json:"name"`
-	Value     string `db:"value" json:"value"`
+	StoreID int64  `db:"store_id" json:"store_id"`
+	Name    string `db:"name" json:"name"`
+	Value   string `db:"value" json:"value"`
 }
 
 func (q *Queries) CreateColor(ctx context.Context, arg CreateColorParams) (Color, error) {
-	row := q.db.QueryRowContext(ctx, createColor,
-		arg.StoreID,
-		arg.StoreName,
-		arg.Name,
-		arg.Value,
-	)
+	row := q.db.QueryRowContext(ctx, createColor, arg.StoreID, arg.Name, arg.Value)
 	var i Color
 	err := row.Scan(
 		&i.ID,
 		&i.StoreID,
-		&i.StoreName,
 		&i.Name,
 		&i.Value,
 		&i.CreatedAt,
@@ -57,7 +50,7 @@ func (q *Queries) DeleteColor(ctx context.Context, id int64) error {
 }
 
 const getColor = `-- name: GetColor :one
-SELECT id, store_id, store_name, name, value, created_at, updated_at FROM colors
+SELECT id, store_id, name, value, created_at, updated_at FROM colors
 WHERE id = $1
 LIMIT 1
 `
@@ -68,7 +61,6 @@ func (q *Queries) GetColor(ctx context.Context, id int64) (Color, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.StoreID,
-		&i.StoreName,
 		&i.Name,
 		&i.Value,
 		&i.CreatedAt,
@@ -78,7 +70,7 @@ func (q *Queries) GetColor(ctx context.Context, id int64) (Color, error) {
 }
 
 const getColors = `-- name: GetColors :many
-SELECT id, store_id, store_name, name, value, created_at, updated_at FROM colors
+SELECT id, store_id, name, value, created_at, updated_at FROM colors
 WHERE store_id = $1
 ORDER BY id
 `
@@ -95,7 +87,6 @@ func (q *Queries) GetColors(ctx context.Context, storeID int64) ([]Color, error)
 		if err := rows.Scan(
 			&i.ID,
 			&i.StoreID,
-			&i.StoreName,
 			&i.Name,
 			&i.Value,
 			&i.CreatedAt,

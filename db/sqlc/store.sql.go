@@ -8,9 +8,8 @@ package db
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"time"
-
-	"github.com/sqlc-dev/pqtype"
 )
 
 const createStore = `-- name: CreateStore :one
@@ -43,50 +42,72 @@ SELECT
     s.id AS store_id,
     s.name AS store_name,
     s.created_at AS store_created_at,
-    -- Billboards
-    b.id AS billboard_id,
-    b.label AS billboard_label,
-    b.image_url AS billboard_image_url,
-    b.created_at AS billboard_created_at,
-    -- Categories
-    c.id AS category_id,
-    c.store_name AS category_store_name,
-    c.billboard_label AS category_billboard_label,
-    c.name AS category_name,
-    c.created_at AS category_created_at,
-    c.updated_at AS category_updated_at,
-    -- Sizes
-    sz.id AS size_id,
-    sz.store_name AS size_store_name,
-    sz.name AS size_name,
-    sz.value AS size_value,
-    sz.created_at AS size_created_at,
-    sz.updated_at AS size_updated_at,
-    -- Colors
-    cl.id AS color_id,
-    cl.store_name AS color_store_name,
-    cl.name AS color_name,
-    cl.value AS color_value,
-    cl.created_at AS color_created_at,
-    cl.updated_at AS color_updated_at,
-    -- Products (using product_stores junction table)
-    p.id AS product_id,
-    p.name AS product_name,
-    p.price AS product_price,
-    p.is_featured AS product_is_featured,
-    p.is_archived AS product_is_archived,
-    p.description AS product_description,
-    p.images AS product_images,
-    p.created_at AS product_created_at,
-    p.updated_at AS product_updated_at,
-    -- Orders
-    o.id AS order_id,
-    o.items AS order_items,
-    o.is_paid AS order_is_paid,
-    o.phone AS order_phone,
-    o.address AS order_address,
-    o.created_at AS order_created_at,
-    o.updated_at AS order_updated_at
+    -- Aggregated Billboards
+    json_agg(
+        json_build_object(
+            'billboard_id', b.id,
+            'billboard_label', b.label,
+            'billboard_image_url', b.image_url,
+            'billboard_created_at', b.created_at
+        )
+    ) AS billboards,
+    -- Aggregated Categories
+    json_agg(
+        json_build_object(
+            'category_id', c.id,
+            'category_store_id', c.store_id,
+            'category_billboard_id', c.billboard_id,
+            'category_name', c.name,
+            'category_created_at', c.created_at,
+            'category_updated_at', c.updated_at
+        )
+    ) AS categories,
+    -- Aggregated Sizes
+    json_agg(
+        json_build_object(
+            'size_id', sz.id,
+            'size_name', sz.name,
+            'size_value', sz.value,
+            'size_created_at', sz.created_at,
+            'size_updated_at', sz.updated_at
+        )
+    ) AS sizes,
+    -- Aggregated Colors
+    json_agg(
+        json_build_object(
+            'color_id', cl.id,
+            'color_name', cl.name,
+            'color_value', cl.value,
+            'color_created_at', cl.created_at,
+            'color_updated_at', cl.updated_at
+        )
+    ) AS colors,
+    -- Aggregated Products
+    json_agg(
+        json_build_object(
+            'product_id', p.id,
+            'product_name', p.name,
+            'product_price', p.price,
+            'product_is_featured', p.is_featured,
+            'product_is_archived', p.is_archived,
+            'product_description', p.description,
+            'product_images', p.images,
+            'product_created_at', p.created_at,
+            'product_updated_at', p.updated_at
+        )
+    ) AS products,
+    -- Aggregated Orders
+    json_agg(
+        json_build_object(
+            'order_id', o.id,
+            'order_items', o.items,
+            'order_is_paid', o.is_paid,
+            'order_phone', o.phone,
+            'order_address', o.address,
+            'order_created_at', o.created_at,
+            'order_updated_at', o.updated_at
+        )
+    ) AS orders
 FROM
     stores s
 LEFT JOIN
@@ -98,58 +119,26 @@ LEFT JOIN
 LEFT JOIN
     colors cl ON s.id = cl.store_id
 LEFT JOIN
+    products p ON s.id = p.store_id
+LEFT JOIN
     orders o ON s.id = o.store_id
-LEFT JOIN
-    product_stores ps ON s.id = ps.store_id
-LEFT JOIN
-    products p ON ps.product_id = p.id
+GROUP BY
+    s.id, s.name, s.created_at
 ORDER BY
-    s.created_at ASC
+    s.created_at ASC  
 LIMIT 1
 `
 
 type GetFirstStoreRow struct {
-	StoreID                int64                 `db:"store_id" json:"store_id"`
-	StoreName              string                `db:"store_name" json:"store_name"`
-	StoreCreatedAt         time.Time             `db:"store_created_at" json:"store_created_at"`
-	BillboardID            sql.NullInt64         `db:"billboard_id" json:"billboard_id"`
-	BillboardLabel         sql.NullString        `db:"billboard_label" json:"billboard_label"`
-	BillboardImageUrl      sql.NullString        `db:"billboard_image_url" json:"billboard_image_url"`
-	BillboardCreatedAt     sql.NullTime          `db:"billboard_created_at" json:"billboard_created_at"`
-	CategoryID             sql.NullInt64         `db:"category_id" json:"category_id"`
-	CategoryStoreName      sql.NullString        `db:"category_store_name" json:"category_store_name"`
-	CategoryBillboardLabel sql.NullString        `db:"category_billboard_label" json:"category_billboard_label"`
-	CategoryName           sql.NullString        `db:"category_name" json:"category_name"`
-	CategoryCreatedAt      sql.NullTime          `db:"category_created_at" json:"category_created_at"`
-	CategoryUpdatedAt      sql.NullTime          `db:"category_updated_at" json:"category_updated_at"`
-	SizeID                 sql.NullInt64         `db:"size_id" json:"size_id"`
-	SizeStoreName          sql.NullString        `db:"size_store_name" json:"size_store_name"`
-	SizeName               sql.NullString        `db:"size_name" json:"size_name"`
-	SizeValue              sql.NullString        `db:"size_value" json:"size_value"`
-	SizeCreatedAt          sql.NullTime          `db:"size_created_at" json:"size_created_at"`
-	SizeUpdatedAt          sql.NullTime          `db:"size_updated_at" json:"size_updated_at"`
-	ColorID                sql.NullInt64         `db:"color_id" json:"color_id"`
-	ColorStoreName         sql.NullString        `db:"color_store_name" json:"color_store_name"`
-	ColorName              sql.NullString        `db:"color_name" json:"color_name"`
-	ColorValue             sql.NullString        `db:"color_value" json:"color_value"`
-	ColorCreatedAt         sql.NullTime          `db:"color_created_at" json:"color_created_at"`
-	ColorUpdatedAt         sql.NullTime          `db:"color_updated_at" json:"color_updated_at"`
-	ProductID              sql.NullInt64         `db:"product_id" json:"product_id"`
-	ProductName            sql.NullString        `db:"product_name" json:"product_name"`
-	ProductPrice           sql.NullFloat64       `db:"product_price" json:"product_price"`
-	ProductIsFeatured      sql.NullBool          `db:"product_is_featured" json:"product_is_featured"`
-	ProductIsArchived      sql.NullBool          `db:"product_is_archived" json:"product_is_archived"`
-	ProductDescription     sql.NullString        `db:"product_description" json:"product_description"`
-	ProductImages          pqtype.NullRawMessage `db:"product_images" json:"product_images"`
-	ProductCreatedAt       sql.NullTime          `db:"product_created_at" json:"product_created_at"`
-	ProductUpdatedAt       sql.NullTime          `db:"product_updated_at" json:"product_updated_at"`
-	OrderID                sql.NullInt64         `db:"order_id" json:"order_id"`
-	OrderItems             pqtype.NullRawMessage `db:"order_items" json:"order_items"`
-	OrderIsPaid            sql.NullBool          `db:"order_is_paid" json:"order_is_paid"`
-	OrderPhone             sql.NullString        `db:"order_phone" json:"order_phone"`
-	OrderAddress           sql.NullString        `db:"order_address" json:"order_address"`
-	OrderCreatedAt         sql.NullTime          `db:"order_created_at" json:"order_created_at"`
-	OrderUpdatedAt         sql.NullTime          `db:"order_updated_at" json:"order_updated_at"`
+	StoreID        int64           `db:"store_id" json:"store_id"`
+	StoreName      string          `db:"store_name" json:"store_name"`
+	StoreCreatedAt time.Time       `db:"store_created_at" json:"store_created_at"`
+	Billboards     json.RawMessage `db:"billboards" json:"billboards"`
+	Categories     json.RawMessage `db:"categories" json:"categories"`
+	Sizes          json.RawMessage `db:"sizes" json:"sizes"`
+	Colors         json.RawMessage `db:"colors" json:"colors"`
+	Products       json.RawMessage `db:"products" json:"products"`
+	Orders         json.RawMessage `db:"orders" json:"orders"`
 }
 
 func (q *Queries) GetFirstStore(ctx context.Context) (GetFirstStoreRow, error) {
@@ -159,44 +148,12 @@ func (q *Queries) GetFirstStore(ctx context.Context) (GetFirstStoreRow, error) {
 		&i.StoreID,
 		&i.StoreName,
 		&i.StoreCreatedAt,
-		&i.BillboardID,
-		&i.BillboardLabel,
-		&i.BillboardImageUrl,
-		&i.BillboardCreatedAt,
-		&i.CategoryID,
-		&i.CategoryStoreName,
-		&i.CategoryBillboardLabel,
-		&i.CategoryName,
-		&i.CategoryCreatedAt,
-		&i.CategoryUpdatedAt,
-		&i.SizeID,
-		&i.SizeStoreName,
-		&i.SizeName,
-		&i.SizeValue,
-		&i.SizeCreatedAt,
-		&i.SizeUpdatedAt,
-		&i.ColorID,
-		&i.ColorStoreName,
-		&i.ColorName,
-		&i.ColorValue,
-		&i.ColorCreatedAt,
-		&i.ColorUpdatedAt,
-		&i.ProductID,
-		&i.ProductName,
-		&i.ProductPrice,
-		&i.ProductIsFeatured,
-		&i.ProductIsArchived,
-		&i.ProductDescription,
-		&i.ProductImages,
-		&i.ProductCreatedAt,
-		&i.ProductUpdatedAt,
-		&i.OrderID,
-		&i.OrderItems,
-		&i.OrderIsPaid,
-		&i.OrderPhone,
-		&i.OrderAddress,
-		&i.OrderCreatedAt,
-		&i.OrderUpdatedAt,
+		&i.Billboards,
+		&i.Categories,
+		&i.Sizes,
+		&i.Colors,
+		&i.Products,
+		&i.Orders,
 	)
 	return i, err
 }
@@ -206,50 +163,72 @@ SELECT
     s.id AS store_id,
     s.name AS store_name,
     s.created_at AS store_created_at,
-    -- Billboards
-    b.id AS billboard_id,
-    b.label AS billboard_label,
-    b.image_url AS billboard_image_url,
-    b.created_at AS billboard_created_at,
-    -- Categories
-    c.id AS category_id,
-    c.store_name AS category_store_name,
-    c.billboard_label AS category_billboard_label,
-    c.name AS category_name,
-    c.created_at AS category_created_at,
-    c.updated_at AS category_updated_at,
-    -- Sizes
-    sz.id AS size_id,
-    sz.store_name AS size_store_name,
-    sz.name AS size_name,
-    sz.value AS size_value,
-    sz.created_at AS size_created_at,
-    sz.updated_at AS size_updated_at,
-    -- Colors
-    cl.id AS color_id,
-    cl.store_name AS color_store_name,
-    cl.name AS color_name,
-    cl.value AS color_value,
-    cl.created_at AS color_created_at,
-    cl.updated_at AS color_updated_at,
-    -- Products (using product_stores junction table)
-    p.id AS product_id,
-    p.name AS product_name,
-    p.price AS product_price,
-    p.is_featured AS product_is_featured,
-    p.is_archived AS product_is_archived,
-    p.description AS product_description,
-    p.images AS product_images,
-    p.created_at AS product_created_at,
-    p.updated_at AS product_updated_at,
-    -- Orders
-    o.id AS order_id,
-    o.items AS order_items,
-    o.is_paid AS order_is_paid,
-    o.phone AS order_phone,
-    o.address AS order_address,
-    o.created_at AS order_created_at,
-    o.updated_at AS order_updated_at
+    -- Aggregated Billboards
+    json_agg(
+        json_build_object(
+            'billboard_id', b.id,
+            'billboard_label', b.label,
+            'billboard_image_url', b.image_url,
+            'billboard_created_at', b.created_at
+        )
+    ) AS billboards,
+    -- Aggregated Categories
+    json_agg(
+        json_build_object(
+            'category_id', c.id,
+            'category_store_id', c.store_id,
+            'category_billboard_id', c.billboard_id,
+            'category_name', c.name,
+            'category_created_at', c.created_at,
+            'category_updated_at', c.updated_at
+        )
+    ) AS categories,
+    -- Aggregated Sizes
+    json_agg(
+        json_build_object(
+            'size_id', sz.id,
+            'size_name', sz.name,
+            'size_value', sz.value,
+            'size_created_at', sz.created_at,
+            'size_updated_at', sz.updated_at
+        )
+    ) AS sizes,
+    -- Aggregated Colors
+    json_agg(
+        json_build_object(
+            'color_id', cl.id,
+            'color_name', cl.name,
+            'color_value', cl.value,
+            'color_created_at', cl.created_at,
+            'color_updated_at', cl.updated_at
+        )
+    ) AS colors,
+    -- Aggregated Products
+    json_agg(
+        json_build_object(
+            'product_id', p.id,
+            'product_name', p.name,
+            'product_price', p.price,
+            'product_is_featured', p.is_featured,
+            'product_is_archived', p.is_archived,
+            'product_description', p.description,
+            'product_images', p.images,
+            'product_created_at', p.created_at,
+            'product_updated_at', p.updated_at
+        )
+    ) AS products,
+    -- Aggregated Orders
+    json_agg(
+        json_build_object(
+            'order_id', o.id,
+            'order_items', o.items,
+            'order_is_paid', o.is_paid,
+            'order_phone', o.phone,
+            'order_address', o.address,
+            'order_created_at', o.created_at,
+            'order_updated_at', o.updated_at
+        )
+    ) AS orders
 FROM
     stores s
 LEFT JOIN
@@ -261,57 +240,25 @@ LEFT JOIN
 LEFT JOIN
     colors cl ON s.id = cl.store_id
 LEFT JOIN
+    products p ON s.id = p.store_id
+LEFT JOIN
     orders o ON s.id = o.store_id
-LEFT JOIN
-    product_stores ps ON s.id = ps.store_id
-LEFT JOIN
-    products p ON ps.product_id = p.id
 WHERE
     s.id = $1
+GROUP BY
+    s.id, s.name, s.created_at
 `
 
 type GetStoreRow struct {
-	StoreID                int64                 `db:"store_id" json:"store_id"`
-	StoreName              string                `db:"store_name" json:"store_name"`
-	StoreCreatedAt         time.Time             `db:"store_created_at" json:"store_created_at"`
-	BillboardID            sql.NullInt64         `db:"billboard_id" json:"billboard_id"`
-	BillboardLabel         sql.NullString        `db:"billboard_label" json:"billboard_label"`
-	BillboardImageUrl      sql.NullString        `db:"billboard_image_url" json:"billboard_image_url"`
-	BillboardCreatedAt     sql.NullTime          `db:"billboard_created_at" json:"billboard_created_at"`
-	CategoryID             sql.NullInt64         `db:"category_id" json:"category_id"`
-	CategoryStoreName      sql.NullString        `db:"category_store_name" json:"category_store_name"`
-	CategoryBillboardLabel sql.NullString        `db:"category_billboard_label" json:"category_billboard_label"`
-	CategoryName           sql.NullString        `db:"category_name" json:"category_name"`
-	CategoryCreatedAt      sql.NullTime          `db:"category_created_at" json:"category_created_at"`
-	CategoryUpdatedAt      sql.NullTime          `db:"category_updated_at" json:"category_updated_at"`
-	SizeID                 sql.NullInt64         `db:"size_id" json:"size_id"`
-	SizeStoreName          sql.NullString        `db:"size_store_name" json:"size_store_name"`
-	SizeName               sql.NullString        `db:"size_name" json:"size_name"`
-	SizeValue              sql.NullString        `db:"size_value" json:"size_value"`
-	SizeCreatedAt          sql.NullTime          `db:"size_created_at" json:"size_created_at"`
-	SizeUpdatedAt          sql.NullTime          `db:"size_updated_at" json:"size_updated_at"`
-	ColorID                sql.NullInt64         `db:"color_id" json:"color_id"`
-	ColorStoreName         sql.NullString        `db:"color_store_name" json:"color_store_name"`
-	ColorName              sql.NullString        `db:"color_name" json:"color_name"`
-	ColorValue             sql.NullString        `db:"color_value" json:"color_value"`
-	ColorCreatedAt         sql.NullTime          `db:"color_created_at" json:"color_created_at"`
-	ColorUpdatedAt         sql.NullTime          `db:"color_updated_at" json:"color_updated_at"`
-	ProductID              sql.NullInt64         `db:"product_id" json:"product_id"`
-	ProductName            sql.NullString        `db:"product_name" json:"product_name"`
-	ProductPrice           sql.NullFloat64       `db:"product_price" json:"product_price"`
-	ProductIsFeatured      sql.NullBool          `db:"product_is_featured" json:"product_is_featured"`
-	ProductIsArchived      sql.NullBool          `db:"product_is_archived" json:"product_is_archived"`
-	ProductDescription     sql.NullString        `db:"product_description" json:"product_description"`
-	ProductImages          pqtype.NullRawMessage `db:"product_images" json:"product_images"`
-	ProductCreatedAt       sql.NullTime          `db:"product_created_at" json:"product_created_at"`
-	ProductUpdatedAt       sql.NullTime          `db:"product_updated_at" json:"product_updated_at"`
-	OrderID                sql.NullInt64         `db:"order_id" json:"order_id"`
-	OrderItems             pqtype.NullRawMessage `db:"order_items" json:"order_items"`
-	OrderIsPaid            sql.NullBool          `db:"order_is_paid" json:"order_is_paid"`
-	OrderPhone             sql.NullString        `db:"order_phone" json:"order_phone"`
-	OrderAddress           sql.NullString        `db:"order_address" json:"order_address"`
-	OrderCreatedAt         sql.NullTime          `db:"order_created_at" json:"order_created_at"`
-	OrderUpdatedAt         sql.NullTime          `db:"order_updated_at" json:"order_updated_at"`
+	StoreID        int64           `db:"store_id" json:"store_id"`
+	StoreName      string          `db:"store_name" json:"store_name"`
+	StoreCreatedAt time.Time       `db:"store_created_at" json:"store_created_at"`
+	Billboards     json.RawMessage `db:"billboards" json:"billboards"`
+	Categories     json.RawMessage `db:"categories" json:"categories"`
+	Sizes          json.RawMessage `db:"sizes" json:"sizes"`
+	Colors         json.RawMessage `db:"colors" json:"colors"`
+	Products       json.RawMessage `db:"products" json:"products"`
+	Orders         json.RawMessage `db:"orders" json:"orders"`
 }
 
 func (q *Queries) GetStore(ctx context.Context, id int64) (GetStoreRow, error) {
@@ -321,97 +268,87 @@ func (q *Queries) GetStore(ctx context.Context, id int64) (GetStoreRow, error) {
 		&i.StoreID,
 		&i.StoreName,
 		&i.StoreCreatedAt,
-		&i.BillboardID,
-		&i.BillboardLabel,
-		&i.BillboardImageUrl,
-		&i.BillboardCreatedAt,
-		&i.CategoryID,
-		&i.CategoryStoreName,
-		&i.CategoryBillboardLabel,
-		&i.CategoryName,
-		&i.CategoryCreatedAt,
-		&i.CategoryUpdatedAt,
-		&i.SizeID,
-		&i.SizeStoreName,
-		&i.SizeName,
-		&i.SizeValue,
-		&i.SizeCreatedAt,
-		&i.SizeUpdatedAt,
-		&i.ColorID,
-		&i.ColorStoreName,
-		&i.ColorName,
-		&i.ColorValue,
-		&i.ColorCreatedAt,
-		&i.ColorUpdatedAt,
-		&i.ProductID,
-		&i.ProductName,
-		&i.ProductPrice,
-		&i.ProductIsFeatured,
-		&i.ProductIsArchived,
-		&i.ProductDescription,
-		&i.ProductImages,
-		&i.ProductCreatedAt,
-		&i.ProductUpdatedAt,
-		&i.OrderID,
-		&i.OrderItems,
-		&i.OrderIsPaid,
-		&i.OrderPhone,
-		&i.OrderAddress,
-		&i.OrderCreatedAt,
-		&i.OrderUpdatedAt,
+		&i.Billboards,
+		&i.Categories,
+		&i.Sizes,
+		&i.Colors,
+		&i.Products,
+		&i.Orders,
 	)
 	return i, err
 }
 
 const getStores = `-- name: GetStores :many
-SELECT
+SELECT 
     s.id AS store_id,
     s.name AS store_name,
     s.created_at AS store_created_at,
-    -- Billboards
-    b.id AS billboard_id,
-    b.label AS billboard_label,
-    b.image_url AS billboard_image_url,
-    b.created_at AS billboard_created_at,
-    -- Categories
-    c.id AS category_id,
-    c.store_name AS category_store_name,
-    c.billboard_label AS category_billboard_label,
-    c.name AS category_name,
-    c.created_at AS category_created_at,
-    c.updated_at AS category_updated_at,
-    -- Sizes
-    sz.id AS size_id,
-    sz.store_name AS size_store_name,
-    sz.name AS size_name,
-    sz.value AS size_value,
-    sz.created_at AS size_created_at,
-    sz.updated_at AS size_updated_at,
-    -- Colors
-    cl.id AS color_id,
-    cl.store_name AS color_store_name,
-    cl.name AS color_name,
-    cl.value AS color_value,
-    cl.created_at AS color_created_at,
-    cl.updated_at AS color_updated_at,
-    -- Products (using product_stores junction table)
-    p.id AS product_id,
-    p.name AS product_name,
-    p.price AS product_price,
-    p.is_featured AS product_is_featured,
-    p.is_archived AS product_is_archived,
-    p.description AS product_description,
-    p.images AS product_images,
-    p.created_at AS product_created_at,
-    p.updated_at AS product_updated_at,
-    -- Orders
-    o.id AS order_id,
-    o.items AS order_items,
-    o.is_paid AS order_is_paid,
-    o.phone AS order_phone,
-    o.address AS order_address,
-    o.created_at AS order_created_at,
-    o.updated_at AS order_updated_at
+    -- Aggregated Billboards
+    json_agg(
+        json_build_object(
+            'billboard_id', b.id,
+            'billboard_label', b.label,
+            'billboard_image_url', b.image_url,
+            'billboard_created_at', b.created_at
+        )
+    ) AS billboards,
+    -- Aggregated Categories
+    json_agg(
+        json_build_object(
+            'category_id', c.id,
+            'category_store_id', c.store_id,  
+            'category_billboard_id', c.billboard_id,  
+            'category_name', c.name,
+            'category_created_at', c.created_at,
+            'category_updated_at', c.updated_at
+        )
+    ) AS categories,
+    -- Aggregated Sizes
+    json_agg(
+        json_build_object(
+            'size_id', sz.id,
+            'size_name', sz.name,
+            'size_value', sz.value,
+            'size_created_at', sz.created_at,
+            'size_updated_at', sz.updated_at
+        )
+    ) AS sizes,
+    -- Aggregated Colors
+    json_agg(
+        json_build_object(
+            'color_id', cl.id,
+            'color_name', cl.name,
+            'color_value', cl.value,
+            'color_created_at', cl.created_at,
+            'color_updated_at', cl.updated_at
+        )
+    ) AS colors,
+    -- Aggregated Products
+    json_agg(
+        json_build_object(
+            'product_id', p.id,
+            'product_name', p.name,
+            'product_price', p.price,
+            'product_is_featured', p.is_featured,
+            'product_is_archived', p.is_archived,
+            'product_description', p.description,
+            'product_images', p.images,
+            'product_created_at', p.created_at,
+            'product_updated_at', p.updated_at
+        )
+    ) AS products,
+    -- Aggregated Orders
+    json_agg(
+        json_build_object(
+            'order_id', o.id,
+            'order_items', o.items,
+            'order_is_paid', o.is_paid,
+            'order_phone', o.phone,
+            'order_address', o.address,
+            'order_created_at', o.created_at,
+            'order_updated_at', o.updated_at
+        )
+    ) AS orders
 FROM
     stores s
 LEFT JOIN
@@ -423,58 +360,26 @@ LEFT JOIN
 LEFT JOIN
     colors cl ON s.id = cl.store_id
 LEFT JOIN
+    products p ON s.id = p.store_id
+LEFT JOIN
     orders o ON s.id = o.store_id
-LEFT JOIN
-    product_stores ps ON s.id = ps.store_id
-LEFT JOIN
-    products p ON ps.product_id = p.id
+GROUP BY
+    s.id, s.name, s.created_at  -- Add s.name and s.created_at to the GROUP BY clause
 ORDER BY
-    s.created_at DESC
+    s.id, s.created_at ASC
 LIMIT $1
 `
 
 type GetStoresRow struct {
-	StoreID                int64                 `db:"store_id" json:"store_id"`
-	StoreName              string                `db:"store_name" json:"store_name"`
-	StoreCreatedAt         time.Time             `db:"store_created_at" json:"store_created_at"`
-	BillboardID            sql.NullInt64         `db:"billboard_id" json:"billboard_id"`
-	BillboardLabel         sql.NullString        `db:"billboard_label" json:"billboard_label"`
-	BillboardImageUrl      sql.NullString        `db:"billboard_image_url" json:"billboard_image_url"`
-	BillboardCreatedAt     sql.NullTime          `db:"billboard_created_at" json:"billboard_created_at"`
-	CategoryID             sql.NullInt64         `db:"category_id" json:"category_id"`
-	CategoryStoreName      sql.NullString        `db:"category_store_name" json:"category_store_name"`
-	CategoryBillboardLabel sql.NullString        `db:"category_billboard_label" json:"category_billboard_label"`
-	CategoryName           sql.NullString        `db:"category_name" json:"category_name"`
-	CategoryCreatedAt      sql.NullTime          `db:"category_created_at" json:"category_created_at"`
-	CategoryUpdatedAt      sql.NullTime          `db:"category_updated_at" json:"category_updated_at"`
-	SizeID                 sql.NullInt64         `db:"size_id" json:"size_id"`
-	SizeStoreName          sql.NullString        `db:"size_store_name" json:"size_store_name"`
-	SizeName               sql.NullString        `db:"size_name" json:"size_name"`
-	SizeValue              sql.NullString        `db:"size_value" json:"size_value"`
-	SizeCreatedAt          sql.NullTime          `db:"size_created_at" json:"size_created_at"`
-	SizeUpdatedAt          sql.NullTime          `db:"size_updated_at" json:"size_updated_at"`
-	ColorID                sql.NullInt64         `db:"color_id" json:"color_id"`
-	ColorStoreName         sql.NullString        `db:"color_store_name" json:"color_store_name"`
-	ColorName              sql.NullString        `db:"color_name" json:"color_name"`
-	ColorValue             sql.NullString        `db:"color_value" json:"color_value"`
-	ColorCreatedAt         sql.NullTime          `db:"color_created_at" json:"color_created_at"`
-	ColorUpdatedAt         sql.NullTime          `db:"color_updated_at" json:"color_updated_at"`
-	ProductID              sql.NullInt64         `db:"product_id" json:"product_id"`
-	ProductName            sql.NullString        `db:"product_name" json:"product_name"`
-	ProductPrice           sql.NullFloat64       `db:"product_price" json:"product_price"`
-	ProductIsFeatured      sql.NullBool          `db:"product_is_featured" json:"product_is_featured"`
-	ProductIsArchived      sql.NullBool          `db:"product_is_archived" json:"product_is_archived"`
-	ProductDescription     sql.NullString        `db:"product_description" json:"product_description"`
-	ProductImages          pqtype.NullRawMessage `db:"product_images" json:"product_images"`
-	ProductCreatedAt       sql.NullTime          `db:"product_created_at" json:"product_created_at"`
-	ProductUpdatedAt       sql.NullTime          `db:"product_updated_at" json:"product_updated_at"`
-	OrderID                sql.NullInt64         `db:"order_id" json:"order_id"`
-	OrderItems             pqtype.NullRawMessage `db:"order_items" json:"order_items"`
-	OrderIsPaid            sql.NullBool          `db:"order_is_paid" json:"order_is_paid"`
-	OrderPhone             sql.NullString        `db:"order_phone" json:"order_phone"`
-	OrderAddress           sql.NullString        `db:"order_address" json:"order_address"`
-	OrderCreatedAt         sql.NullTime          `db:"order_created_at" json:"order_created_at"`
-	OrderUpdatedAt         sql.NullTime          `db:"order_updated_at" json:"order_updated_at"`
+	StoreID        int64           `db:"store_id" json:"store_id"`
+	StoreName      string          `db:"store_name" json:"store_name"`
+	StoreCreatedAt time.Time       `db:"store_created_at" json:"store_created_at"`
+	Billboards     json.RawMessage `db:"billboards" json:"billboards"`
+	Categories     json.RawMessage `db:"categories" json:"categories"`
+	Sizes          json.RawMessage `db:"sizes" json:"sizes"`
+	Colors         json.RawMessage `db:"colors" json:"colors"`
+	Products       json.RawMessage `db:"products" json:"products"`
+	Orders         json.RawMessage `db:"orders" json:"orders"`
 }
 
 func (q *Queries) GetStores(ctx context.Context, limit int32) ([]GetStoresRow, error) {
@@ -490,44 +395,12 @@ func (q *Queries) GetStores(ctx context.Context, limit int32) ([]GetStoresRow, e
 			&i.StoreID,
 			&i.StoreName,
 			&i.StoreCreatedAt,
-			&i.BillboardID,
-			&i.BillboardLabel,
-			&i.BillboardImageUrl,
-			&i.BillboardCreatedAt,
-			&i.CategoryID,
-			&i.CategoryStoreName,
-			&i.CategoryBillboardLabel,
-			&i.CategoryName,
-			&i.CategoryCreatedAt,
-			&i.CategoryUpdatedAt,
-			&i.SizeID,
-			&i.SizeStoreName,
-			&i.SizeName,
-			&i.SizeValue,
-			&i.SizeCreatedAt,
-			&i.SizeUpdatedAt,
-			&i.ColorID,
-			&i.ColorStoreName,
-			&i.ColorName,
-			&i.ColorValue,
-			&i.ColorCreatedAt,
-			&i.ColorUpdatedAt,
-			&i.ProductID,
-			&i.ProductName,
-			&i.ProductPrice,
-			&i.ProductIsFeatured,
-			&i.ProductIsArchived,
-			&i.ProductDescription,
-			&i.ProductImages,
-			&i.ProductCreatedAt,
-			&i.ProductUpdatedAt,
-			&i.OrderID,
-			&i.OrderItems,
-			&i.OrderIsPaid,
-			&i.OrderPhone,
-			&i.OrderAddress,
-			&i.OrderCreatedAt,
-			&i.OrderUpdatedAt,
+			&i.Billboards,
+			&i.Categories,
+			&i.Sizes,
+			&i.Colors,
+			&i.Products,
+			&i.Orders,
 		); err != nil {
 			return nil, err
 		}
@@ -543,7 +416,6 @@ func (q *Queries) GetStores(ctx context.Context, limit int32) ([]GetStoresRow, e
 }
 
 const updateStore = `-- name: UpdateStore :exec
-
 UPDATE stores
 SET
   name = COALESCE($1, name)
@@ -556,7 +428,6 @@ type UpdateStoreParams struct {
 	ID   int64          `db:"id" json:"id"`
 }
 
-// Here $1 is the limit passed (number of stores to fetch)
 func (q *Queries) UpdateStore(ctx context.Context, arg UpdateStoreParams) error {
 	_, err := q.db.ExecContext(ctx, updateStore, arg.Name, arg.ID)
 	return err

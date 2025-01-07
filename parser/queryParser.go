@@ -33,6 +33,8 @@ func (p *CustomQueryParameterParser) Parse(target proto.Message, values url.Valu
 		return populateGetProductsParams(values, req)
 	case *service.GetProductRequest:
 		return populateGetProductParams(values, req)
+	case *service.GetOrdersRequest:
+		return populateGetOrdersParams(values, req)
 	}
 
 	return (*runtime.DefaultQueryParser)(nil).Parse(target, values, filter)
@@ -120,6 +122,15 @@ func populateGetProductParams(values url.Values, r *service.GetProductRequest) e
 	if pId := values.Get("product_id"); pId != "" {
 		if parsedPId, err := strconv.Atoi(pId); err == nil {
 			r.ProductId = int64(parsedPId)
+		}
+	}
+	return nil
+}
+
+func populateGetOrdersParams(values url.Values, r *service.GetOrdersRequest) error {
+	if storeId := values.Get("store_id"); storeId != "" {
+		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
+			r.StoreId = int64(parsedStoreId)
 		}
 	}
 	return nil

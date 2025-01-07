@@ -12,32 +12,25 @@ import (
 
 const createSize = `-- name: CreateSize :one
 INSERT INTO sizes (
-  store_id, store_name, name, value
+  store_id, name, value
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3
 )
-RETURNING id, store_id, store_name, name, value, created_at, updated_at
+RETURNING id, store_id, name, value, created_at, updated_at
 `
 
 type CreateSizeParams struct {
-	StoreID   int64  `db:"store_id" json:"store_id"`
-	StoreName string `db:"store_name" json:"store_name"`
-	Name      string `db:"name" json:"name"`
-	Value     string `db:"value" json:"value"`
+	StoreID int64  `db:"store_id" json:"store_id"`
+	Name    string `db:"name" json:"name"`
+	Value   string `db:"value" json:"value"`
 }
 
 func (q *Queries) CreateSize(ctx context.Context, arg CreateSizeParams) (Size, error) {
-	row := q.db.QueryRowContext(ctx, createSize,
-		arg.StoreID,
-		arg.StoreName,
-		arg.Name,
-		arg.Value,
-	)
+	row := q.db.QueryRowContext(ctx, createSize, arg.StoreID, arg.Name, arg.Value)
 	var i Size
 	err := row.Scan(
 		&i.ID,
 		&i.StoreID,
-		&i.StoreName,
 		&i.Name,
 		&i.Value,
 		&i.CreatedAt,
@@ -57,7 +50,7 @@ func (q *Queries) DeleteSize(ctx context.Context, id int64) error {
 }
 
 const getSize = `-- name: GetSize :one
-SELECT id, store_id, store_name, name, value, created_at, updated_at FROM sizes
+SELECT id, store_id, name, value, created_at, updated_at FROM sizes
 WHERE id = $1
 LIMIT 1
 `
@@ -68,7 +61,6 @@ func (q *Queries) GetSize(ctx context.Context, id int64) (Size, error) {
 	err := row.Scan(
 		&i.ID,
 		&i.StoreID,
-		&i.StoreName,
 		&i.Name,
 		&i.Value,
 		&i.CreatedAt,
@@ -78,7 +70,7 @@ func (q *Queries) GetSize(ctx context.Context, id int64) (Size, error) {
 }
 
 const getSizes = `-- name: GetSizes :many
-SELECT id, store_id, store_name, name, value, created_at, updated_at FROM sizes
+SELECT id, store_id, name, value, created_at, updated_at FROM sizes
 WHERE store_id = $1
 ORDER BY id
 `
@@ -95,7 +87,6 @@ func (q *Queries) GetSizes(ctx context.Context, storeID int64) ([]Size, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.StoreID,
-			&i.StoreName,
 			&i.Name,
 			&i.Value,
 			&i.CreatedAt,

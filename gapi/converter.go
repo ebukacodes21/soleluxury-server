@@ -34,68 +34,12 @@ func convertFirstStoreRow(store db.GetFirstStoreRow) *pb.Store {
 		StoreId:        store.StoreID,
 		StoreName:      store.StoreName,
 		StoreCreatedAt: timestamppb.New(store.StoreCreatedAt),
-		Billboards: []*pb.Billboard{
-			{
-				Id:        store.BillboardID.Int64,
-				StoreId:   store.StoreID,
-				Label:     store.BillboardLabel.String,
-				ImageUrl:  store.BillboardImageUrl.String,
-				CreatedAt: timestamppb.New(store.BillboardCreatedAt.Time),
-			},
-		},
-		Categories: []*pb.Category{
-			{
-				Id:             store.CategoryID.Int64,
-				BillboardId:    store.BillboardID.Int64,
-				BillboardLabel: store.BillboardLabel.String,
-				StoreId:        store.StoreID,
-				StoreName:      store.StoreName,
-				Name:           store.CategoryName.String,
-				CreatedAt:      timestamppb.New(store.CategoryCreatedAt.Time),
-			},
-		},
-		Sizes: []*pb.Size{
-			{
-				Id:        store.SizeID.Int64,
-				StoreId:   store.StoreID,
-				StoreName: store.StoreName,
-				Name:      store.SizeName.String,
-				Value:     store.SizeValue.String,
-				CreatedAt: timestamppb.New(store.SizeCreatedAt.Time),
-			},
-		},
-		Colors: []*pb.Color{
-			{
-				Id:        store.ColorID.Int64,
-				StoreId:   store.StoreID,
-				StoreName: store.StoreName,
-				Name:      store.ColorName.String,
-				Value:     store.ColorValue.String,
-				CreatedAt: timestamppb.New(store.ColorCreatedAt.Time),
-			},
-		},
-		Orders: []*pb.Order{
-			{
-				Id:             store.OrderID.Int64,
-				OrderItems:     mapItems(store.OrderItems.RawMessage),
-				OrderIsPaid:    store.OrderIsPaid.Bool,
-				OrderPhone:     store.OrderPhone.String,
-				OrderAddress:   store.OrderAddress.String,
-				OrderCreatedAt: timestamppb.New(store.OrderCreatedAt.Time),
-			},
-		},
-		Products: []*pb.Product{
-			{
-				Id:          store.ProductID.Int64,
-				Name:        store.ProductName.String,
-				Description: store.ProductDescription.String,
-				Price:       float32(store.ProductPrice.Float64),
-				Images:      mapImages(store.ProductImages.RawMessage),
-				IsFeatured:  store.ProductIsFeatured.Bool,
-				IsArchived:  store.ProductIsArchived.Bool,
-				CreatedAt:   timestamppb.New(store.ProductCreatedAt.Time),
-			},
-		},
+		Billboards:     mapBillboards(store.Billboards),
+		Categories:     mapCategories(store.Categories),
+		Sizes:          mapSizes(store.Sizes),
+		Colors:         mapColors(store.Colors),
+		Orders:         mapOrders(store.Orders),
+		Products:       mapProducts(store.Products),
 	}
 }
 
@@ -104,68 +48,12 @@ func convertStoreRow(store db.GetStoreRow) *pb.Store {
 		StoreId:        store.StoreID,
 		StoreName:      store.StoreName,
 		StoreCreatedAt: timestamppb.New(store.StoreCreatedAt),
-		Billboards: []*pb.Billboard{
-			{
-				Id:        store.BillboardID.Int64,
-				StoreId:   store.StoreID,
-				Label:     store.BillboardLabel.String,
-				ImageUrl:  store.BillboardImageUrl.String,
-				CreatedAt: timestamppb.New(store.BillboardCreatedAt.Time),
-			},
-		},
-		Categories: []*pb.Category{
-			{
-				Id:             store.CategoryID.Int64,
-				BillboardId:    store.BillboardID.Int64,
-				BillboardLabel: store.BillboardLabel.String,
-				StoreId:        store.StoreID,
-				StoreName:      store.StoreName,
-				Name:           store.CategoryName.String,
-				CreatedAt:      timestamppb.New(store.CategoryCreatedAt.Time),
-			},
-		},
-		Sizes: []*pb.Size{
-			{
-				Id:        store.SizeID.Int64,
-				StoreId:   store.StoreID,
-				StoreName: store.StoreName,
-				Name:      store.SizeName.String,
-				Value:     store.SizeValue.String,
-				CreatedAt: timestamppb.New(store.SizeCreatedAt.Time),
-			},
-		},
-		Colors: []*pb.Color{
-			{
-				Id:        store.ColorID.Int64,
-				StoreId:   store.StoreID,
-				StoreName: store.StoreName,
-				Name:      store.ColorName.String,
-				Value:     store.ColorValue.String,
-				CreatedAt: timestamppb.New(store.ColorCreatedAt.Time),
-			},
-		},
-		Orders: []*pb.Order{
-			{
-				Id:             store.OrderID.Int64,
-				OrderItems:     mapItems(store.OrderItems.RawMessage),
-				OrderIsPaid:    store.OrderIsPaid.Bool,
-				OrderPhone:     store.OrderPhone.String,
-				OrderAddress:   store.OrderAddress.String,
-				OrderCreatedAt: timestamppb.New(store.OrderCreatedAt.Time),
-			},
-		},
-		Products: []*pb.Product{
-			{
-				Id:          store.ProductID.Int64,
-				Name:        store.ProductName.String,
-				Description: store.ProductDescription.String,
-				Price:       float32(store.ProductPrice.Float64),
-				Images:      mapImages(store.ProductImages.RawMessage),
-				IsFeatured:  store.ProductIsFeatured.Bool,
-				IsArchived:  store.ProductIsArchived.Bool,
-				CreatedAt:   timestamppb.New(store.ProductCreatedAt.Time),
-			},
-		},
+		Billboards:     mapBillboards(store.Billboards),
+		Categories:     mapCategories(store.Categories),
+		Sizes:          mapSizes(store.Sizes),
+		Colors:         mapColors(store.Colors),
+		Orders:         mapOrders(store.Orders),
+		Products:       mapProducts(store.Products),
 	}
 }
 
@@ -176,68 +64,12 @@ func convertStoresRow(stores []db.GetStoresRow) []*pb.Store {
 			StoreId:        store.StoreID,
 			StoreName:      store.StoreName,
 			StoreCreatedAt: timestamppb.New(store.StoreCreatedAt),
-			Billboards: []*pb.Billboard{
-				{
-					Id:        store.BillboardID.Int64,
-					StoreId:   store.StoreID,
-					Label:     store.BillboardLabel.String,
-					ImageUrl:  store.BillboardImageUrl.String,
-					CreatedAt: timestamppb.New(store.BillboardCreatedAt.Time),
-				},
-			},
-			Categories: []*pb.Category{
-				{
-					Id:             store.CategoryID.Int64,
-					BillboardId:    store.BillboardID.Int64,
-					BillboardLabel: store.BillboardLabel.String,
-					StoreId:        store.StoreID,
-					StoreName:      store.StoreName,
-					Name:           store.CategoryName.String,
-					CreatedAt:      timestamppb.New(store.CategoryCreatedAt.Time),
-				},
-			},
-			Sizes: []*pb.Size{
-				{
-					Id:        store.SizeID.Int64,
-					StoreId:   store.StoreID,
-					StoreName: store.StoreName,
-					Name:      store.SizeName.String,
-					Value:     store.SizeValue.String,
-					CreatedAt: timestamppb.New(store.SizeCreatedAt.Time),
-				},
-			},
-			Colors: []*pb.Color{
-				{
-					Id:        store.ColorID.Int64,
-					StoreId:   store.StoreID,
-					StoreName: store.StoreName,
-					Name:      store.ColorName.String,
-					Value:     store.ColorValue.String,
-					CreatedAt: timestamppb.New(store.ColorCreatedAt.Time),
-				},
-			},
-			Orders: []*pb.Order{
-				{
-					Id:             store.OrderID.Int64,
-					OrderItems:     mapItems(store.OrderItems.RawMessage),
-					OrderIsPaid:    store.OrderIsPaid.Bool,
-					OrderPhone:     store.OrderPhone.String,
-					OrderAddress:   store.OrderAddress.String,
-					OrderCreatedAt: timestamppb.New(store.OrderCreatedAt.Time),
-				},
-			},
-			Products: []*pb.Product{
-				{
-					Id:          store.ProductID.Int64,
-					Name:        store.ProductName.String,
-					Description: store.ProductDescription.String,
-					Price:       float32(store.ProductPrice.Float64),
-					Images:      mapImages(store.ProductImages.RawMessage),
-					IsFeatured:  store.ProductIsFeatured.Bool,
-					IsArchived:  store.ProductIsArchived.Bool,
-					CreatedAt:   timestamppb.New(store.ProductCreatedAt.Time),
-				},
-			},
+			Billboards:     mapBillboards(store.Billboards),
+			Categories:     mapCategories(store.Categories),
+			Sizes:          mapSizes(store.Sizes),
+			Colors:         mapColors(store.Colors),
+			Orders:         mapOrders(store.Orders),
+			Products:       mapProducts(store.Products),
 		})
 	}
 
@@ -271,26 +103,33 @@ func convertBillboards(billboards []db.Billboard) []*pb.Billboard {
 
 func convertCategory(category db.Category) *pb.Category {
 	return &pb.Category{
-		Id:             category.ID,
-		Name:           category.Name,
-		BillboardId:    category.BillboardID,
-		BillboardLabel: category.BillboardLabel,
-		StoreId:        category.StoreID,
-		CreatedAt:      timestamppb.New(category.CreatedAt),
+		Id:          category.ID,
+		Name:        category.Name,
+		BillboardId: category.BillboardID,
+		StoreId:     category.StoreID,
+		CreatedAt:   timestamppb.New(category.CreatedAt),
 	}
 }
 
-func convertCategories(categories []db.Category) []*pb.Category {
+func convertCategoryRow(category db.GetCategoryRow) *pb.Category {
+	return &pb.Category{
+		Id:          category.CategoryID,
+		Name:        category.CategoryName,
+		BillboardId: category.CategoryBillboardID,
+		StoreId:     category.CategoryStoreID,
+		CreatedAt:   timestamppb.New(category.CategoryCreatedAt),
+	}
+}
+
+func convertCategoriesRow(categories []db.GetCategoriesRow) []*pb.Category {
 	var pbCategories []*pb.Category
 	for _, category := range categories {
 		pbCategories = append(pbCategories, &pb.Category{
-			Id:             category.ID,
-			BillboardId:    category.BillboardID,
-			StoreId:        category.StoreID,
-			StoreName:      category.StoreName,
-			BillboardLabel: category.BillboardLabel,
-			Name:           category.Name,
-			CreatedAt:      timestamppb.New(category.CreatedAt),
+			Id:          category.CategoryID,
+			BillboardId: category.CategoryBillboardID,
+			StoreId:     category.CategoryStoreID,
+			Name:        category.CategoryName,
+			CreatedAt:   timestamppb.New(category.CategoryCreatedAt),
 		})
 	}
 
@@ -303,7 +142,6 @@ func convertSize(size db.Size) *pb.Size {
 		Name:      size.Name,
 		Value:     size.Value,
 		StoreId:   size.StoreID,
-		StoreName: size.StoreName,
 		CreatedAt: timestamppb.New(size.CreatedAt),
 	}
 }
@@ -314,7 +152,6 @@ func convertSizes(sizes []db.Size) []*pb.Size {
 		pbSizes = append(pbSizes, &pb.Size{
 			Id:        size.ID,
 			StoreId:   size.StoreID,
-			StoreName: size.StoreName,
 			Value:     size.Value,
 			Name:      size.Name,
 			CreatedAt: timestamppb.New(size.CreatedAt),
@@ -330,7 +167,6 @@ func convertColor(color db.Color) *pb.Color {
 		Name:      color.Name,
 		Value:     color.Value,
 		StoreId:   color.StoreID,
-		StoreName: color.StoreName,
 		CreatedAt: timestamppb.New(color.CreatedAt),
 	}
 }
@@ -339,9 +175,9 @@ func convertColors(colors []db.Color) []*pb.Color {
 	var pbColors []*pb.Color
 	for _, color := range colors {
 		pbColors = append(pbColors, &pb.Color{
-			Id:        color.ID,
-			StoreId:   color.StoreID,
-			StoreName: color.StoreName,
+			Id:      color.ID,
+			StoreId: color.StoreID,
+
 			Value:     color.Value,
 			Name:      color.Name,
 			CreatedAt: timestamppb.New(color.CreatedAt),
@@ -349,6 +185,18 @@ func convertColors(colors []db.Color) []*pb.Color {
 	}
 
 	return pbColors
+}
+
+func convertOrders(orders []db.Order) []*pb.Order {
+	var pbOrders []*pb.Order
+	for _, order := range orders {
+		pbOrders = append(pbOrders, &pb.Order{
+			Id:         order.ID,
+			OrderItems: mapItems(order.Items),
+		})
+	}
+
+	return pbOrders
 }
 
 func convertProduct(product db.Product) (*pb.Product, error) {
@@ -443,9 +291,10 @@ func mapImages(images json.RawMessage) []*pb.Item {
 	return pbItems
 }
 
+// order items
 func mapItems(items json.RawMessage) []*pb.OrderItem {
 	var rawItems []struct {
-		Url string `json:"url"`
+		Name string `json:"name"`
 	}
 
 	if err := json.Unmarshal(items, &rawItems); err != nil {
@@ -453,12 +302,142 @@ func mapItems(items json.RawMessage) []*pb.OrderItem {
 	}
 
 	var pbItems []*pb.OrderItem
-	for _, img := range rawItems {
+	for _, item := range rawItems {
 		pbOrderItem := &pb.OrderItem{
-			Name: img.Url,
+			Name: item.Name,
 		}
 		pbItems = append(pbItems, pbOrderItem)
 	}
 
 	return pbItems
+}
+
+// billboards
+func mapBillboards(items json.RawMessage) []*pb.Billboard {
+	var rawBillboards []struct {
+		Label string `json:"label"`
+	}
+
+	if err := json.Unmarshal(items, &rawBillboards); err != nil {
+		return nil
+	}
+
+	var pbBillboards []*pb.Billboard
+	for _, item := range rawBillboards {
+		pbBillboard := &pb.Billboard{
+			Label: item.Label,
+		}
+		pbBillboards = append(pbBillboards, pbBillboard)
+	}
+
+	return pbBillboards
+}
+
+// categories
+func mapCategories(items json.RawMessage) []*pb.Category {
+	var rawCategories []struct {
+		Name string `json:"name"`
+	}
+
+	if err := json.Unmarshal(items, &rawCategories); err != nil {
+		return nil
+	}
+
+	var pbCategories []*pb.Category
+	for _, item := range rawCategories {
+		pbCategory := &pb.Category{
+			Name: item.Name,
+		}
+		pbCategories = append(pbCategories, pbCategory)
+	}
+
+	return pbCategories
+}
+
+// products
+func mapProducts(items json.RawMessage) []*pb.Product {
+	var rawProducts []struct {
+		Name string `json:"name"`
+	}
+
+	if err := json.Unmarshal(items, &rawProducts); err != nil {
+		return nil
+	}
+
+	var pbProducts []*pb.Product
+	for _, item := range rawProducts {
+		pbProduct := &pb.Product{
+			Name: item.Name,
+		}
+
+		pbProducts = append(pbProducts, pbProduct)
+	}
+
+	return pbProducts
+}
+
+// orders
+func mapOrders(items json.RawMessage) []*pb.Order {
+	var rawOrders []struct {
+		OrderPhone string `json:"order_phone"`
+	}
+
+	if err := json.Unmarshal(items, &rawOrders); err != nil {
+		return nil
+	}
+
+	var pbOrders []*pb.Order
+	for _, item := range rawOrders {
+		pbOrder := &pb.Order{
+			OrderPhone: item.OrderPhone,
+		}
+
+		pbOrders = append(pbOrders, pbOrder)
+	}
+
+	return pbOrders
+}
+
+// colors
+func mapColors(items json.RawMessage) []*pb.Color {
+	var rawColors []struct {
+		Name string `json:"name"`
+	}
+
+	if err := json.Unmarshal(items, &rawColors); err != nil {
+		return nil
+	}
+
+	var pbColors []*pb.Color
+	for _, item := range rawColors {
+		pbColor := &pb.Color{
+			Name: item.Name,
+		}
+
+		pbColors = append(pbColors, pbColor)
+	}
+
+	return pbColors
+}
+
+// sizes
+func mapSizes(items json.RawMessage) []*pb.Size {
+	var rawSizes []struct {
+		Name string `json:"name"`
+	}
+
+	if err := json.Unmarshal(items, &rawSizes); err != nil {
+		return nil
+	}
+
+	var pbSizes []*pb.Size
+	for _, item := range rawSizes {
+		pbSize := &pb.Size{
+			Name: item.Name,
+		}
+
+		pbSizes = append(pbSizes, pbSize)
+	}
+
+	return pbSizes
 }

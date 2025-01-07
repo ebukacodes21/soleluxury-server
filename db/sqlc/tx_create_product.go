@@ -5,14 +5,12 @@ import "context"
 type CreateProductTxParams struct {
 	CreateProductColorParams
 	*CreateProductSizeParams
-	*CreateProductStoreParams
 	*CreateProductCategoryParams
 }
 
 type CreateProductTxResponse struct {
 	ProductColor    ProductColor
 	ProductSize     ProductSize
-	ProductStore    ProductStore
 	ProductCategory ProductCategory
 }
 
@@ -27,11 +25,6 @@ func (sr *SoleluxuryRepository) CreateProductTx(ctx context.Context, args Create
 		}
 
 		result.ProductSize, err = sr.CreateProductSize(ctx, *args.CreateProductSizeParams)
-		if err != nil {
-			return err
-		}
-
-		result.ProductStore, err = sr.CreateProductStore(ctx, *args.CreateProductStoreParams)
 		if err != nil {
 			return err
 		}

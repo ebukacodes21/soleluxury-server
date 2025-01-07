@@ -12,11 +12,11 @@ type Querier interface {
 	CreateBillboard(ctx context.Context, arg CreateBillboardParams) (Billboard, error)
 	CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error)
 	CreateColor(ctx context.Context, arg CreateColorParams) (Color, error)
+	CreateOrder(ctx context.Context, storeID int64) (Order, error)
 	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
 	CreateProductCategory(ctx context.Context, arg CreateProductCategoryParams) (ProductCategory, error)
 	CreateProductColor(ctx context.Context, arg CreateProductColorParams) (ProductColor, error)
 	CreateProductSize(ctx context.Context, arg CreateProductSizeParams) (ProductSize, error)
-	CreateProductStore(ctx context.Context, arg CreateProductStoreParams) (ProductStore, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateSize(ctx context.Context, arg CreateSizeParams) (Size, error)
 	CreateStore(ctx context.Context, name string) (Store, error)
@@ -28,17 +28,17 @@ type Querier interface {
 	DeleteProductCategory(ctx context.Context, productID int64) error
 	DeleteProductColor(ctx context.Context, productID int64) error
 	DeleteProductSize(ctx context.Context, productID int64) error
-	DeleteProductStore(ctx context.Context, productID int64) error
 	DeleteSession(ctx context.Context) error
 	DeleteSize(ctx context.Context, id int64) error
 	DeleteStore(ctx context.Context, id int64) error
 	GetBillboard(ctx context.Context, id int64) (Billboard, error)
 	GetBillboards(ctx context.Context, storeID int64) ([]Billboard, error)
-	GetCategories(ctx context.Context, storeID int64) ([]Category, error)
-	GetCategory(ctx context.Context, id int64) (Category, error)
+	GetCategories(ctx context.Context, storeID int64) ([]GetCategoriesRow, error)
+	GetCategory(ctx context.Context, id int64) (GetCategoryRow, error)
 	GetColor(ctx context.Context, id int64) (Color, error)
 	GetColors(ctx context.Context, storeID int64) ([]Color, error)
 	GetFirstStore(ctx context.Context) (GetFirstStoreRow, error)
+	GetOrders(ctx context.Context, storeID int64) ([]Order, error)
 	GetProduct(ctx context.Context, arg GetProductParams) (GetProductRow, error)
 	GetProducts(ctx context.Context, storeID int64) ([]GetProductsRow, error)
 	GetSize(ctx context.Context, id int64) (Size, error)
@@ -55,7 +55,6 @@ type Querier interface {
 	UpdateProductColor(ctx context.Context, arg UpdateProductColorParams) error
 	UpdateProductSize(ctx context.Context, arg UpdateProductSizeParams) error
 	UpdateSize(ctx context.Context, arg UpdateSizeParams) error
-	// Here $1 is the limit passed (number of stores to fetch)
 	UpdateStore(ctx context.Context, arg UpdateStoreParams) error
 }
 

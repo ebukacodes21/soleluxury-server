@@ -33,10 +33,9 @@ func (s *Server) CreateColor(ctx context.Context, req *pb.CreateColorRequest) (*
 	}
 
 	args := db.CreateColorParams{
-		StoreID:   store.StoreID,
-		StoreName: store.StoreName,
-		Name:      req.GetName(),
-		Value:     req.GetValue(),
+		StoreID: store.StoreID,
+		Name:    req.GetName(),
+		Value:   req.GetValue(),
 	}
 
 	color, err := s.repository.CreateColor(ctx, args)

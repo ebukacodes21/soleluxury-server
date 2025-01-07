@@ -40,6 +40,7 @@ func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest
 	}
 
 	prodArgs := db.CreateProductParams{
+		StoreID:     req.GetStoreId(),
 		Name:        req.GetName(),
 		Price:       float64(req.GetPrice()),
 		IsFeatured:  req.GetIsFeatured(),
@@ -61,10 +62,6 @@ func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest
 		CreateProductSizeParams: &db.CreateProductSizeParams{
 			ProductID: product.ID,
 			SizeID:    req.GetSizeId(),
-		},
-		CreateProductStoreParams: &db.CreateProductStoreParams{
-			ProductID: product.ID,
-			StoreID:   req.GetStoreId(),
 		},
 		CreateProductCategoryParams: &db.CreateProductCategoryParams{
 			ProductID:  product.ID,
@@ -132,8 +129,8 @@ func (s *Server) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb
 	}
 
 	args := db.GetProductParams{
-		StoreID:   req.GetStoreId(),
-		ProductID: req.GetProductId(),
+		StoreID: req.GetStoreId(),
+		ID:      req.GetProductId(),
 	}
 
 	product, err := s.repository.GetProduct(ctx, args)

@@ -87,16 +87,6 @@ message Product {
     google.protobuf.Timestamp created_at = 8;
 }
 
-message Order {
-    int64 id = 1;  
-    repeated OrderItem order_items = 2;  
-    bool order_is_paid = 3;  
-    string order_phone = 4;  
-    string order_address = 5;  
-    google.protobuf.Timestamp order_created_at = 6;  
-    google.protobuf.Timestamp order_updated_at = 7; 
-}
-
 message ProductResponse {
     int64 id = 1;
     string name = 2;
@@ -112,4 +102,14 @@ message ProductResponse {
     int64 color_id = 12;
     string color_value = 13;
     google.protobuf.Timestamp created_at = 14;
+}
+
+message Order {
+    int64 id = 1;  
+    repeated OrderItem order_items = 2;  
+    bool order_is_paid = 3;  
+    string order_phone = 4;  
+    string order_address = 5;  
+    google.protobuf.Timestamp order_created_at = 6;  
+    google.protobuf.Timestamp order_updated_at = 7; 
 }
