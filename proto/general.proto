@@ -51,11 +51,10 @@ message Store {
 message Category {
     int64 id = 1;
     int64 store_id = 2;
-    string store_name = 3;
-    string billboard_label = 4;
-    int64 billboard_id = 5;
-    string name = 6;
-    google.protobuf.Timestamp created_at = 7;
+    int64 billboard_id = 3;
+    string name = 4;
+    repeated Billboard billboard = 5;
+    google.protobuf.Timestamp created_at = 6;
 }
 
 message Size {

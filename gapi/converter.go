@@ -117,6 +117,7 @@ func convertCategoryRow(category db.GetCategoryRow) *pb.Category {
 		Name:        category.CategoryName,
 		BillboardId: category.CategoryBillboardID,
 		StoreId:     category.CategoryStoreID,
+		Billboard:   mapBillboards(category.Billboard),
 		CreatedAt:   timestamppb.New(category.CategoryCreatedAt),
 	}
 }
@@ -129,6 +130,7 @@ func convertCategoriesRow(categories []db.GetCategoriesRow) []*pb.Category {
 			BillboardId: category.CategoryBillboardID,
 			StoreId:     category.CategoryStoreID,
 			Name:        category.CategoryName,
+			Billboard:   mapBillboards(category.Billboards),
 			CreatedAt:   timestamppb.New(category.CategoryCreatedAt),
 		})
 	}
@@ -315,7 +317,9 @@ func mapItems(items json.RawMessage) []*pb.OrderItem {
 // billboards
 func mapBillboards(items json.RawMessage) []*pb.Billboard {
 	var rawBillboards []struct {
-		Label string `json:"label"`
+		Billboard_Label    string `json:"billboard_label"`
+		Billboard_ID       int64  `json:"billboard_id"`
+		Billboard_ImageUrl string `json:"billboard_image_url"`
 	}
 
 	if err := json.Unmarshal(items, &rawBillboards); err != nil {
@@ -325,7 +329,9 @@ func mapBillboards(items json.RawMessage) []*pb.Billboard {
 	var pbBillboards []*pb.Billboard
 	for _, item := range rawBillboards {
 		pbBillboard := &pb.Billboard{
-			Label: item.Label,
+			Label:    item.Billboard_Label,
+			Id:       item.Billboard_ID,
+			ImageUrl: item.Billboard_ImageUrl,
 		}
 		pbBillboards = append(pbBillboards, pbBillboard)
 	}
@@ -336,7 +342,10 @@ func mapBillboards(items json.RawMessage) []*pb.Billboard {
 // categories
 func mapCategories(items json.RawMessage) []*pb.Category {
 	var rawCategories []struct {
-		Name string `json:"name"`
+		ID      string `json:"category_id"`
+		StoreID int64  `json:"store_id"`
+		Name    string `json:"category_name"`
+		// Bill
 	}
 
 	if err := json.Unmarshal(items, &rawCategories); err != nil {
@@ -352,6 +361,22 @@ func mapCategories(items json.RawMessage) []*pb.Category {
 	}
 
 	return pbCategories
+}
+
+func mapBillboard(item json.RawMessage) *pb.Billboard {
+	var rawBillboard struct {
+		Billboard_Label string `json:"billboard_label"`
+		Billboard_ID    int64  `json:"billboard_id"`
+	}
+
+	if err := json.Unmarshal(item, &rawBillboard); err != nil {
+		return nil
+	}
+
+	return &pb.Billboard{
+		Label: rawBillboard.Billboard_Label,
+		Id:    rawBillboard.Billboard_ID,
+	}
 }
 
 // products

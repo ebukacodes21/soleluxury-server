@@ -275,7 +275,7 @@ LEFT JOIN
 LEFT JOIN
     orders o ON s.id = o.store_id
 GROUP BY
-    s.id, s.name, s.created_at  -- Add s.name and s.created_at to the GROUP BY clause
+    s.id, s.name, s.created_at  
 ORDER BY
     s.id, s.created_at ASC
 LIMIT $1;

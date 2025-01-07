@@ -1211,18 +1211,19 @@
           "type": "string",
           "format": "int64"
         },
-        "storeName": {
-          "type": "string"
-        },
-        "billboardLabel": {
-          "type": "string"
-        },
         "billboardId": {
           "type": "string",
           "format": "int64"
         },
         "name": {
           "type": "string"
+        },
+        "billboard": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBillboard"
+          }
         },
         "createdAt": {
           "type": "string",
