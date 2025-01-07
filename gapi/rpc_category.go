@@ -38,11 +38,9 @@ func (s *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 	}
 
 	args := db.CreateCategoryParams{
-		StoreID:        store.StoreID,
-		BillboardID:    billboard.ID,
-		BillboardLabel: billboard.Label,
-		StoreName:      store.StoreName,
-		Name:           req.GetName(),
+		StoreID:     store.StoreID,
+		BillboardID: billboard.ID,
+		Name:        req.GetName(),
 	}
 
 	category, err := s.repository.CreateCategory(ctx, args)
@@ -79,7 +77,7 @@ func (s *Server) GetCategory(ctx context.Context, req *pb.GetCategoryRequest) (*
 	}
 
 	resp := &pb.GetCategoryResponse{
-		Category: convertCategory(category),
+		Category: convertCategoryRow(category),
 	}
 
 	return resp, nil
@@ -106,7 +104,7 @@ func (s *Server) GetCategories(ctx context.Context, req *pb.GetCategoriesRequest
 		return nil, status.Errorf(codes.NotFound, "unable to get categories %s", err)
 	}
 
-	reversedCategories := convertCategories(categories)
+	reversedCategories := convertCategoriesRow(categories)
 	for i, j := 0, len(reversedCategories)-1; i < j; i, j = i+1, j-1 {
 		reversedCategories[i], reversedCategories[j] = reversedCategories[j], reversedCategories[i]
 	}
@@ -137,10 +135,6 @@ func (s *Server) UpdateCategory(ctx context.Context, req *pb.UpdateCategoryReque
 	args := db.UpdateCategoryParams{
 		ID:      req.GetId(),
 		StoreID: req.GetStoreId(),
-		BillboardLabel: sql.NullString{
-			Valid:  true,
-			String: req.GetBillboardLabel(),
-		},
 		Name: sql.NullString{
 			Valid:  true,
 			String: req.GetName(),
@@ -228,9 +222,6 @@ func validateUpdateCategoryRequest(req *pb.UpdateCategoryRequest) (violations []
 	}
 	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
-	}
-	if err := validate.ValidateName(req.GetBillboardLabel()); err != nil {
-		violations = append(violations, fieldViolation("billboard_label", err))
 	}
 
 	return violations

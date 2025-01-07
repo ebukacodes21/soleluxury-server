@@ -1,8 +1,8 @@
 -- name: CreateColor :one
 INSERT INTO colors (
-  store_id, store_name, name, value
+  store_id, name, value
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3
 )
 RETURNING *;
 

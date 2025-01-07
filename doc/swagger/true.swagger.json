@@ -684,6 +684,39 @@
         ]
       }
     },
+    "/api/get-orders": {
+      "get": {
+        "summary": "Get orders",
+        "description": "Use this API to get orders",
+        "operationId": "Soleluxury_GetOrders",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetOrdersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "storeId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/get-product": {
       "get": {
         "summary": "Get a product",
@@ -1178,18 +1211,19 @@
           "type": "string",
           "format": "int64"
         },
-        "storeName": {
-          "type": "string"
-        },
-        "billboardLabel": {
-          "type": "string"
-        },
         "billboardId": {
           "type": "string",
           "format": "int64"
         },
         "name": {
           "type": "string"
+        },
+        "billboard": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbBillboard"
+          }
         },
         "createdAt": {
           "type": "string",
@@ -1564,6 +1598,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbColor"
+          }
+        }
+      }
+    },
+    "pbGetOrdersResponse": {
+      "type": "object",
+      "properties": {
+        "ordersRes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbOrder"
           }
         }
       }

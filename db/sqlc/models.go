@@ -20,20 +20,17 @@ type Billboard struct {
 }
 
 type Category struct {
-	ID             int64     `db:"id" json:"id"`
-	StoreID        int64     `db:"store_id" json:"store_id"`
-	BillboardID    int64     `db:"billboard_id" json:"billboard_id"`
-	StoreName      string    `db:"store_name" json:"store_name"`
-	BillboardLabel string    `db:"billboard_label" json:"billboard_label"`
-	Name           string    `db:"name" json:"name"`
-	CreatedAt      time.Time `db:"created_at" json:"created_at"`
-	UpdatedAt      time.Time `db:"updated_at" json:"updated_at"`
+	ID          int64     `db:"id" json:"id"`
+	StoreID     int64     `db:"store_id" json:"store_id"`
+	BillboardID int64     `db:"billboard_id" json:"billboard_id"`
+	Name        string    `db:"name" json:"name"`
+	CreatedAt   time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
 }
 
 type Color struct {
 	ID        int64     `db:"id" json:"id"`
 	StoreID   int64     `db:"store_id" json:"store_id"`
-	StoreName string    `db:"store_name" json:"store_name"`
 	Name      string    `db:"name" json:"name"`
 	Value     string    `db:"value" json:"value"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
@@ -53,6 +50,7 @@ type Order struct {
 
 type Product struct {
 	ID          int64           `db:"id" json:"id"`
+	StoreID     int64           `db:"store_id" json:"store_id"`
 	Name        string          `db:"name" json:"name"`
 	Price       float64         `db:"price" json:"price"`
 	IsFeatured  bool            `db:"is_featured" json:"is_featured"`
@@ -78,11 +76,6 @@ type ProductSize struct {
 	SizeID    int64 `db:"size_id" json:"size_id"`
 }
 
-type ProductStore struct {
-	ProductID int64 `db:"product_id" json:"product_id"`
-	StoreID   int64 `db:"store_id" json:"store_id"`
-}
-
 type Session struct {
 	ID           uuid.UUID `db:"id" json:"id"`
 	UserID       int64     `db:"user_id" json:"user_id"`
@@ -98,7 +91,6 @@ type Session struct {
 type Size struct {
 	ID        int64     `db:"id" json:"id"`
 	StoreID   int64     `db:"store_id" json:"store_id"`
-	StoreName string    `db:"store_name" json:"store_name"`
 	Name      string    `db:"name" json:"name"`
 	Value     string    `db:"value" json:"value"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`

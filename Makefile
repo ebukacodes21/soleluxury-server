@@ -34,7 +34,7 @@ evans:
     repl
 
 server:
-	air
+	go run main.go
 
 composeup:
 	docker compose --env-file app.env up --build -d
@@ -42,4 +42,4 @@ composeup:
 composedown:
 	docker compose --env-file app.env down
 
-PHONY: init generate table proto evans server composeup composedown migrateup migratedown
+PHONY: init generate table proto evans go composeup composedown migrateup migratedown

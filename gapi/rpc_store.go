@@ -41,22 +41,21 @@ func (s *Server) CreateStore(ctx context.Context, req *pb.CreateStoreRequest) (*
 }
 
 func (s *Server) GetStore(ctx context.Context, req *pb.GetStoreRequest) (*pb.GetStoreResponse, error) {
-	payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
-	}
+	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
+	// if err != nil {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+	// }
 
 	violations := validateGetStoreRequest(req)
 	if violations != nil {
 		return nil, invalidArgs(violations)
 	}
 
-	if payload.Role == "user" {
-		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get store")
-	}
+	// if payload.Role == "user" {
+	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get store")
+	// }
 
 	store, err := s.repository.GetStore(ctx, req.GetId())
-
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to get store %s", err)
 	}
@@ -69,14 +68,14 @@ func (s *Server) GetStore(ctx context.Context, req *pb.GetStoreRequest) (*pb.Get
 }
 
 func (s *Server) GetStores(ctx context.Context, _ *emptypb.Empty) (*pb.GetStoresResponse, error) {
-	payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
-	}
+	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
+	// if err != nil {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+	// }
 
-	if payload.Role == "user" {
-		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get stores")
-	}
+	// if payload.Role == "user" {
+	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get stores")
+	// }
 
 	stores, err := s.repository.GetStores(ctx, 10)
 	if err != nil {

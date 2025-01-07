@@ -14,6 +14,7 @@ import "rpc_store.proto";
 import "rpc_size.proto";
 import "rpc_color.proto";
 import "rpc_product.proto";
+import "rpc_order.proto";
 
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
@@ -352,6 +353,15 @@ service Soleluxury {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a product";
             summary: "Delete product";
+        };
+    }
+    rpc GetOrders (GetOrdersRequest) returns (GetOrdersResponse) {
+        option (google.api.http) = {
+            get: "/api/get-orders"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get orders";
+            summary: "Get orders";
         };
     }
 }

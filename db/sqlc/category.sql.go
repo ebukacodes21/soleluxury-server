@@ -8,40 +8,32 @@ package db
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"time"
 )
 
 const createCategory = `-- name: CreateCategory :one
 INSERT INTO categories (
-  store_id, billboard_id, store_name, billboard_label, name
+  store_id, billboard_id, name
 ) VALUES (
-  $1, $2, $3, $4, $5
+  $1, $2, $3
 )
-RETURNING id, store_id, billboard_id, store_name, billboard_label, name, created_at, updated_at
+RETURNING id, store_id, billboard_id, name, created_at, updated_at
 `
 
 type CreateCategoryParams struct {
-	StoreID        int64  `db:"store_id" json:"store_id"`
-	BillboardID    int64  `db:"billboard_id" json:"billboard_id"`
-	StoreName      string `db:"store_name" json:"store_name"`
-	BillboardLabel string `db:"billboard_label" json:"billboard_label"`
-	Name           string `db:"name" json:"name"`
+	StoreID     int64  `db:"store_id" json:"store_id"`
+	BillboardID int64  `db:"billboard_id" json:"billboard_id"`
+	Name        string `db:"name" json:"name"`
 }
 
 func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) (Category, error) {
-	row := q.db.QueryRowContext(ctx, createCategory,
-		arg.StoreID,
-		arg.BillboardID,
-		arg.StoreName,
-		arg.BillboardLabel,
-		arg.Name,
-	)
+	row := q.db.QueryRowContext(ctx, createCategory, arg.StoreID, arg.BillboardID, arg.Name)
 	var i Category
 	err := row.Scan(
 		&i.ID,
 		&i.StoreID,
 		&i.BillboardID,
-		&i.StoreName,
-		&i.BillboardLabel,
 		&i.Name,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -60,29 +52,61 @@ func (q *Queries) DeleteCategory(ctx context.Context, id int64) error {
 }
 
 const getCategories = `-- name: GetCategories :many
-SELECT id, store_id, billboard_id, store_name, billboard_label, name, created_at, updated_at FROM categories
-WHERE store_id = $1
-ORDER BY id
+SELECT
+    c.id AS category_id,
+    c.store_id AS category_store_id,
+    c.billboard_id AS category_billboard_id,
+    c.name AS category_name,
+    c.created_at AS category_created_at,
+    c.updated_at AS category_updated_at,
+    -- Associated Billboard Details
+    json_agg(
+        json_build_object(
+            'billboard_id', b.id,
+            'billboard_label', b.label,
+            'billboard_image_url', b.image_url,
+            'billboard_created_at', b.created_at
+        )
+    ) AS billboards
+FROM
+    categories c
+LEFT JOIN
+    billboards b ON c.billboard_id = b.id
+WHERE
+    c.store_id = $1
+GROUP BY
+    c.id
+ORDER BY
+    c.id
 `
 
-func (q *Queries) GetCategories(ctx context.Context, storeID int64) ([]Category, error) {
+type GetCategoriesRow struct {
+	CategoryID          int64           `db:"category_id" json:"category_id"`
+	CategoryStoreID     int64           `db:"category_store_id" json:"category_store_id"`
+	CategoryBillboardID int64           `db:"category_billboard_id" json:"category_billboard_id"`
+	CategoryName        string          `db:"category_name" json:"category_name"`
+	CategoryCreatedAt   time.Time       `db:"category_created_at" json:"category_created_at"`
+	CategoryUpdatedAt   time.Time       `db:"category_updated_at" json:"category_updated_at"`
+	Billboards          json.RawMessage `db:"billboards" json:"billboards"`
+}
+
+func (q *Queries) GetCategories(ctx context.Context, storeID int64) ([]GetCategoriesRow, error) {
 	rows, err := q.db.QueryContext(ctx, getCategories, storeID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Category{}
+	items := []GetCategoriesRow{}
 	for rows.Next() {
-		var i Category
+		var i GetCategoriesRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.StoreID,
-			&i.BillboardID,
-			&i.StoreName,
-			&i.BillboardLabel,
-			&i.Name,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.CategoryID,
+			&i.CategoryStoreID,
+			&i.CategoryBillboardID,
+			&i.CategoryName,
+			&i.CategoryCreatedAt,
+			&i.CategoryUpdatedAt,
+			&i.Billboards,
 		); err != nil {
 			return nil, err
 		}
@@ -98,23 +122,50 @@ func (q *Queries) GetCategories(ctx context.Context, storeID int64) ([]Category,
 }
 
 const getCategory = `-- name: GetCategory :one
-SELECT id, store_id, billboard_id, store_name, billboard_label, name, created_at, updated_at FROM categories
-WHERE id = $1
+SELECT
+    c.id AS category_id,
+    c.store_id AS category_store_id,
+    c.billboard_id AS category_billboard_id,
+    c.name AS category_name,
+    c.created_at AS category_created_at,
+    c.updated_at AS category_updated_at,
+    -- Associated Billboard Details
+    json_build_object(
+        'billboard_id', b.id,
+        'billboard_label', b.label,
+        'billboard_image_url', b.image_url,
+        'billboard_created_at', b.created_at
+    ) AS billboard
+FROM
+    categories c
+LEFT JOIN
+    billboards b ON c.billboard_id = b.id
+WHERE
+    c.id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetCategory(ctx context.Context, id int64) (Category, error) {
+type GetCategoryRow struct {
+	CategoryID          int64           `db:"category_id" json:"category_id"`
+	CategoryStoreID     int64           `db:"category_store_id" json:"category_store_id"`
+	CategoryBillboardID int64           `db:"category_billboard_id" json:"category_billboard_id"`
+	CategoryName        string          `db:"category_name" json:"category_name"`
+	CategoryCreatedAt   time.Time       `db:"category_created_at" json:"category_created_at"`
+	CategoryUpdatedAt   time.Time       `db:"category_updated_at" json:"category_updated_at"`
+	Billboard           json.RawMessage `db:"billboard" json:"billboard"`
+}
+
+func (q *Queries) GetCategory(ctx context.Context, id int64) (GetCategoryRow, error) {
 	row := q.db.QueryRowContext(ctx, getCategory, id)
-	var i Category
+	var i GetCategoryRow
 	err := row.Scan(
-		&i.ID,
-		&i.StoreID,
-		&i.BillboardID,
-		&i.StoreName,
-		&i.BillboardLabel,
-		&i.Name,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.CategoryID,
+		&i.CategoryStoreID,
+		&i.CategoryBillboardID,
+		&i.CategoryName,
+		&i.CategoryCreatedAt,
+		&i.CategoryUpdatedAt,
+		&i.Billboard,
 	)
 	return i, err
 }
@@ -122,26 +173,19 @@ func (q *Queries) GetCategory(ctx context.Context, id int64) (Category, error) {
 const updateCategory = `-- name: UpdateCategory :exec
 UPDATE categories
 SET
-  name = COALESCE($1, name),
-  billboard_label = COALESCE($2, billboard_label)
+  name = COALESCE($1, name)
 WHERE 
-  id = $3
-  AND store_id = $4
+  id = $2
+  AND store_id = $3
 `
 
 type UpdateCategoryParams struct {
-	Name           sql.NullString `db:"name" json:"name"`
-	BillboardLabel sql.NullString `db:"billboard_label" json:"billboard_label"`
-	ID             int64          `db:"id" json:"id"`
-	StoreID        int64          `db:"store_id" json:"store_id"`
+	Name    sql.NullString `db:"name" json:"name"`
+	ID      int64          `db:"id" json:"id"`
+	StoreID int64          `db:"store_id" json:"store_id"`
 }
 
 func (q *Queries) UpdateCategory(ctx context.Context, arg UpdateCategoryParams) error {
-	_, err := q.db.ExecContext(ctx, updateCategory,
-		arg.Name,
-		arg.BillboardLabel,
-		arg.ID,
-		arg.StoreID,
-	)
+	_, err := q.db.ExecContext(ctx, updateCategory, arg.Name, arg.ID, arg.StoreID)
 	return err
 }

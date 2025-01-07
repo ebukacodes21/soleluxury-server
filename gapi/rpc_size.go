@@ -33,10 +33,9 @@ func (s *Server) CreateSize(ctx context.Context, req *pb.CreateSizeRequest) (*pb
 	}
 
 	args := db.CreateSizeParams{
-		StoreID:   store.StoreID,
-		StoreName: store.StoreName,
-		Name:      req.GetName(),
-		Value:     req.GetValue(),
+		StoreID: store.StoreID,
+		Name:    req.GetName(),
+		Value:   req.GetValue(),
 	}
 
 	size, err := s.repository.CreateSize(ctx, args)

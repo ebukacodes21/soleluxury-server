@@ -1,9 +1,9 @@
 -- name: CreateProduct :one
 INSERT INTO products (
-    name, price, is_featured, is_archived, description, images
+    store_id, name, price, is_featured, is_archived, description, images
 )
 VALUES (
-    $1, $2, $3, $4, $5, $6
+    $1, $2, $3, $4, $5, $6, $7
 )
 RETURNING *;
 
@@ -19,15 +19,6 @@ RETURNING *;
 -- name: CreateProductSize :one
 INSERT INTO product_sizes (
     product_id, size_id
-)
-VALUES (
-    $1, $2
-)
-RETURNING *;
-
--- name: CreateProductStore :one
-INSERT INTO product_stores (
-    product_id, store_id
 )
 VALUES (
     $1, $2
@@ -61,8 +52,6 @@ SELECT
     sz.value AS size_value
 FROM 
     products p
-JOIN 
-    product_stores ps ON p.id = ps.product_id
 LEFT JOIN 
     product_categories pc ON p.id = pc.product_id
 LEFT JOIN 
@@ -76,7 +65,7 @@ LEFT JOIN
 LEFT JOIN 
     sizes sz ON psz.size_id = sz.id
 WHERE 
-    ps.store_id = $1
+    p.store_id = $1
     AND p.is_archived = false;
 
 -- name: GetProduct :one
@@ -97,8 +86,6 @@ SELECT
     sz.value AS size_value
 FROM 
     products p
-JOIN 
-    product_stores ps ON p.id = ps.product_id
 LEFT JOIN 
     product_categories pc ON p.id = pc.product_id
 LEFT JOIN 
@@ -111,9 +98,9 @@ LEFT JOIN
     product_sizes psz ON p.id = psz.product_id
 LEFT JOIN 
     sizes sz ON psz.size_id = sz.id
-WHERE ps.store_id = $1
-    AND ps.product_id = $2
-LIMIT 1; 
+WHERE p.store_id = $1
+    AND p.id = $2
+LIMIT 1;
 
 -- name: UpdateProduct :exec
 UPDATE products
@@ -159,10 +146,6 @@ WHERE product_id = $1;
 
 -- name: DeleteProductSize :exec
 DELETE FROM product_sizes
-WHERE product_id = $1;
-
--- name: DeleteProductStore :exec
-DELETE FROM product_stores
 WHERE product_id = $1;
 
 -- name: DeleteProduct :exec

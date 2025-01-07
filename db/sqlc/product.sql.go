@@ -16,15 +16,16 @@ import (
 
 const createProduct = `-- name: CreateProduct :one
 INSERT INTO products (
-    name, price, is_featured, is_archived, description, images
+    store_id, name, price, is_featured, is_archived, description, images
 )
 VALUES (
-    $1, $2, $3, $4, $5, $6
+    $1, $2, $3, $4, $5, $6, $7
 )
-RETURNING id, name, price, is_featured, is_archived, description, images, created_at, updated_at
+RETURNING id, store_id, name, price, is_featured, is_archived, description, images, created_at, updated_at
 `
 
 type CreateProductParams struct {
+	StoreID     int64           `db:"store_id" json:"store_id"`
 	Name        string          `db:"name" json:"name"`
 	Price       float64         `db:"price" json:"price"`
 	IsFeatured  bool            `db:"is_featured" json:"is_featured"`
@@ -35,6 +36,7 @@ type CreateProductParams struct {
 
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {
 	row := q.db.QueryRowContext(ctx, createProduct,
+		arg.StoreID,
 		arg.Name,
 		arg.Price,
 		arg.IsFeatured,
@@ -45,6 +47,7 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 	var i Product
 	err := row.Scan(
 		&i.ID,
+		&i.StoreID,
 		&i.Name,
 		&i.Price,
 		&i.IsFeatured,
@@ -123,28 +126,6 @@ func (q *Queries) CreateProductSize(ctx context.Context, arg CreateProductSizePa
 	return i, err
 }
 
-const createProductStore = `-- name: CreateProductStore :one
-INSERT INTO product_stores (
-    product_id, store_id
-)
-VALUES (
-    $1, $2
-)
-RETURNING product_id, store_id
-`
-
-type CreateProductStoreParams struct {
-	ProductID int64 `db:"product_id" json:"product_id"`
-	StoreID   int64 `db:"store_id" json:"store_id"`
-}
-
-func (q *Queries) CreateProductStore(ctx context.Context, arg CreateProductStoreParams) (ProductStore, error) {
-	row := q.db.QueryRowContext(ctx, createProductStore, arg.ProductID, arg.StoreID)
-	var i ProductStore
-	err := row.Scan(&i.ProductID, &i.StoreID)
-	return i, err
-}
-
 const deleteProduct = `-- name: DeleteProduct :exec
 DELETE FROM products
 WHERE id = $1
@@ -185,16 +166,6 @@ func (q *Queries) DeleteProductSize(ctx context.Context, productID int64) error 
 	return err
 }
 
-const deleteProductStore = `-- name: DeleteProductStore :exec
-DELETE FROM product_stores
-WHERE product_id = $1
-`
-
-func (q *Queries) DeleteProductStore(ctx context.Context, productID int64) error {
-	_, err := q.db.ExecContext(ctx, deleteProductStore, productID)
-	return err
-}
-
 const getProduct = `-- name: GetProduct :one
 SELECT
     p.id AS product_id,
@@ -213,8 +184,6 @@ SELECT
     sz.value AS size_value
 FROM 
     products p
-JOIN 
-    product_stores ps ON p.id = ps.product_id
 LEFT JOIN 
     product_categories pc ON p.id = pc.product_id
 LEFT JOIN 
@@ -227,14 +196,14 @@ LEFT JOIN
     product_sizes psz ON p.id = psz.product_id
 LEFT JOIN 
     sizes sz ON psz.size_id = sz.id
-WHERE ps.store_id = $1
-    AND ps.product_id = $2
+WHERE p.store_id = $1
+    AND p.id = $2
 LIMIT 1
 `
 
 type GetProductParams struct {
-	StoreID   int64 `db:"store_id" json:"store_id"`
-	ProductID int64 `db:"product_id" json:"product_id"`
+	StoreID int64 `db:"store_id" json:"store_id"`
+	ID      int64 `db:"id" json:"id"`
 }
 
 type GetProductRow struct {
@@ -255,7 +224,7 @@ type GetProductRow struct {
 }
 
 func (q *Queries) GetProduct(ctx context.Context, arg GetProductParams) (GetProductRow, error) {
-	row := q.db.QueryRowContext(ctx, getProduct, arg.StoreID, arg.ProductID)
+	row := q.db.QueryRowContext(ctx, getProduct, arg.StoreID, arg.ID)
 	var i GetProductRow
 	err := row.Scan(
 		&i.ProductID,
@@ -294,8 +263,6 @@ SELECT
     sz.value AS size_value
 FROM 
     products p
-JOIN 
-    product_stores ps ON p.id = ps.product_id
 LEFT JOIN 
     product_categories pc ON p.id = pc.product_id
 LEFT JOIN 
@@ -309,7 +276,7 @@ LEFT JOIN
 LEFT JOIN 
     sizes sz ON psz.size_id = sz.id
 WHERE 
-    ps.store_id = $1
+    p.store_id = $1
     AND p.is_archived = false
 `
 
