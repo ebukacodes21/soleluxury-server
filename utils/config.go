@@ -14,8 +14,9 @@ type Config struct {
 	WebsocketAddr   string        `mapstructure:"WEBSOCKET_SERVER_ADDR"`
 	AllowedOrigins  []string      `mapstructure:"ALLOWED_ORIGINS"`
 	MigrationURL    string        `mapstructure:"MIGRATION_URL"`
-	DBDriver        string        `mapstructure:"DB_DRIVER"`
-	DBSource        string        `mapstructure:"DB_SOURCE"`
+	PostgresDriver  string        `mapstructure:"POSTGRES_DRIVER"`
+	PostgresSource  string        `mapstructure:"POSTGRES_SOURCE"`
+	MongoUrl        string        `mapstructure:"MONGO_URL"`
 	EmailSender     string        `mapstructure:"EMAIL_SENDER"`
 	EmailAddress    string        `mapstructure:"EMAIL_SENDER_ADDRESS"`
 	EmailPassword   string        `mapstructure:"EMAIL_SENDER_PASSWORD"`

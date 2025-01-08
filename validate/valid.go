@@ -57,7 +57,7 @@ func ValidateName(value string) error {
 }
 
 func ValidateDescription(value string) error {
-	return ValidateString(value, 3, 100)
+	return ValidateString(value, 3, 1000)
 }
 
 func ValidatePrice(value float32) error {

@@ -342,10 +342,10 @@ func mapBillboards(items json.RawMessage) []*pb.Billboard {
 // categories
 func mapCategories(items json.RawMessage) []*pb.Category {
 	var rawCategories []struct {
-		ID      string `json:"category_id"`
-		StoreID int64  `json:"store_id"`
-		Name    string `json:"category_name"`
-		// Bill
+		Category_ID          int64  `json:"category_id"`
+		Category_StoreID     int64  `json:"category_store_id"`
+		Category_BillboardID int64  `json:"category_billboard_id"`
+		Category_Name        string `json:"category_name"`
 	}
 
 	if err := json.Unmarshal(items, &rawCategories); err != nil {
@@ -355,7 +355,10 @@ func mapCategories(items json.RawMessage) []*pb.Category {
 	var pbCategories []*pb.Category
 	for _, item := range rawCategories {
 		pbCategory := &pb.Category{
-			Name: item.Name,
+			Id:          item.Category_ID,
+			StoreId:     item.Category_StoreID,
+			BillboardId: item.Category_BillboardID,
+			Name:        item.Category_Name,
 		}
 		pbCategories = append(pbCategories, pbCategory)
 	}

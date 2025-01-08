@@ -26,6 +26,20 @@ services:
     networks:
       - app-net
 
+  mongo:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "${MONGO_DATABASE_PORT}:${MONGO_DATABASE_PORT}"
+    networks:
+      - app-net
+
   redis:
     image: redis:latest
     restart: always
@@ -38,3 +52,4 @@ networks:
 
 volumes:
   postgres_data:
+  mongo_data:
