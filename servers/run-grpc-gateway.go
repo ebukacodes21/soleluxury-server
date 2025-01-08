@@ -12,7 +12,7 @@ import (
 	"github.com/rakyll/statik/fs"
 	"github.com/rs/cors"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
+	db "github.com/ebukacodes21/soleluxury-server/db"
 	"github.com/ebukacodes21/soleluxury-server/gapi"
 	"github.com/ebukacodes21/soleluxury-server/pb"
 	"github.com/ebukacodes21/soleluxury-server/utils"

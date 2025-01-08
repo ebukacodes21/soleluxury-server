@@ -45,12 +45,12 @@ func (tp *TaskProcessor) ProcessSendRegisterMail(ctx context.Context, task *asyn
 		return fmt.Errorf("unable to unmarshal JSON: %v", err)
 	}
 
-	user, err := tp.repository.GetUser(ctx, payload.Email)
-	if err != nil {
-		return fmt.Errorf("failed to get user %v ", err)
-	}
+	// user, err := tp.repository.GetUser(ctx, payload.Email)
+	// if err != nil {
+	// 	return fmt.Errorf("failed to get user %v ", err)
+	// }
 
-	log.Print(user)
+	// log.Print(user)
 	// send email
 	return nil
 }

@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	db "github.com/ebukacodes21/soleluxury-server/db"
 	"github.com/ebukacodes21/soleluxury-server/utils"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -33,7 +34,7 @@ func main() {
 	}
 	defer client.Disconnect(ctx)
 
-	// dbb.NewMongoRepository()
+	_ = db.NewMongoRepository(client, "soleluxury")
 
 	err = group.Wait()
 	if err != nil {

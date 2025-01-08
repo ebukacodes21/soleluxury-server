@@ -3,7 +3,7 @@ package worker
 import (
 	"context"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
+	db "github.com/ebukacodes21/soleluxury-server/db"
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog/log"
 )

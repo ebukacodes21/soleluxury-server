@@ -3,7 +3,7 @@ package gapi
 import (
 	"fmt"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
+	db "github.com/ebukacodes21/soleluxury-server/db"
 	"github.com/ebukacodes21/soleluxury-server/pb"
 	"github.com/ebukacodes21/soleluxury-server/token"
 	"github.com/ebukacodes21/soleluxury-server/utils"
