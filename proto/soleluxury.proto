@@ -107,8 +107,7 @@ service Soleluxury {
     }
     rpc DeleteStore (DeleteStoreRequest) returns (DeleteStoreResponse) {
         option (google.api.http) = {
-            post: "/api/delete-store"
-            body: "*"
+            get: "/api/delete-store"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a store";
@@ -155,8 +154,7 @@ service Soleluxury {
     }
     rpc DeleteBillboard (DeleteBillboardRequest) returns (DeleteBillboardResponse) {
         option (google.api.http) = {
-            post: "/api/delete-billboard"
-            body: "*"
+            get: "/api/delete-billboard"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a billboard";
@@ -203,8 +201,7 @@ service Soleluxury {
     }
     rpc DeleteCategory (DeleteCategoryRequest) returns (DeleteCategoryResponse) {
         option (google.api.http) = {
-            post: "/api/delete-category"
-            body: "*"
+            get: "/api/delete-category"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a category to a store";
@@ -251,8 +248,7 @@ service Soleluxury {
     }
     rpc DeleteSize (DeleteSizeRequest) returns (DeleteSizeResponse) {
         option (google.api.http) = {
-            post: "/api/delete-size"
-            body: "*"
+            get: "/api/delete-size"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a size to a store";
@@ -299,8 +295,7 @@ service Soleluxury {
     }
     rpc DeleteColor (DeleteColorRequest) returns (DeleteColorResponse) {
         option (google.api.http) = {
-            post: "/api/delete-color"
-            body: "*"
+            get: "/api/delete-color"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a color to a store";
@@ -347,8 +342,7 @@ service Soleluxury {
     }
     rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse) {
         option (google.api.http) = {
-            post: "/api/delete-product"
-            body: "*"
+            get: "/api/delete-product"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to delete a product";

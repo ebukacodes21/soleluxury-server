@@ -2,22 +2,14 @@ package gapi
 
 import (
 	"context"
-	"database/sql"
-	"encoding/json"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
 	"github.com/ebukacodes21/soleluxury-server/pb"
-	"github.com/sqlc-dev/pqtype"
 
 	"github.com/ebukacodes21/soleluxury-server/validate"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
-
-type Image struct {
-	URL string `json:"url"`
-}
 
 func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest) (*pb.CreateProductResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
@@ -34,53 +26,13 @@ func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to create product")
 	}
 
-	imagesJSON, err := rawMessage(req.GetImages())
-	if err != nil {
-		return nil, status.Errorf(codes.FailedPrecondition, "unable to marshal product image")
-	}
-
-	prodArgs := db.CreateProductParams{
-		StoreID:     req.GetStoreId(),
-		Name:        req.GetName(),
-		Price:       float64(req.GetPrice()),
-		IsFeatured:  req.GetIsFeatured(),
-		IsArchived:  req.GetIsArchived(),
-		Description: req.GetDescription(),
-		Images:      imagesJSON,
-	}
-
-	product, err := s.repository.CreateProduct(ctx, prodArgs)
+	product, err := s.repository.CreateProduct(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "unable to create product")
 	}
 
-	args := db.CreateProductTxParams{
-		CreateProductColorParams: db.CreateProductColorParams{
-			ProductID: product.ID,
-			ColorID:   req.GetColorId(),
-		},
-		CreateProductSizeParams: &db.CreateProductSizeParams{
-			ProductID: product.ID,
-			SizeID:    req.GetSizeId(),
-		},
-		CreateProductCategoryParams: &db.CreateProductCategoryParams{
-			ProductID:  product.ID,
-			CategoryID: req.GetCategoryId(),
-		},
-	}
-
-	_, err = s.repository.CreateProductTx(ctx, args)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "unable to create joint table data")
-	}
-
-	p, err := convertProduct(product)
-	if err != nil {
-		return nil, status.Errorf(codes.FailedPrecondition, "unable to convert product %s", err)
-	}
-
 	resp := &pb.CreateProductResponse{
-		Product: p,
+		Product: convertProduct(product),
 	}
 
 	return resp, nil
@@ -101,13 +53,13 @@ func (s *Server) GetProducts(ctx context.Context, req *pb.GetProductsRequest) (*
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get products")
 	}
 
-	row, err := s.repository.GetProducts(ctx, req.GetStoreId())
+	products, err := s.repository.GetProducts(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to find products")
 	}
 
 	resp := &pb.GetProductsResponse{
-		ProductRes: convertProductsRow(row),
+		ProductRes: convertProducts(products),
 	}
 
 	return resp, nil
@@ -128,18 +80,13 @@ func (s *Server) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get a product")
 	}
 
-	args := db.GetProductParams{
-		StoreID: req.GetStoreId(),
-		ID:      req.GetProductId(),
-	}
-
-	product, err := s.repository.GetProduct(ctx, args)
+	product, err := s.repository.GetProductByID(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "product not found")
 	}
 
 	resp := &pb.GetProductResponse{
-		ProductRes: convertProductRow(product),
+		ProductRes: convertSingleProduct(product),
 	}
 
 	return resp, nil
@@ -160,65 +107,13 @@ func (s *Server) UpdateProduct(ctx context.Context, req *pb.UpdateProductRequest
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to update a product")
 	}
 
-	images, err := rawMessage(req.GetImages())
-	if err != nil {
-		return nil, status.Errorf(codes.FailedPrecondition, "unable to marshal product image")
-	}
-
-	args := db.UpdateProductTxParams{
-		UpdateProductParams: db.UpdateProductParams{
-			ID: req.GetProductId(),
-			Name: sql.NullString{
-				Valid:  true,
-				String: req.GetName(),
-			},
-			Price: sql.NullFloat64{
-				Valid:   true,
-				Float64: float64(req.GetPrice()),
-			},
-			IsFeatured: sql.NullBool{
-				Valid: true,
-				Bool:  req.GetIsFeatured(),
-			},
-			Description: sql.NullString{
-				Valid:  true,
-				String: req.GetDescription(),
-			},
-			Images: pqtype.NullRawMessage{
-				Valid:      true,
-				RawMessage: images,
-			},
-		},
-		UpdateProductColorParams: db.UpdateProductColorParams{
-			ProductID: req.ProductId,
-			ColorID: sql.NullInt64{
-				Valid: true,
-				Int64: req.GetColorId(),
-			},
-		},
-		UpdateProductSizeParams: &db.UpdateProductSizeParams{
-			ProductID: req.ProductId,
-			SizeID: sql.NullInt64{
-				Valid: true,
-				Int64: req.GetSizeId(),
-			},
-		},
-		UpdateProductCategoryParams: &db.UpdateProductCategoryParams{
-			ProductID: req.ProductId,
-			CategoryID: sql.NullInt64{
-				Valid: true,
-				Int64: req.GetCategoryId(),
-			},
-		},
-	}
-
-	err = s.repository.UpdateProductTx(ctx, args)
+	message, err := s.repository.UpdateProduct(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "unable to update a product")
 	}
 
 	resp := &pb.UpdateProductResponse{
-		Message: "product update successful",
+		Message: message,
 	}
 
 	return resp, nil
@@ -239,13 +134,13 @@ func (s *Server) DeleteProduct(ctx context.Context, req *pb.DeleteProductRequest
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to delete a product")
 	}
 
-	err = s.repository.DeleteProductTx(ctx, req.ProductId)
+	message, err := s.repository.DeleteProduct(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "unable to delete a product")
 	}
 
 	resp := &pb.DeleteProductResponse{
-		Message: "product delete successful",
+		Message: message,
 	}
 
 	return resp, nil
@@ -304,10 +199,6 @@ func validateGetProductsRequest(req *pb.GetProductsRequest) (violations []*errde
 }
 
 func validateGetProductRequest(req *pb.GetProductRequest) (violations []*errdetails.BadRequest_FieldViolation) {
-	if err := validate.ValidateId(req.GetStoreId()); err != nil {
-		violations = append(violations, fieldViolation("store_id", err))
-	}
-
 	if err := validate.ValidateId(req.GetProductId()); err != nil {
 		violations = append(violations, fieldViolation("product_id", err))
 	}
@@ -384,23 +275,4 @@ func validateDeleteProductRequest(req *pb.DeleteProductRequest) (violations []*e
 	}
 
 	return violations
-}
-
-func rawMessage(data []*pb.Item) (json.RawMessage, error) {
-	imagesJSON, err := json.Marshal(data)
-	if err != nil {
-		return nil, status.Errorf(codes.FailedPrecondition, "error marshaling images: %v", err)
-	}
-
-	var images []Image
-	for _, img := range data {
-		images = append(images, Image{URL: img.GetUrl()})
-	}
-
-	imagesJSON, err = json.Marshal(images)
-	if err != nil {
-		return nil, status.Errorf(codes.FailedPrecondition, "unable to marshal JSON")
-	}
-
-	return imagesJSON, nil
 }

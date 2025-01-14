@@ -2,9 +2,7 @@ package gapi
 
 import (
 	"context"
-	"database/sql"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
 	"github.com/ebukacodes21/soleluxury-server/pb"
 	"github.com/ebukacodes21/soleluxury-server/validate"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -12,6 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// create size
 func (s *Server) CreateSize(ctx context.Context, req *pb.CreateSizeRequest) (*pb.CreateSizeResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
 	if err != nil {
@@ -27,18 +26,7 @@ func (s *Server) CreateSize(ctx context.Context, req *pb.CreateSizeRequest) (*pb
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to create size")
 	}
 
-	store, err := s.repository.GetStore(ctx, req.GetStoreId())
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "no store found")
-	}
-
-	args := db.CreateSizeParams{
-		StoreID: store.StoreID,
-		Name:    req.GetName(),
-		Value:   req.GetValue(),
-	}
-
-	size, err := s.repository.CreateSize(ctx, args)
+	size, err := s.repository.CreateSize(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "unable to create size %s", err)
 	}
@@ -51,6 +39,7 @@ func (s *Server) CreateSize(ctx context.Context, req *pb.CreateSizeRequest) (*pb
 
 }
 
+// get size
 func (s *Server) GetSize(ctx context.Context, req *pb.GetSizeRequest) (*pb.GetSizeResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
 	if err != nil {
@@ -66,7 +55,7 @@ func (s *Server) GetSize(ctx context.Context, req *pb.GetSizeRequest) (*pb.GetSi
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get size")
 	}
 
-	size, err := s.repository.GetSize(ctx, req.GetId())
+	size, err := s.repository.GetSize(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to get size %s", err)
 	}
@@ -79,6 +68,7 @@ func (s *Server) GetSize(ctx context.Context, req *pb.GetSizeRequest) (*pb.GetSi
 
 }
 
+// get sizes
 func (s *Server) GetSizes(ctx context.Context, req *pb.GetSizesRequest) (*pb.GetSizesResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
 	if err != nil {
@@ -94,7 +84,7 @@ func (s *Server) GetSizes(ctx context.Context, req *pb.GetSizesRequest) (*pb.Get
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get sizes")
 	}
 
-	sizes, err := s.repository.GetSizes(ctx, req.GetStoreId())
+	sizes, err := s.repository.GetAllSizes(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to get sizes %s", err)
 	}
@@ -127,26 +117,13 @@ func (s *Server) UpdateSize(ctx context.Context, req *pb.UpdateSizeRequest) (*pb
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to update size")
 	}
 
-	args := db.UpdateSizeParams{
-		ID:      req.GetId(),
-		StoreID: req.GetStoreId(),
-		Name: sql.NullString{
-			Valid:  true,
-			String: req.GetName(),
-		},
-		Value: sql.NullString{
-			Valid:  true,
-			String: req.GetValue(),
-		},
-	}
-
-	err = s.repository.UpdateSize(ctx, args)
+	message, err := s.repository.UpdateSize(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to update size %s", err)
 	}
 
 	resp := &pb.UpdateSizeResponse{
-		Message: "size update successful",
+		Message: message,
 	}
 
 	return resp, nil
@@ -168,13 +145,13 @@ func (s *Server) DeleteSize(ctx context.Context, req *pb.DeleteSizeRequest) (*pb
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to delete size")
 	}
 
-	err = s.repository.DeleteSize(ctx, req.GetId())
+	message, err := s.repository.DeleteSize(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to delete size %s", err)
 	}
 
 	resp := &pb.DeleteSizeResponse{
-		Message: "Size delete successful",
+		Message: message,
 	}
 
 	return resp, nil
@@ -215,9 +192,6 @@ func validateGetSizesRequest(req *pb.GetSizesRequest) (violations []*errdetails.
 func validateUpdateSizeRequest(req *pb.UpdateSizeRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 	if err := validate.ValidateId(req.GetId()); err != nil {
 		violations = append(violations, fieldViolation("id", err))
-	}
-	if err := validate.ValidateId(req.GetStoreId()); err != nil {
-		violations = append(violations, fieldViolation("store_id", err))
 	}
 	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))

@@ -57,7 +57,7 @@ func ValidateName(value string) error {
 }
 
 func ValidateDescription(value string) error {
-	return ValidateString(value, 3, 100)
+	return ValidateString(value, 3, 1000)
 }
 
 func ValidatePrice(value float32) error {
@@ -89,9 +89,9 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
-func ValidateId(value int64) error {
-	if value <= 0 {
-		return fmt.Errorf("value must be a positive integer")
+func ValidateId(value string) error {
+	if value == "" {
+		return fmt.Errorf("id is required")
 	}
 	return nil
 }

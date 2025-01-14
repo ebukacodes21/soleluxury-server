@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
+	db "github.com/ebukacodes21/soleluxury-server/db"
 	"github.com/ebukacodes21/soleluxury-server/worker"
 	"github.com/hibiken/asynq"
 	"golang.org/x/sync/errgroup"

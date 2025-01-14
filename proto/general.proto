@@ -14,11 +14,11 @@ message Item {
 
 message OrderItem {
     string name = 1;
-    int64 qty = 2;
+    string qty = 2;
 }
 
 message User {
-    int64 id = 1;
+    string id = 1;
     string username = 2;
     string password = 3;
     string email = 4;
@@ -28,18 +28,10 @@ message User {
     google.protobuf.Timestamp created_at = 8;
 }
 
-message Billboard {
-    int64 id = 1;
-    int64 store_id = 2;
-    string label = 3;
-    string image_url = 4;
-    google.protobuf.Timestamp created_at = 5;
-}
-
 message Store {
-    int64 store_id = 1; 
-    string store_name = 2;  
-    google.protobuf.Timestamp store_created_at = 3;  
+    string id = 1; 
+    string name = 2;  
+    google.protobuf.Timestamp created_at = 3;  
     repeated Billboard billboards = 4;  
     repeated Category categories = 5;   
     repeated Size sizes = 6; 
@@ -48,35 +40,44 @@ message Store {
     repeated Product products = 9;
 }
 
+message Billboard {
+    string id = 1;
+    string label = 2;
+    string image_url = 3;
+    string store_id = 4;
+    Store store = 5;
+    repeated Category categories = 6;
+    google.protobuf.Timestamp created_at = 7;
+}
+
 message Category {
-    int64 id = 1;
-    int64 store_id = 2;
-    int64 billboard_id = 3;
-    string name = 4;
-    repeated Billboard billboard = 5;
-    google.protobuf.Timestamp created_at = 6;
+    string id = 1;
+    string name = 2;
+    string store_id = 3;
+    string billboard_id = 4;
+    Billboard billboard = 5;
+    Store store = 6;
+    google.protobuf.Timestamp created_at = 7;
 }
 
 message Size {
-    int64 id = 1;
-    int64 store_id = 2;
-    string store_name = 3;
-    string name = 4;
-    string value = 5;
-    google.protobuf.Timestamp created_at = 7;
+    string id = 1;
+    Store store = 2;
+    string name = 3;
+    string value = 4;
+    google.protobuf.Timestamp created_at = 5;
 }
 
 message Color {
-    int64 id = 1;
-    int64 store_id = 2;
-    string store_name = 3;
-    string name = 4;
-    string value = 5;
-    google.protobuf.Timestamp created_at = 7;
+    string id = 1;
+    Store store = 2;
+    string name = 3;
+    string value = 4;
+    google.protobuf.Timestamp created_at = 5;
 }
 
 message Product {
-    int64 id = 1;
+    string id = 1;
     string name = 2;
     float price = 3;
     bool is_featured = 4;
@@ -87,24 +88,26 @@ message Product {
 }
 
 message ProductResponse {
-    int64 id = 1;
-    string name = 2;
-    string description = 3;
-    float price = 4;
-    bool is_featured = 5;
-    bool is_archived = 6;
-    repeated Item images = 7;
-    int64 category_id = 8;
-    string category_name = 9;
-    int64 size_id = 10; 
-    string size_value = 11;
-    int64 color_id = 12;
-    string color_value = 13;
-    google.protobuf.Timestamp created_at = 14;
+    string id = 1;
+    string store_id = 2;
+    Store store = 3;
+    string category_id = 4;
+    Category category = 5;
+    string name = 6;
+    string description = 7;
+    float price = 8;
+    bool is_featured = 9;
+    bool is_archived = 10;
+    repeated Item images = 11;
+    string size_id = 12; 
+    Size size = 13;
+    string color_id = 14;
+    Color color = 15;
+    google.protobuf.Timestamp created_at = 16;
 }
 
 message Order {
-    int64 id = 1;  
+    string id = 1;  
     repeated OrderItem order_items = 2;  
     bool order_is_paid = 3;  
     string order_phone = 4;  

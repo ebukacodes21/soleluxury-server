@@ -2,15 +2,10 @@ package gapi
 
 import (
 	"context"
-	"time"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
+	"github.com/ebukacodes21/soleluxury-server/db"
 	"github.com/ebukacodes21/soleluxury-server/pb"
-	"github.com/ebukacodes21/soleluxury-server/utils"
 	"github.com/ebukacodes21/soleluxury-server/validate"
-	"github.com/ebukacodes21/soleluxury-server/worker"
-	"github.com/hibiken/asynq"
-	pg "github.com/lib/pq"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -24,46 +19,13 @@ func (s Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.
 		return nil, invalidArgs(violations)
 	}
 
-	hash, err := utils.HashPassword(req.GetPassword())
+	user, err := s.repository.CreateUser(ctx, req)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "unable to hash password %s", err)
-	}
-	code := validate.RandomString(32)
-
-	args := db.CreateUserTxParams{
-		CreateUserParams: db.CreateUserParams{
-			Username:         req.GetUsername(),
-			Email:            req.GetEmail(),
-			Password:         hash,
-			VerificationCode: code,
-		},
-		AfterCreate: func(user db.User) error {
-			payload := worker.RegisterMailPayload{
-				Username: user.Username,
-				Email:    user.Email,
-			}
-			options := []asynq.Option{
-				asynq.MaxRetry(10),
-				asynq.ProcessIn(10 * time.Second),
-				asynq.Queue(worker.Critical),
-			}
-			return s.td.DistributeTaskRegisterMail(ctx, &payload, options...)
-		},
-	}
-
-	result, err := s.repository.CreateUserTx(ctx, args)
-	if err != nil {
-		if pgErr, ok := err.(*pg.Error); ok {
-			switch pgErr.Code.Name() {
-			case "unique_violation":
-				return nil, status.Errorf(codes.Internal, "unique violation %s ", pgErr)
-			}
-		}
-		return nil, status.Errorf(codes.Internal, "failed to create user -- %s", err)
+		return nil, status.Errorf(codes.Internal, "failed to create user  %s ", err)
 	}
 
 	resp := &pb.CreateUserResponse{
-		User: convertUser(result.User),
+		User: convertUser(user),
 	}
 
 	return resp, nil
@@ -75,14 +37,9 @@ func (s *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.L
 		return nil, invalidArgs(violations)
 	}
 
-	user, err := s.repository.GetUser(ctx, req.GetEmail())
+	user, err := s.repository.FindUser(ctx, req)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "no user found %s ", err)
-	}
-
-	err = utils.ComparePassword(req.GetPassword(), user.Password)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "incorrect password %s ", err)
+		return nil, status.Errorf(codes.Internal, "user not found  %s ", err)
 	}
 
 	// if !user.IsVerified {
@@ -100,53 +57,48 @@ func (s *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.L
 	}
 
 	metaData := s.extractMetaData(ctx)
-	session, err := s.repository.CreateSession(ctx, db.CreateSessionParams{
-		ID:           refreshPayload.Id,
+	args := db.SessionReq{
 		Username:     user.Username,
 		UserID:       user.ID,
 		RefreshToken: refreshToken,
-		UserAgent:    metaData.UserAgent,
 		ClientIp:     metaData.ClientIp,
+		UserAgent:    metaData.UserAgent,
 		IsBlocked:    false,
-		ExpiredAt:    refreshPayload.ExpiredAt,
-	})
+		ExpiredAt:    &refreshPayload.ExpiredAt,
+	}
 
+	session, err := s.repository.CreateSession(ctx, args)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to create session")
+		return nil, status.Errorf(codes.NotFound, "failed to create session. %s ", err)
 	}
 
 	resp := &pb.LoginUserResponse{
+		SessionId:             session.ID.String(),
 		User:                  convertUser(user),
 		AccessToken:           accessToken,
 		AccessTokenExpiresAt:  timestamppb.New(accessPayload.ExpiredAt),
 		RefreshToken:          refreshToken,
 		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiredAt),
-		SessionId:             session.ID.String(),
 	}
 
 	return resp, nil
 }
 
-func (s *Server) LogoutUser(ctx context.Context, _ *emptypb.Empty) (*pb.LogoutResponse, error) {
+func (s *Server) LogoutUser(ctx context.Context, req *emptypb.Empty) (*pb.LogoutResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
 	}
 
-	args := db.LogoutParams{
-		UserID:   payload.UserId,
-		Username: payload.Username,
-	}
-
-	err = s.repository.Logout(ctx, args)
+	err = s.repository.LogOut(ctx, payload.UserId)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to log user out %s ", err)
+		return nil, status.Errorf(codes.NotFound, "failed to logout user %s ", err)
 	}
 
-	message := "logout successful"
 	resp := &pb.LogoutResponse{
-		Message: message,
+		Message: "logout successful",
 	}
+
 	return resp, nil
 }
 

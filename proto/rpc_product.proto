@@ -7,10 +7,10 @@ option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
 import "general.proto";
 
 message CreateProductRequest {
-    int64 store_id = 1;
-    int64 category_id = 2;
-    int64 size_id = 3;
-    int64 color_id = 4;
+    string store_id = 1;
+    string category_id = 2;
+    string size_id = 3;
+    string color_id = 4;
     string name = 5;
     string description = 6;
     float price = 7;
@@ -24,7 +24,7 @@ message CreateProductResponse {
 }
 
 message GetProductsRequest {
-    int64 store_id = 1;
+    string store_id = 1;
 }
 
 message GetProductsResponse {
@@ -32,8 +32,7 @@ message GetProductsResponse {
 }
 
 message GetProductRequest {
-    int64 store_id = 1;
-    int64 product_id = 2;
+    string product_id = 1;
 }
 
 message GetProductResponse {
@@ -41,10 +40,10 @@ message GetProductResponse {
 }
 
 message UpdateProductRequest {
-    int64 product_id = 1;
-    optional int64 category_id = 2;
-    optional int64 size_id = 3;
-    optional int64 color_id = 4;
+    string product_id = 1;
+    optional string category_id = 2;
+    optional string size_id = 3;
+    optional string color_id = 4;
     optional string name = 5;
     optional string description = 6;
     optional float price = 7;
@@ -58,7 +57,7 @@ message UpdateProductResponse {
 }
 
 message DeleteProductRequest {
-    int64 product_id = 1;
+    string product_id = 1;
 }
 
 message DeleteProductResponse {

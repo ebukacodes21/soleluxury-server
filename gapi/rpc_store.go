@@ -2,9 +2,7 @@ package gapi
 
 import (
 	"context"
-	"database/sql"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
 	"github.com/ebukacodes21/soleluxury-server/pb"
 	"github.com/ebukacodes21/soleluxury-server/validate"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -13,6 +11,7 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
+// create store
 func (s *Server) CreateStore(ctx context.Context, req *pb.CreateStoreRequest) (*pb.CreateStoreResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
 	if err != nil {
@@ -28,7 +27,7 @@ func (s *Server) CreateStore(ctx context.Context, req *pb.CreateStoreRequest) (*
 		return nil, invalidArgs(violations)
 	}
 
-	store, err := s.repository.CreateStore(ctx, req.GetName())
+	store, err := s.repository.CreateStore(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.FailedPrecondition, "unable to create store %s", err)
 	}
@@ -40,82 +39,54 @@ func (s *Server) CreateStore(ctx context.Context, req *pb.CreateStoreRequest) (*
 	return resp, nil
 }
 
-func (s *Server) GetStore(ctx context.Context, req *pb.GetStoreRequest) (*pb.GetStoreResponse, error) {
-	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
-	// }
+// get first store
+func (s *Server) GetFirstStore(ctx context.Context, req *emptypb.Empty) (*pb.GetStoreResponse, error) {
+	store, err := s.repository.GetFirstStore(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.FailedPrecondition, "unable to get first store %s", err)
+	}
 
+	resp := &pb.GetStoreResponse{
+		Store: convertStore(store),
+	}
+
+	return resp, nil
+}
+
+// get store
+func (s *Server) GetStore(ctx context.Context, req *pb.GetStoreRequest) (*pb.GetStoreResponse, error) {
 	violations := validateGetStoreRequest(req)
 	if violations != nil {
 		return nil, invalidArgs(violations)
 	}
 
-	// if payload.Role == "user" {
-	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get store")
-	// }
-
-	store, err := s.repository.GetStore(ctx, req.GetId())
+	store, err := s.repository.GetStoreByID(ctx, req)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "unable to get store %s", err)
+		return nil, status.Errorf(codes.FailedPrecondition, "unable to get store %s", err)
 	}
 
 	resp := &pb.GetStoreResponse{
-		Store: convertStoreRow(store),
+		Store: convertStore(store),
 	}
 
 	return resp, nil
 }
 
-func (s *Server) GetStores(ctx context.Context, _ *emptypb.Empty) (*pb.GetStoresResponse, error) {
-	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	// if err != nil {
-	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
-	// }
-
-	// if payload.Role == "user" {
-	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get stores")
-	// }
-
-	stores, err := s.repository.GetStores(ctx, 10)
+// get all stores
+func (s *Server) GetStores(ctx context.Context, req *emptypb.Empty) (*pb.GetStoresResponse, error) {
+	stores, err := s.repository.GetAllStores(ctx)
 	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "unable to get stores %s", err)
-	}
-
-	reversedStores := convertStoresRow(stores)
-	for i, j := 0, len(reversedStores)-1; i < j; i, j = i+1, j-1 {
-		reversedStores[i], reversedStores[j] = reversedStores[j], reversedStores[i]
+		return nil, status.Errorf(codes.FailedPrecondition, "unable to get stores %s", err)
 	}
 
 	resp := &pb.GetStoresResponse{
-		Stores: reversedStores,
+		Stores: convertStores(stores),
 	}
 
 	return resp, nil
 }
 
-func (s *Server) GetFirstStore(ctx context.Context, _ *emptypb.Empty) (*pb.GetStoreResponse, error) {
-	payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
-	}
-
-	if payload.Role == "user" {
-		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get store")
-	}
-
-	store, err := s.repository.GetFirstStore(ctx)
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "unable to get store %s", err)
-	}
-
-	resp := &pb.GetStoreResponse{
-		Store: convertFirstStoreRow(store),
-	}
-
-	return resp, nil
-}
-
+// update store
 func (s *Server) UpdateStore(ctx context.Context, req *pb.UpdateStoreRequest) (*pb.UpdateStoreResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
 	if err != nil {
@@ -131,26 +102,19 @@ func (s *Server) UpdateStore(ctx context.Context, req *pb.UpdateStoreRequest) (*
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to update store")
 	}
 
-	args := db.UpdateStoreParams{
-		ID: req.GetId(),
-		Name: sql.NullString{
-			Valid:  true,
-			String: req.GetName(),
-		},
-	}
-
-	err = s.repository.UpdateStore(ctx, args)
+	message, err := s.repository.UpdateStore(ctx, req)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "unable to update store")
+		return nil, status.Errorf(codes.Internal, "unable to update store %s ", err)
 	}
 
 	resp := &pb.UpdateStoreResponse{
-		Message: "store update successful",
+		Message: message,
 	}
 
 	return resp, nil
 }
 
+// delete store
 func (s *Server) DeleteStore(ctx context.Context, req *pb.DeleteStoreRequest) (*pb.DeleteStoreResponse, error) {
 	payload, err := s.authGuard(ctx, []string{"user", "admin"})
 	if err != nil {
@@ -166,18 +130,19 @@ func (s *Server) DeleteStore(ctx context.Context, req *pb.DeleteStoreRequest) (*
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to delete store")
 	}
 
-	err = s.repository.DeleteStore(ctx, req.GetId())
+	message, err := s.repository.DeleteStore(ctx, req)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "unable to delete store")
+		return nil, status.Errorf(codes.Internal, "unable to delete store %s ", err)
 	}
 
 	resp := &pb.DeleteStoreResponse{
-		Message: "store delete successful",
+		Message: message,
 	}
 
 	return resp, nil
 }
 
+// validate create store request
 func validateCreateStoreRequest(req *pb.CreateStoreRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))
@@ -211,5 +176,6 @@ func validateDeleteStoreRequest(req *pb.DeleteStoreRequest) (violations []*errde
 	if err := validate.ValidateId(req.GetId()); err != nil {
 		violations = append(violations, fieldViolation("id", err))
 	}
+
 	return violations
 }

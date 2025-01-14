@@ -2,17 +2,18 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
+	db "github.com/ebukacodes21/soleluxury-server/db"
 	"github.com/ebukacodes21/soleluxury-server/servers"
 	"github.com/ebukacodes21/soleluxury-server/utils"
 	"github.com/ebukacodes21/soleluxury-server/worker"
 	"github.com/hibiken/asynq"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -24,30 +25,32 @@ func main() {
 		log.Fatal(err)
 	}
 
-	conn, err := sql.Open(config.DBDriver, config.DBSource)
+	// create go routines
+	ctx, stop := signal.NotifyContext(context.Background(), signals...)
+	defer stop()
+	group, ctx := errgroup.WithContext(ctx)
+
+	// mongo connection and a repo
+	client, err := mongo.Connect(options.Client().ApplyURI(config.MongoUrl))
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer client.Disconnect(ctx)
+	repository := db.NewRepository(client, config.MongoDBName)
 
-	repository := db.NewSoleluxuryRepository(conn)
-
-	ctx, stop := signal.NotifyContext(context.Background(), signals...)
-	defer stop()
-
-	group, ctx := errgroup.WithContext(ctx)
-
-	opt := asynq.RedisClientOpt{
+	opts := asynq.RedisClientOpt{
 		Addr: config.REDISServerAddr,
 	}
-	td := worker.NewTaskDistributor(opt)
-	tp := worker.NewTaskProcessor(opt, repository)
+	// dedicated workers
+	td := worker.NewTaskDistributor(opts)
+	tp := worker.NewTaskProcessor(opts, repository)
 
-	servers.RunMigration(config.MigrationURL, config.DBSource)
-	servers.RunGrpcServer(group, ctx, repository, config, td, tp)
+	// servers
 	servers.RunGrpcGateway(group, ctx, repository, config, td, tp)
-	servers.RunTasks(group, ctx, opt, repository)
-	worker.SetupScheduler(ctx, repository)
+	servers.RunGrpcServer(group, ctx, repository, config, td, tp)
+	servers.RunTasks(group, ctx, opts, repository)
 
+	// listen for cancelled contexts
 	err = group.Wait()
 	if err != nil {
 		log.Fatal(err)

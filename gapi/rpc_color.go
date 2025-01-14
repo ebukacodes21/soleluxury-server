@@ -2,9 +2,7 @@ package gapi
 
 import (
 	"context"
-	"database/sql"
 
-	db "github.com/ebukacodes21/soleluxury-server/db/sqlc"
 	"github.com/ebukacodes21/soleluxury-server/pb"
 	"github.com/ebukacodes21/soleluxury-server/validate"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
@@ -27,18 +25,7 @@ func (s *Server) CreateColor(ctx context.Context, req *pb.CreateColorRequest) (*
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to create color")
 	}
 
-	store, err := s.repository.GetStore(ctx, req.GetStoreId())
-	if err != nil {
-		return nil, status.Errorf(codes.NotFound, "no store found")
-	}
-
-	args := db.CreateColorParams{
-		StoreID: store.StoreID,
-		Name:    req.GetName(),
-		Value:   req.GetValue(),
-	}
-
-	color, err := s.repository.CreateColor(ctx, args)
+	color, err := s.repository.CreateColor(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "unable to create color %s", err)
 	}
@@ -66,7 +53,7 @@ func (s *Server) GetColor(ctx context.Context, req *pb.GetColorRequest) (*pb.Get
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get color")
 	}
 
-	color, err := s.repository.GetColor(ctx, req.GetId())
+	color, err := s.repository.GetColor(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to get color %s", err)
 	}
@@ -93,7 +80,7 @@ func (s *Server) GetColors(ctx context.Context, req *pb.GetColorsRequest) (*pb.G
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get colors")
 	}
 
-	colors, err := s.repository.GetColors(ctx, req.GetStoreId())
+	colors, err := s.repository.GetAllColors(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to get colors %s", err)
 	}
@@ -126,26 +113,13 @@ func (s *Server) UpdateColor(ctx context.Context, req *pb.UpdateColorRequest) (*
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to update color")
 	}
 
-	args := db.UpdateColorParams{
-		ID:      req.GetId(),
-		StoreID: req.GetStoreId(),
-		Name: sql.NullString{
-			Valid:  true,
-			String: req.GetName(),
-		},
-		Value: sql.NullString{
-			Valid:  true,
-			String: req.GetValue(),
-		},
-	}
-
-	err = s.repository.UpdateColor(ctx, args)
+	message, err := s.repository.UpdateColor(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to update color %s", err)
 	}
 
 	resp := &pb.UpdateColorResponse{
-		Message: "color update successful",
+		Message: message,
 	}
 
 	return resp, nil
@@ -167,13 +141,13 @@ func (s *Server) DeleteColor(ctx context.Context, req *pb.DeleteColorRequest) (*
 		return nil, status.Errorf(codes.PermissionDenied, "not authorized to delete color")
 	}
 
-	err = s.repository.DeleteColor(ctx, req.GetId())
+	message, err := s.repository.DeleteColor(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.NotFound, "unable to delete color %s", err)
 	}
 
 	resp := &pb.DeleteColorResponse{
-		Message: "color delete successful",
+		Message: message,
 	}
 
 	return resp, nil
@@ -214,9 +188,6 @@ func validateGetColorsRequest(req *pb.GetColorsRequest) (violations []*errdetail
 func validateUpdateColorRequest(req *pb.UpdateColorRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 	if err := validate.ValidateId(req.GetId()); err != nil {
 		violations = append(violations, fieldViolation("id", err))
-	}
-	if err := validate.ValidateId(req.GetStoreId()); err != nil {
-		violations = append(violations, fieldViolation("store_id", err))
 	}
 	if err := validate.ValidateName(req.GetName()); err != nil {
 		violations = append(violations, fieldViolation("name", err))

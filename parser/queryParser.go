@@ -15,20 +15,32 @@ type CustomQueryParameterParser struct{}
 
 func (p *CustomQueryParameterParser) Parse(target proto.Message, values url.Values, filter *utilities.DoubleArray) error {
 	switch req := target.(type) {
+	case *service.DeleteStoreRequest:
+		return populateDeleteStoreParams(values, req)
 	case *service.GetBillboardsRequest:
 		return populateGetBillboardsParams(values, req)
+	case *service.DeleteBillboardRequest:
+		return populateDeleteBillboardParams(values, req)
 	case *service.GetCategoryRequest:
 		return populateGetCategoryParams(values, req)
 	case *service.GetCategoriesRequest:
 		return populateGetCategoriesParams(values, req)
+	case *service.DeleteCategoryRequest:
+		return populateDeleteCategoryParams(values, req)
 	case *service.GetSizeRequest:
 		return populateGetSizeParams(values, req)
 	case *service.GetSizesRequest:
 		return populateGetSizesParams(values, req)
+	case *service.DeleteSizeRequest:
+		return populateDeleteSizeParams(values, req)
 	case *service.GetColorRequest:
 		return populateGetColorParams(values, req)
 	case *service.GetColorsRequest:
 		return populateGetColorsParams(values, req)
+	case *service.DeleteColorRequest:
+		return populateDeleteColorParams(values, req)
+	case *service.DeleteProductRequest:
+		return populateDeleteProductParams(values, req)
 	case *service.GetProductsRequest:
 		return populateGetProductsParams(values, req)
 	case *service.GetProductRequest:
@@ -40,89 +52,107 @@ func (p *CustomQueryParameterParser) Parse(target proto.Message, values url.Valu
 	return (*runtime.DefaultQueryParser)(nil).Parse(target, values, filter)
 }
 
+func populateDeleteStoreParams(values url.Values, r *service.DeleteStoreRequest) error {
+	if storeID := values.Get("id"); storeID != "" {
+		r.Id = storeID
+	}
+	return nil
+}
+
+func populateDeleteBillboardParams(values url.Values, r *service.DeleteBillboardRequest) error {
+	if id := values.Get("id"); id != "" {
+		r.Id = id
+	}
+	return nil
+}
+
+func populateDeleteCategoryParams(values url.Values, r *service.DeleteCategoryRequest) error {
+	if id := values.Get("id"); id != "" {
+		r.Id = id
+	}
+	return nil
+}
+
+func populateDeleteSizeParams(values url.Values, r *service.DeleteSizeRequest) error {
+	if id := values.Get("id"); id != "" {
+		r.Id = id
+	}
+	return nil
+}
+
+func populateDeleteColorParams(values url.Values, r *service.DeleteColorRequest) error {
+	if id := values.Get("id"); id != "" {
+		r.Id = id
+	}
+	return nil
+}
+
+func populateDeleteProductParams(values url.Values, r *service.DeleteProductRequest) error {
+	if id := values.Get("product_id"); id != "" {
+		r.ProductId = id
+	}
+	return nil
+}
+
 func populateGetBillboardsParams(values url.Values, r *service.GetBillboardsRequest) error {
 	if storeID := values.Get("store_id"); storeID != "" {
-		if parsedStoreID, err := strconv.Atoi(storeID); err == nil {
-			r.StoreId = int64(parsedStoreID)
-		}
+		r.StoreId = storeID
 	}
 	return nil
 }
 
 func populateGetCategoryParams(values url.Values, r *service.GetCategoryRequest) error {
 	if Id := values.Get("id"); Id != "" {
-		if parsedID, err := strconv.Atoi(Id); err == nil {
-			r.Id = int64(parsedID)
-		}
+		r.Id = Id
 	}
 	return nil
 }
 
 func populateGetCategoriesParams(values url.Values, r *service.GetCategoriesRequest) error {
 	if storeId := values.Get("store_id"); storeId != "" {
-		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
-			r.StoreId = int64(parsedStoreId)
-		}
+		r.StoreId = storeId
 	}
 	return nil
 }
 
 func populateGetSizeParams(values url.Values, r *service.GetSizeRequest) error {
 	if Id := values.Get("id"); Id != "" {
-		if parsedID, err := strconv.Atoi(Id); err == nil {
-			r.Id = int64(parsedID)
-		}
+		r.Id = Id
 	}
 	return nil
 }
 
 func populateGetSizesParams(values url.Values, r *service.GetSizesRequest) error {
 	if storeId := values.Get("store_id"); storeId != "" {
-		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
-			r.StoreId = int64(parsedStoreId)
-		}
+		r.StoreId = storeId
 	}
 	return nil
 }
 
 func populateGetColorParams(values url.Values, r *service.GetColorRequest) error {
 	if Id := values.Get("id"); Id != "" {
-		if parsedID, err := strconv.Atoi(Id); err == nil {
-			r.Id = int64(parsedID)
-		}
+		r.Id = Id
 	}
 	return nil
 }
 
 func populateGetColorsParams(values url.Values, r *service.GetColorsRequest) error {
 	if storeId := values.Get("store_id"); storeId != "" {
-		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
-			r.StoreId = int64(parsedStoreId)
-		}
+		r.StoreId = storeId
 	}
 	return nil
 }
 
 func populateGetProductsParams(values url.Values, r *service.GetProductsRequest) error {
 	if storeId := values.Get("store_id"); storeId != "" {
-		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
-			r.StoreId = int64(parsedStoreId)
-		}
+		r.StoreId = storeId
 	}
 	return nil
 }
 
 func populateGetProductParams(values url.Values, r *service.GetProductRequest) error {
-	if storeId := values.Get("store_id"); storeId != "" {
-		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
-			r.StoreId = int64(parsedStoreId)
-		}
-	}
-
 	if pId := values.Get("product_id"); pId != "" {
-		if parsedPId, err := strconv.Atoi(pId); err == nil {
-			r.ProductId = int64(parsedPId)
-		}
+		r.ProductId = pId
 	}
 	return nil
 }
