@@ -6,10 +6,11 @@ import (
 
 	"github.com/aead/chacha20poly1305"
 	"github.com/o1egl/paseto"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type TokenContract interface {
-	CreateToken(username string, userId int64, role string, duration time.Duration) (string, *Payload, error)
+	CreateToken(username string, userId bson.ObjectID, role string, duration time.Duration) (string, *Payload, error)
 	VerifyToken(token string) (*Payload, error)
 }
 
@@ -31,7 +32,7 @@ func NewToken(key string) (TokenContract, error) {
 	return token, nil
 }
 
-func (t *Token) CreateToken(username string, userId int64, role string, duration time.Duration) (string, *Payload, error) {
+func (t *Token) CreateToken(username string, userId bson.ObjectID, role string, duration time.Duration) (string, *Payload, error) {
 	payload, err := NewPayload(username, userId, role, duration)
 	if err != nil {
 		return "", nil, fmt.Errorf("unable to create payload")

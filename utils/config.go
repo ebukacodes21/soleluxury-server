@@ -17,6 +17,7 @@ type Config struct {
 	PostgresDriver  string        `mapstructure:"POSTGRES_DRIVER"`
 	PostgresSource  string        `mapstructure:"POSTGRES_SOURCE"`
 	MongoUrl        string        `mapstructure:"MONGO_URL"`
+	MongoDBName     string        `mapstructure:"MONGO_INITDB_DATABASE"`
 	EmailSender     string        `mapstructure:"EMAIL_SENDER"`
 	EmailAddress    string        `mapstructure:"EMAIL_SENDER_ADDRESS"`
 	EmailPassword   string        `mapstructure:"EMAIL_SENDER_PASSWORD"`

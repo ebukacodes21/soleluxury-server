@@ -89,9 +89,9 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
-func ValidateId(value int64) error {
-	if value <= 0 {
-		return fmt.Errorf("value must be a positive integer")
+func ValidateId(value string) error {
+	if value == "" {
+		return fmt.Errorf("id is required")
 	}
 	return nil
 }

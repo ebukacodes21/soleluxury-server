@@ -7,7 +7,7 @@ option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
 import "general.proto";
 
 message CreateSizeRequest {
-    int64 store_id = 1;
+    string store_id = 1;
     string name = 3;
     string value = 4;
 }
@@ -17,7 +17,7 @@ message CreateSizeResponse {
 }
 
 message GetSizeRequest {
-    int64 id = 1;
+    string id = 1;
 }
 
 message GetSizeResponse {
@@ -25,7 +25,7 @@ message GetSizeResponse {
 }
 
 message GetSizesRequest {
-    int64 store_id = 1;
+    string store_id = 1;
 }
 
 message GetSizesResponse {
@@ -33,10 +33,9 @@ message GetSizesResponse {
 }
 
 message UpdateSizeRequest {
-    int64 id = 1;
-    int64 store_id = 2;
-    string name = 3;
-    string value = 4;
+    string id = 1;
+    string name = 2;
+    string value = 3;
 }
 
 message UpdateSizeResponse {
@@ -44,7 +43,7 @@ message UpdateSizeResponse {
 }
 
 message DeleteSizeRequest {
-    int64 id = 1;
+    string id = 1;
 }
 
 message DeleteSizeResponse {

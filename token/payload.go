@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 var (
@@ -13,15 +14,15 @@ var (
 )
 
 type Payload struct {
-	Id        uuid.UUID `json:"id"`
-	Username  string    `json:"username"`
-	UserId    int64     `json:"user_id"`
-	Role      string    `json:"role"`
-	IssuedAt  time.Time `json:"issued_at"`
-	ExpiredAt time.Time `json:"expired_at"`
+	Id        uuid.UUID     `json:"id"`
+	Username  string        `json:"username"`
+	UserId    bson.ObjectID `json:"user_id"`
+	Role      string        `json:"role"`
+	IssuedAt  time.Time     `json:"issued_at"`
+	ExpiredAt time.Time     `json:"expired_at"`
 }
 
-func NewPayload(username string, userId int64, role string, duration time.Duration) (*Payload, error) {
+func NewPayload(username string, userId bson.ObjectID, role string, duration time.Duration) (*Payload, error) {
 	id, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err

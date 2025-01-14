@@ -15,7 +15,7 @@ message CreateStoreResponse {
 }
 
 message GetStoreRequest {
-    int64 id = 1;
+    string id = 1;
 }
 
 message GetStoreResponse {
@@ -27,7 +27,7 @@ message GetStoresResponse {
 }
 
 message UpdateStoreRequest {
-    int64 id = 1;
+    string id = 1;
     optional string name = 2;
 }
 
@@ -36,7 +36,7 @@ message UpdateStoreResponse {
 }
 
 message DeleteStoreRequest {
-    int64 id = 1;
+    string id = 1;
 }
 
 message DeleteStoreResponse {
