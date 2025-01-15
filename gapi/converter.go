@@ -20,9 +20,12 @@ func convertUser(user *db.User) *pb.User {
 
 func convertStore(store *db.Store) *pb.Store {
 	return &pb.Store{
-		Id:        store.ID.Hex(),
-		Name:      store.Name,
-		CreatedAt: timestamppb.New(store.CreatedAt),
+		Id:         store.ID.Hex(),
+		Name:       store.Name,
+		CreatedAt:  timestamppb.New(store.CreatedAt),
+		Billboards: convertBillboards(store.Billboards),
+		Categories: convertCategories(store.Categories),
+		Products:   convertProducts(store.Products),
 	}
 }
 
@@ -31,9 +34,12 @@ func convertStores(stores []db.Store) []*pb.Store {
 
 	for _, store := range stores {
 		pbStore := &pb.Store{
-			Id:        store.ID.Hex(),
-			Name:      store.Name,
-			CreatedAt: timestamppb.New(store.CreatedAt),
+			Id:         store.ID.Hex(),
+			Name:       store.Name,
+			CreatedAt:  timestamppb.New(store.CreatedAt),
+			Billboards: convertBillboards(store.Billboards),
+			Categories: convertCategories(store.Categories),
+			Products:   convertProducts(store.Products),
 		}
 
 		pbStores = append(pbStores, pbStore)
@@ -79,6 +85,7 @@ func convertCategory(category *db.Category) *pb.Category {
 		BillboardId: category.Billboard.ID.Hex(),
 		Name:        category.Name,
 		Billboard:   convertBillboard(&category.Billboard),
+		Products:    convertProducts(category.Products),
 		CreatedAt:   timestamppb.New(category.CreatedAt),
 	}
 }
@@ -93,6 +100,7 @@ func convertCategories(categories []db.Category) []*pb.Category {
 			BillboardId: category.Billboard.ID.Hex(),
 			Name:        category.Name,
 			Billboard:   convertBillboard(&category.Billboard),
+			Products:    convertProducts(category.Products),
 			CreatedAt:   timestamppb.New(category.CreatedAt),
 		}
 

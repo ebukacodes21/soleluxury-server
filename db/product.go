@@ -231,23 +231,36 @@ func (r *Repository) populateProductDetails(ctx context.Context, product *Produc
 	var category Category
 	var size Size
 	var color Color
+	var billboard Billboard
 
+	// find product store
 	err := r.storeColl.FindOne(ctx, bson.M{"_id": product.StoreID}).Decode(&store)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return fmt.Errorf("store with id %s not found: %v", product.StoreID.Hex(), err)
 		}
-		return fmt.Errorf("unable to fetch store product %s: %v", product.StoreID.Hex(), err)
+		return fmt.Errorf("unable to fetch product store %s: %v", product.StoreID.Hex(), err)
 	}
 
+	// find product category
 	err = r.categoryColl.FindOne(ctx, bson.M{"_id": product.CategoryID}).Decode(&category)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return fmt.Errorf("category with id %s not found: %v", product.CategoryID.Hex(), err)
 		}
-		return fmt.Errorf("unable to fetch category product %s: %v", product.CategoryID.Hex(), err)
+		return fmt.Errorf("unable to fetch product category %s: %v", product.CategoryID.Hex(), err)
 	}
 
+	// here find category billboard
+	err = r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID}).Decode(&billboard)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return fmt.Errorf("billboard with id %s not found: %v", category.BillboardID.Hex(), err)
+		}
+		return fmt.Errorf("unable to fetch category billboard %s: %v", category.BillboardID.Hex(), err)
+	}
+
+	// find product size
 	err = r.sizeColl.FindOne(ctx, bson.M{"_id": product.SizeID}).Decode(&size)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -256,6 +269,7 @@ func (r *Repository) populateProductDetails(ctx context.Context, product *Produc
 		return fmt.Errorf("unable to fetch size product %s: %v", product.SizeID.Hex(), err)
 	}
 
+	// find product color
 	err = r.colorColl.FindOne(ctx, bson.M{"_id": product.ColorID}).Decode(&color)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -264,8 +278,14 @@ func (r *Repository) populateProductDetails(ctx context.Context, product *Produc
 		return fmt.Errorf("unable to fetch color product %s: %v", product.ColorID.Hex(), err)
 	}
 
-	product.Category = category
+	// populate fields
+	size.Store = store
+	color.Store = store
+	billboard.Store = store
+	category.Billboard = billboard
+
 	product.Store = store
+	product.Category = category
 	product.Color = color
 	product.Size = size
 	return nil

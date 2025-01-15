@@ -57,7 +57,6 @@ require (
 	github.com/rs/cors v1.11.1
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.19.0
-	go.mongodb.org/mongo-driver v1.17.2
 	golang.org/x/crypto v0.31.0
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sync v0.10.0

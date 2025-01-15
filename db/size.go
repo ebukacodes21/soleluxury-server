@@ -12,14 +12,8 @@ import (
 
 // create size
 func (r *Repository) CreateSize(ctx context.Context, args *pb.CreateSizeRequest) (*Size, error) {
-	var exSize Size
 	var store Store
 	name := args.GetName()
-
-	err := r.sizeColl.FindOne(ctx, bson.M{"name": name}).Decode(&exSize)
-	if err != mongo.ErrNoDocuments {
-		return nil, fmt.Errorf("size %s already existing", name)
-	}
 
 	storeId, err := bson.ObjectIDFromHex(args.GetStoreId())
 	if err != nil {

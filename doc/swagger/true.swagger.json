@@ -1199,6 +1199,13 @@
         "store": {
           "$ref": "#/definitions/pbStore"
         },
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbProductResponse"
+          }
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time"
@@ -1842,7 +1849,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/pbProduct"
+            "$ref": "#/definitions/pbProductResponse"
           }
         }
       }
