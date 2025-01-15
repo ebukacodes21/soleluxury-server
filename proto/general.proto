@@ -37,7 +37,7 @@ message Store {
     repeated Size sizes = 6; 
     repeated Color colors = 7;
     repeated Order orders = 8; 
-    repeated Product products = 9;
+    repeated ProductResponse products = 9;
 }
 
 message Billboard {
@@ -57,7 +57,8 @@ message Category {
     string billboard_id = 4;
     Billboard billboard = 5;
     Store store = 6;
-    google.protobuf.Timestamp created_at = 7;
+    repeated ProductResponse products = 7;
+    google.protobuf.Timestamp created_at = 8;
 }
 
 message Size {

@@ -250,6 +250,7 @@ func (r *Repository) populateStoreDetails(ctx context.Context, store *Store) err
 
 func (r *Repository) populateStoreCategories(ctx context.Context, store *Store) error {
 	var categories []Category
+	var billboard Billboard
 	cursor, err := r.categoryColl.Find(ctx, bson.M{"store_id": store.ID})
 	if err != nil {
 		return fmt.Errorf("unable to fetch categories for store %s: %v", store.ID.Hex(), err)
@@ -261,6 +262,14 @@ func (r *Repository) populateStoreCategories(ctx context.Context, store *Store) 
 		if err := cursor.Decode(&category); err != nil {
 			return fmt.Errorf("unable to decode category: %v", err)
 		}
+
+		if err := r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID, "store_id": store.ID}).Decode(&billboard); err != nil {
+			return fmt.Errorf("unable to decode billboard: %v", err)
+		}
+
+		billboard.Store = *store
+		category.Store = *store
+		category.Billboard = billboard
 		categories = append(categories, category)
 	}
 
@@ -285,6 +294,8 @@ func (r *Repository) populateBillboards(ctx context.Context, store *Store) error
 		if err := cursor.Decode(&billboard); err != nil {
 			return fmt.Errorf("unable to decode billboard: %v", err)
 		}
+
+		billboard.Store = *store
 		billboards = append(billboards, billboard)
 	}
 
@@ -309,6 +320,8 @@ func (r *Repository) populateSizes(ctx context.Context, store *Store) error {
 		if err := cursor.Decode(&size); err != nil {
 			return fmt.Errorf("unable to decode size: %v", err)
 		}
+
+		size.Store = *store
 		sizes = append(sizes, size)
 	}
 
@@ -333,6 +346,7 @@ func (r *Repository) populateColors(ctx context.Context, store *Store) error {
 		if err := cursor.Decode(&color); err != nil {
 			return fmt.Errorf("unable to decode color: %v", err)
 		}
+		color.Store = *store
 		colors = append(colors, color)
 	}
 
@@ -353,11 +367,41 @@ func (r *Repository) populateProducts(ctx context.Context, store *Store) error {
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
+		var color Color
+		var size Size
 		var product Product
+		var category Category
+		var billboard Billboard
 		if err := cursor.Decode(&product); err != nil {
 			return fmt.Errorf("unable to decode product: %v", err)
 		}
+
+		if err := r.categoryColl.FindOne(ctx, bson.M{"_id": product.CategoryID}).Decode(&category); err != nil {
+			return fmt.Errorf("unable to fetch category for product %s: %v", product.CategoryID.Hex(), err)
+		}
+
+		if err := r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID}).Decode(&billboard); err != nil {
+			return fmt.Errorf("unable to fetch billboard for category %s: %v", category.BillboardID.Hex(), err)
+		}
+
+		if err := r.colorColl.FindOne(ctx, bson.M{"_id": product.ColorID}).Decode(&color); err != nil {
+			return fmt.Errorf("unable to fetch color for product %s: %v", product.ColorID.Hex(), err)
+		}
+
+		if err := r.sizeColl.FindOne(ctx, bson.M{"_id": product.SizeID}).Decode(&size); err != nil {
+			return fmt.Errorf("unable to fetch size for product %s: %v", product.SizeID.Hex(), err)
+		}
+
+		size.Store = *store
+		color.Store = *store
+		billboard.Store = *store
+		category.Billboard = billboard
+		product.Category = category
+		product.Store = *store
+		product.Size = size
+		product.Color = color
 		products = append(products, product)
+		category.Products = products
 	}
 
 	if err := cursor.Err(); err != nil {

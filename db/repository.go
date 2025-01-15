@@ -68,6 +68,7 @@ type Repository struct {
 
 func NewRepository(client *mongo.Client, databaseName string) DatabaseContract {
 	db := client.Database(databaseName)
+
 	return &Repository{
 		client:        client,
 		database:      db,

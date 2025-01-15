@@ -12,14 +12,8 @@ import (
 
 // create color
 func (r *Repository) CreateColor(ctx context.Context, args *pb.CreateColorRequest) (*Color, error) {
-	var exColor Color
 	var store Store
 	name := args.GetName()
-
-	err := r.colorColl.FindOne(ctx, bson.M{"name": name}).Decode(&exColor)
-	if err != mongo.ErrNoDocuments {
-		return nil, fmt.Errorf("color %s already existing", name)
-	}
 
 	storeId, err := bson.ObjectIDFromHex(args.GetStoreId())
 	if err != nil {

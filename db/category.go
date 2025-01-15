@@ -74,7 +74,7 @@ func (r *Repository) GetCatgeoryByID(ctx context.Context, req *pb.GetCategoryReq
 		return nil, fmt.Errorf("unable to fetch category by ID: %v", err)
 	}
 
-	err = r.populateCategoryBillboard(ctx, &category)
+	err = r.populateCategoryDetails(ctx, &category)
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch associated details: %v", err)
 	}
@@ -103,8 +103,9 @@ func (r *Repository) GetAllCategories(ctx context.Context, args *pb.GetCategorie
 			return nil, fmt.Errorf("unable to decode category: %v", err)
 		}
 
-		if err := r.populateCategoryBillboard(ctx, &category); err != nil {
-			return nil, fmt.Errorf("unable to populate category billboard: %v", err)
+		err = r.populateCategoryDetails(ctx, &category)
+		if err != nil {
+			return nil, fmt.Errorf("unable to fetch associated details: %v", err)
 		}
 
 		categories = append(categories, category)
@@ -164,8 +165,21 @@ func (r *Repository) DeleteCategory(ctx context.Context, arg *pb.DeleteCategoryR
 	return "category delete successful", nil
 }
 
+func (r *Repository) populateCategoryDetails(ctx context.Context, category *Category) error {
+	if err := r.populateCategoryBillboard(ctx, category); err != nil {
+		return fmt.Errorf("unable to populate category billboard: %v", err)
+	}
+
+	if err := r.populateCategoryProducts(ctx, category); err != nil {
+		return fmt.Errorf("unable to populate category products: %v", err)
+	}
+
+	return nil
+}
+
 func (r *Repository) populateCategoryBillboard(ctx context.Context, category *Category) error {
 	var billboard Billboard
+	var store Store
 	err := r.billboardColl.FindOne(ctx, bson.M{"store_id": category.StoreID}).Decode(&billboard)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -174,6 +188,77 @@ func (r *Repository) populateCategoryBillboard(ctx context.Context, category *Ca
 		return fmt.Errorf("unable to fetch billboard for store category %s: %v", category.StoreID.Hex(), err)
 	}
 
+	err = r.storeColl.FindOne(ctx, bson.M{"_id": billboard.StoreID}).Decode(&store)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return fmt.Errorf("store with id %s not found: %v", billboard.StoreID.Hex(), err)
+		}
+		return fmt.Errorf("unable to fetch store %s: %v", billboard.StoreID.Hex(), err)
+	}
+
+	billboard.Store = store
 	category.Billboard = billboard
+	return nil
+}
+
+func (r *Repository) populateCategoryProducts(ctx context.Context, category *Category) error {
+	var products []Product
+
+	cursor, err := r.productColl.Find(ctx, bson.M{"category_id": category.ID})
+	if err != nil {
+		return fmt.Errorf("unable to fetch products for category %s: %v", category.ID.Hex(), err)
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var product Product
+		var store Store
+		var color Color
+		var size Size
+
+		if err := cursor.Decode(&product); err != nil {
+			return fmt.Errorf("unable to decode product: %v", err)
+		}
+
+		//find product store, size and color
+		err = r.storeColl.FindOne(ctx, bson.M{"_id": product.StoreID}).Decode(&store)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return fmt.Errorf("store with id %s not found: %v", product.StoreID.Hex(), err)
+			}
+			return fmt.Errorf("unable to fetch store %s: %v", product.StoreID.Hex(), err)
+		}
+
+		err = r.colorColl.FindOne(ctx, bson.M{"_id": product.ColorID}).Decode(&color)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return fmt.Errorf("color with id %s not found: %v", product.ColorID.Hex(), err)
+			}
+			return fmt.Errorf("unable to fetch color %s: %v", product.ColorID.Hex(), err)
+		}
+
+		err = r.sizeColl.FindOne(ctx, bson.M{"_id": product.SizeID}).Decode(&size)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return fmt.Errorf("size with id %s not found: %v", product.SizeID.Hex(), err)
+			}
+			return fmt.Errorf("unable to fetch size %s: %v", product.SizeID.Hex(), err)
+		}
+
+		// append to product
+		size.Store = store
+		color.Store = store
+		product.Store = store
+		product.Color = color
+		product.Size = size
+		product.Category = *category
+		products = append(products, product)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return fmt.Errorf("cursor error: %v", err)
+	}
+
+	category.Products = products
 	return nil
 }

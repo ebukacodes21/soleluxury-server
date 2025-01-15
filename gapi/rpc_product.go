@@ -39,19 +39,19 @@ func (s *Server) CreateProduct(ctx context.Context, req *pb.CreateProductRequest
 }
 
 func (s *Server) GetProducts(ctx context.Context, req *pb.GetProductsRequest) (*pb.GetProductsResponse, error) {
-	payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
-	}
+	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
+	// if err != nil {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+	// }
 
 	violations := validateGetProductsRequest(req)
 	if violations != nil {
 		return nil, invalidArgs(violations)
 	}
 
-	if payload.Role == "user" {
-		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get products")
-	}
+	// if payload.Role == "user" {
+	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get products")
+	// }
 
 	products, err := s.repository.GetProducts(ctx, req)
 	if err != nil {

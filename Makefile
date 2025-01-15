@@ -30,7 +30,7 @@ evans:
     --path /mount/proto/ \
     --proto soleluxury.proto \
     --host host.docker.internal \
-    --port 8000 \
+    --port 9092 \
     repl
 
 server:

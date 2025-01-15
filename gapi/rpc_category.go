@@ -69,19 +69,19 @@ func (s *Server) GetCategory(ctx context.Context, req *pb.GetCategoryRequest) (*
 
 // get categories
 func (s *Server) GetCategories(ctx context.Context, req *pb.GetCategoriesRequest) (*pb.GetCategoriesResponse, error) {
-	payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
-	}
+	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
+	// if err != nil {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+	// }
 
 	violations := validateGetCategoriesRequest(req)
 	if violations != nil {
 		return nil, invalidArgs(violations)
 	}
 
-	if payload.Role == "user" {
-		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get categories")
-	}
+	// if payload.Role == "user" {
+	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get categories")
+	// }
 
 	categories, err := s.repository.GetAllCategories(ctx, req)
 	if err != nil {
