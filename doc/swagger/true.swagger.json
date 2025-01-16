@@ -578,6 +578,38 @@
         ]
       }
     },
+    "/api/get-category-products": {
+      "get": {
+        "summary": "Get category products",
+        "description": "Use this API to get products of a category",
+        "operationId": "Soleluxury_GetCategoryProducts",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetCategoryProductsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/get-color": {
       "get": {
         "summary": "Get a color",
@@ -1483,6 +1515,18 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbCategory"
+          }
+        }
+      }
+    },
+    "pbGetCategoryProductsResponse": {
+      "type": "object",
+      "properties": {
+        "productRes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbProductResponse"
           }
         }
       }

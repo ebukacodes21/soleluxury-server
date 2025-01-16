@@ -54,6 +54,7 @@ type SoleluxuryClient interface {
 	DeleteColor(ctx context.Context, in *DeleteColorRequest, opts ...grpc.CallOption) (*DeleteColorResponse, error)
 	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
 	GetProducts(ctx context.Context, in *GetProductsRequest, opts ...grpc.CallOption) (*GetProductsResponse, error)
+	GetCategoryProducts(ctx context.Context, in *GetCategoryProductsRequest, opts ...grpc.CallOption) (*GetCategoryProductsResponse, error)
 	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
 	UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*UpdateProductResponse, error)
 	DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*DeleteProductResponse, error)
@@ -347,6 +348,15 @@ func (c *soleluxuryClient) GetProducts(ctx context.Context, in *GetProductsReque
 	return out, nil
 }
 
+func (c *soleluxuryClient) GetCategoryProducts(ctx context.Context, in *GetCategoryProductsRequest, opts ...grpc.CallOption) (*GetCategoryProductsResponse, error) {
+	out := new(GetCategoryProductsResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetCategoryProducts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *soleluxuryClient) GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error) {
 	out := new(GetProductResponse)
 	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetProduct", in, out, opts...)
@@ -418,6 +428,7 @@ type SoleluxuryServer interface {
 	DeleteColor(context.Context, *DeleteColorRequest) (*DeleteColorResponse, error)
 	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
 	GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error)
+	GetCategoryProducts(context.Context, *GetCategoryProductsRequest) (*GetCategoryProductsResponse, error)
 	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
 	UpdateProduct(context.Context, *UpdateProductRequest) (*UpdateProductResponse, error)
 	DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error)
@@ -521,6 +532,9 @@ func (UnimplementedSoleluxuryServer) CreateProduct(context.Context, *CreateProdu
 }
 func (UnimplementedSoleluxuryServer) GetProducts(context.Context, *GetProductsRequest) (*GetProductsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProducts not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetCategoryProducts(context.Context, *GetCategoryProductsRequest) (*GetCategoryProductsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCategoryProducts not implemented")
 }
 func (UnimplementedSoleluxuryServer) GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
@@ -1105,6 +1119,24 @@ func _Soleluxury_GetProducts_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_GetCategoryProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCategoryProductsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetCategoryProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetCategoryProducts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetCategoryProducts(ctx, req.(*GetCategoryProductsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Soleluxury_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProductRequest)
 	if err := dec(in); err != nil {
@@ -1307,6 +1339,10 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProducts",
 			Handler:    _Soleluxury_GetProducts_Handler,
+		},
+		{
+			MethodName: "GetCategoryProducts",
+			Handler:    _Soleluxury_GetCategoryProducts_Handler,
 		},
 		{
 			MethodName: "GetProduct",

@@ -65,20 +65,47 @@ func (s *Server) GetProducts(ctx context.Context, req *pb.GetProductsRequest) (*
 	return resp, nil
 }
 
-func (s *Server) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
-	payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+func (s *Server) GetCategoryProducts(ctx context.Context, req *pb.GetCategoryProductsRequest) (*pb.GetCategoryProductsResponse, error) {
+	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
+	// if err != nil {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+	// }
+
+	violations := validateGetCategoryProductsRequest(req)
+	if violations != nil {
+		return nil, invalidArgs(violations)
 	}
+
+	// if payload.Role == "user" {
+	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get products")
+	// }
+
+	products, err := s.repository.GetCategoryProducts(ctx, req)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "unable to find products")
+	}
+
+	resp := &pb.GetCategoryProductsResponse{
+		ProductRes: convertProducts(products),
+	}
+
+	return resp, nil
+}
+
+func (s *Server) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.GetProductResponse, error) {
+	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
+	// if err != nil {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+	// }
 
 	violations := validateGetProductRequest(req)
 	if violations != nil {
 		return nil, invalidArgs(violations)
 	}
 
-	if payload.Role == "user" {
-		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get a product")
-	}
+	// if payload.Role == "user" {
+	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get a product")
+	// }
 
 	product, err := s.repository.GetProductByID(ctx, req)
 	if err != nil {
@@ -193,6 +220,14 @@ func validateCreateProductRequest(req *pb.CreateProductRequest) (violations []*e
 func validateGetProductsRequest(req *pb.GetProductsRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 	if err := validate.ValidateId(req.GetStoreId()); err != nil {
 		violations = append(violations, fieldViolation("store_id", err))
+	}
+
+	return violations
+}
+
+func validateGetCategoryProductsRequest(req *pb.GetCategoryProductsRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+	if err := validate.ValidateId(req.GetCategoryId()); err != nil {
+		violations = append(violations, fieldViolation("category_id", err))
 	}
 
 	return violations

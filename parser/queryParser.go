@@ -43,6 +43,8 @@ func (p *CustomQueryParameterParser) Parse(target proto.Message, values url.Valu
 		return populateDeleteProductParams(values, req)
 	case *service.GetProductsRequest:
 		return populateGetProductsParams(values, req)
+	case *service.GetCategoryProductsRequest:
+		return populateGetCategoryProductsParams(values, req)
 	case *service.GetProductRequest:
 		return populateGetProductParams(values, req)
 	case *service.GetOrdersRequest:
@@ -146,6 +148,13 @@ func populateGetColorsParams(values url.Values, r *service.GetColorsRequest) err
 func populateGetProductsParams(values url.Values, r *service.GetProductsRequest) error {
 	if storeId := values.Get("store_id"); storeId != "" {
 		r.StoreId = storeId
+	}
+	return nil
+}
+
+func populateGetCategoryProductsParams(values url.Values, r *service.GetCategoryProductsRequest) error {
+	if categoryId := values.Get("category_id"); categoryId != "" {
+		r.CategoryId = categoryId
 	}
 	return nil
 }

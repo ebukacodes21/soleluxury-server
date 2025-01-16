@@ -250,7 +250,6 @@ func (r *Repository) populateStoreDetails(ctx context.Context, store *Store) err
 
 func (r *Repository) populateStoreCategories(ctx context.Context, store *Store) error {
 	var categories []Category
-	var billboard Billboard
 	cursor, err := r.categoryColl.Find(ctx, bson.M{"store_id": store.ID})
 	if err != nil {
 		return fmt.Errorf("unable to fetch categories for store %s: %v", store.ID.Hex(), err)
@@ -263,20 +262,109 @@ func (r *Repository) populateStoreCategories(ctx context.Context, store *Store) 
 			return fmt.Errorf("unable to decode category: %v", err)
 		}
 
-		if err := r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID, "store_id": store.ID}).Decode(&billboard); err != nil {
-			return fmt.Errorf("unable to decode billboard: %v", err)
+		// Fetch products for the category using an aggregation pipeline
+		// This combines category, color, size, and store in one query
+		pipeline := []bson.M{
+			{
+				"$match": bson.M{
+					"category_id": category.ID,
+				},
+			},
+			// Fetch category information (though we already have it in `category`)
+			{
+				"$lookup": bson.M{
+					"from":         "categories", // Collection name for categories
+					"localField":   "category_id",
+					"foreignField": "_id",
+					"as":           "category",
+				},
+			},
+			// Fetch the color information for the product
+			{
+				"$lookup": bson.M{
+					"from":         "colors", // Collection name for colors
+					"localField":   "color_id",
+					"foreignField": "_id",
+					"as":           "color",
+				},
+			},
+			// Fetch the size information for the product
+			{
+				"$lookup": bson.M{
+					"from":         "sizes", // Collection name for sizes
+					"localField":   "size_id",
+					"foreignField": "_id",
+					"as":           "size",
+				},
+			},
+			// Add the store to each product (we can use `$addFields` to add it directly)
+			{
+				"$addFields": bson.M{
+					"store": store, // Add store to each product
+				},
+			},
+			{
+				"$unwind": "$category", // Unwind to flatten the category array
+			},
+			{
+				"$unwind": "$color", // Unwind to flatten the color array
+			},
+			{
+				"$unwind": "$size", // Unwind to flatten the size array
+			},
 		}
 
-		billboard.Store = *store
-		category.Store = *store
-		category.Billboard = billboard
+		// Execute the aggregation query for products
+		productCursor, err := r.productColl.Aggregate(ctx, pipeline)
+		if err != nil {
+			return fmt.Errorf("unable to aggregate products: %v", err)
+		}
+		defer productCursor.Close(ctx)
+
+		var products []Product
+		// Iterate over the cursor and decode each product
+		for productCursor.Next(ctx) {
+			var product Product
+			if err := productCursor.Decode(&product); err != nil {
+				return fmt.Errorf("unable to decode product: %v", err)
+			}
+
+			// Set store, category, size, and color to the product
+			product.Store = *store
+			product.Category = category
+			product.Size.Store = *store
+			product.Color.Store = *store
+
+			// Append to the products list
+			products = append(products, product)
+		}
+
+		// Check for any errors during cursor iteration
+		if err := productCursor.Err(); err != nil {
+			return fmt.Errorf("product cursor error: %v", err)
+		}
+
+		// Assign products to the category
+		category.Products = products
+
+		// Populate the Billboard in the category and set its store
+		if err := r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID}).Decode(&category.Billboard); err != nil {
+			return fmt.Errorf("unable to fetch billboard for category %s: %v", category.ID.Hex(), err)
+		}
+
+		// Set the store on the billboard
+		category.Billboard.Store = *store
+
+		// Append the populated category to the categories list
 		categories = append(categories, category)
 	}
 
+	// Check if there was any error with the category cursor
 	if err := cursor.Err(); err != nil {
 		return fmt.Errorf("cursor error: %v", err)
 	}
 
+	// Finally, assign the populated categories to the store
 	store.Categories = categories
 	return nil
 }
@@ -360,54 +448,98 @@ func (r *Repository) populateColors(ctx context.Context, store *Store) error {
 
 func (r *Repository) populateProducts(ctx context.Context, store *Store) error {
 	var products []Product
-	cursor, err := r.productColl.Find(ctx, bson.M{"store_id": store.ID})
+
+	// Aggregation pipeline to fetch products with category, size, color, and store
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"store_id": store.ID, // Match products for the given store
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "categories", // Join with categories collection
+				"localField":   "category_id",
+				"foreignField": "_id",
+				"as":           "category",
+			},
+		},
+		{
+			"$unwind": "$category", // Unwind to flatten the category array
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "billboards", // Join with billboards collection
+				"localField":   "category.billboard_id",
+				"foreignField": "_id",
+				"as":           "billboard",
+			},
+		},
+		{
+			"$unwind": "$billboard", // Unwind to flatten the billboard array
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "colors", // Join with colors collection
+				"localField":   "color_id",
+				"foreignField": "_id",
+				"as":           "color",
+			},
+		},
+		{
+			"$unwind": "$color", // Unwind to flatten the color array
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "sizes", // Join with sizes collection
+				"localField":   "size_id",
+				"foreignField": "_id",
+				"as":           "size",
+			},
+		},
+		{
+			"$unwind": "$size", // Unwind to flatten the size array
+		},
+		// Add the store to each product
+		{
+			"$addFields": bson.M{
+				"store": store, // Add store information to the product
+			},
+		},
+	}
+
+	// Execute the aggregation query to get products with related data
+	cursor, err := r.productColl.Aggregate(ctx, pipeline)
 	if err != nil {
-		return fmt.Errorf("unable to fetch products for store %s: %v", store.ID.Hex(), err)
+		return fmt.Errorf("unable to aggregate products for store %s: %v", store.ID.Hex(), err)
 	}
 	defer cursor.Close(ctx)
 
+	// Iterate over the cursor and decode each product
 	for cursor.Next(ctx) {
-		var color Color
-		var size Size
 		var product Product
-		var category Category
-		var billboard Billboard
 		if err := cursor.Decode(&product); err != nil {
 			return fmt.Errorf("unable to decode product: %v", err)
 		}
 
-		if err := r.categoryColl.FindOne(ctx, bson.M{"_id": product.CategoryID}).Decode(&category); err != nil {
-			return fmt.Errorf("unable to fetch category for product %s: %v", product.CategoryID.Hex(), err)
-		}
+		// Populate the product's category, size, color, and store
+		product.Category.Store = *store // Set the store on category
+		product.Size.Store = *store     // Set the store on size
+		product.Color.Store = *store    // Set the store on color
 
-		if err := r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID}).Decode(&billboard); err != nil {
-			return fmt.Errorf("unable to fetch billboard for category %s: %v", category.BillboardID.Hex(), err)
-		}
+		// Populate the billboard for the category and set its store
+		product.Category.Billboard.Store = *store
 
-		if err := r.colorColl.FindOne(ctx, bson.M{"_id": product.ColorID}).Decode(&color); err != nil {
-			return fmt.Errorf("unable to fetch color for product %s: %v", product.ColorID.Hex(), err)
-		}
-
-		if err := r.sizeColl.FindOne(ctx, bson.M{"_id": product.SizeID}).Decode(&size); err != nil {
-			return fmt.Errorf("unable to fetch size for product %s: %v", product.SizeID.Hex(), err)
-		}
-
-		size.Store = *store
-		color.Store = *store
-		billboard.Store = *store
-		category.Billboard = billboard
-		product.Category = category
-		product.Store = *store
-		product.Size = size
-		product.Color = color
+		// Append the product to the products list
 		products = append(products, product)
-		category.Products = products
 	}
 
+	// Check for any errors during cursor iteration
 	if err := cursor.Err(); err != nil {
 		return fmt.Errorf("cursor error: %v", err)
 	}
 
+	// Finally, assign the populated products to the store
 	store.Products = products
 	return nil
 }
