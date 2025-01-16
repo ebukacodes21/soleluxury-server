@@ -31,6 +31,14 @@ message GetProductsResponse {
    repeated ProductResponse productRes = 1;
 }
 
+message GetCategoryProductsRequest {
+    string category_id = 1;
+}
+
+message GetCategoryProductsResponse {
+    repeated ProductResponse productRes = 1;
+}
+
 message GetProductRequest {
     string product_id = 1;
 }

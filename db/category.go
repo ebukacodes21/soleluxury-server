@@ -126,6 +126,11 @@ func (r *Repository) UpdateCategory(ctx context.Context, args *pb.UpdateCategory
 		return "", fmt.Errorf("invalid category id: %v", err)
 	}
 
+	bid, err := bson.ObjectIDFromHex(args.GetBillboardId())
+	if err != nil {
+		return "", fmt.Errorf("invalid billboard id: %v", err)
+	}
+
 	err = r.categoryColl.FindOne(ctx, bson.M{"_id": id}).Decode(&category)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -137,7 +142,7 @@ func (r *Repository) UpdateCategory(ctx context.Context, args *pb.UpdateCategory
 	update := bson.M{
 		"$set": bson.M{
 			"name":         args.GetName(),
-			"billboard_id": args.GetBillboardId(),
+			"billboard_id": bid,
 			"updated_at":   time.Now(),
 		},
 	}
@@ -180,7 +185,8 @@ func (r *Repository) populateCategoryDetails(ctx context.Context, category *Cate
 func (r *Repository) populateCategoryBillboard(ctx context.Context, category *Category) error {
 	var billboard Billboard
 	var store Store
-	err := r.billboardColl.FindOne(ctx, bson.M{"store_id": category.StoreID}).Decode(&billboard)
+
+	err := r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID}).Decode(&billboard)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return fmt.Errorf("billboard for store %s category not found: %v", category.StoreID.Hex(), err)
@@ -204,61 +210,92 @@ func (r *Repository) populateCategoryBillboard(ctx context.Context, category *Ca
 func (r *Repository) populateCategoryProducts(ctx context.Context, category *Category) error {
 	var products []Product
 
-	cursor, err := r.productColl.Find(ctx, bson.M{"category_id": category.ID})
+	// Prepare the aggregation pipeline to join category, store, color, and size
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"category_id": category.ID,
+			},
+		},
+		// Lookup the color information
+		{
+			"$lookup": bson.M{
+				"from":         "colors", // Join with colors collection
+				"localField":   "color_id",
+				"foreignField": "_id",
+				"as":           "color",
+			},
+		},
+		// Lookup the size information
+		{
+			"$lookup": bson.M{
+				"from":         "sizes", // Join with sizes collection
+				"localField":   "size_id",
+				"foreignField": "_id",
+				"as":           "size",
+			},
+		},
+		// Lookup the store information
+		{
+			"$lookup": bson.M{
+				"from":         "stores", // Join with stores collection
+				"localField":   "store_id",
+				"foreignField": "_id",
+				"as":           "store",
+			},
+		},
+		// Unwind the results to flatten the arrays (one-to-one mapping)
+		{
+			"$unwind": "$color",
+		},
+		{
+			"$unwind": "$size",
+		},
+		{
+			"$unwind": "$store",
+		},
+		// Add the category data to each product (using $addFields)
+		{
+			"$addFields": bson.M{
+				"category": category, // Attach the current category
+			},
+		},
+	}
+
+	// Execute the aggregation query
+	cursor, err := r.productColl.Aggregate(ctx, pipeline)
 	if err != nil {
-		return fmt.Errorf("unable to fetch products for category %s: %v", category.ID.Hex(), err)
+		return fmt.Errorf("unable to aggregate products for category %s: %v", category.ID.Hex(), err)
 	}
 	defer cursor.Close(ctx)
 
+	// Iterate over the cursor and decode each product
 	for cursor.Next(ctx) {
 		var product Product
-		var store Store
-		var color Color
-		var size Size
-
 		if err := cursor.Decode(&product); err != nil {
 			return fmt.Errorf("unable to decode product: %v", err)
 		}
 
-		//find product store, size and color
-		err = r.storeColl.FindOne(ctx, bson.M{"_id": product.StoreID}).Decode(&store)
-		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				return fmt.Errorf("store with id %s not found: %v", product.StoreID.Hex(), err)
-			}
-			return fmt.Errorf("unable to fetch store %s: %v", product.StoreID.Hex(), err)
-		}
+		// Manually copy category's store into the product's store
+		product.Store = category.Store       // Copy the Store directly (no indirection needed)
+		product.Size.Store = category.Store  // Copy the Store into Size
+		product.Color.Store = category.Store // Copy the Store into Color
 
-		err = r.colorColl.FindOne(ctx, bson.M{"_id": product.ColorID}).Decode(&color)
-		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				return fmt.Errorf("color with id %s not found: %v", product.ColorID.Hex(), err)
-			}
-			return fmt.Errorf("unable to fetch color %s: %v", product.ColorID.Hex(), err)
-		}
-
-		err = r.sizeColl.FindOne(ctx, bson.M{"_id": product.SizeID}).Decode(&size)
-		if err != nil {
-			if err == mongo.ErrNoDocuments {
-				return fmt.Errorf("size with id %s not found: %v", product.SizeID.Hex(), err)
-			}
-			return fmt.Errorf("unable to fetch size %s: %v", product.SizeID.Hex(), err)
-		}
-
-		// append to product
-		size.Store = store
-		color.Store = store
-		product.Store = store
-		product.Color = color
-		product.Size = size
-		product.Category = *category
+		// Append the populated product to the products list
 		products = append(products, product)
 	}
 
+	// Handle any errors during cursor iteration
 	if err := cursor.Err(); err != nil {
 		return fmt.Errorf("cursor error: %v", err)
 	}
 
+	// Populate the Billboard in the category
+	if err := r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID}).Decode(&category.Billboard); err != nil {
+		return fmt.Errorf("unable to fetch billboard for category %s: %v", category.ID.Hex(), err)
+	}
+
+	// Now assign the populated products to the category
 	category.Products = products
 	return nil
 }

@@ -93,12 +93,47 @@ func (r *Repository) GetProducts(ctx context.Context, args *pb.GetProductsReques
 	var products []Product
 	sId, err := bson.ObjectIDFromHex(args.GetStoreId())
 	if err != nil {
-		return nil, fmt.Errorf("invalid store id for color")
+		return nil, fmt.Errorf("invalid store id for product")
 	}
 
 	cursor, err := r.productColl.Find(ctx, bson.M{"store_id": sId})
 	if err != nil {
 		return nil, fmt.Errorf("unable to fetch products for store: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	// decode all the products
+	for cursor.Next(ctx) {
+		var product Product
+		if err := cursor.Decode(&product); err != nil {
+			return nil, fmt.Errorf("unable to decode product: %v", err)
+		}
+
+		if err := r.populateProductDetails(ctx, &product); err != nil {
+			return nil, fmt.Errorf("unable to populate product with details: %v", err)
+		}
+
+		products = append(products, product)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor error: %v", err)
+	}
+
+	return products, nil
+}
+
+// get products
+func (r *Repository) GetCategoryProducts(ctx context.Context, args *pb.GetCategoryProductsRequest) ([]Product, error) {
+	var products []Product
+	cId, err := bson.ObjectIDFromHex(args.GetCategoryId())
+	if err != nil {
+		return nil, fmt.Errorf("invalid category id for color")
+	}
+
+	cursor, err := r.productColl.Find(ctx, bson.M{"category_id": cId})
+	if err != nil {
+		return nil, fmt.Errorf("unable to fetch products for category: %v", err)
 	}
 	defer cursor.Close(ctx)
 
@@ -228,12 +263,8 @@ func convertImage(images []*pb.Item) []Image {
 
 func (r *Repository) populateProductDetails(ctx context.Context, product *Product) error {
 	var store Store
-	var category Category
-	var size Size
-	var color Color
-	var billboard Billboard
 
-	// find product store
+	// Fetch the product store
 	err := r.storeColl.FindOne(ctx, bson.M{"_id": product.StoreID}).Decode(&store)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -242,51 +273,89 @@ func (r *Repository) populateProductDetails(ctx context.Context, product *Produc
 		return fmt.Errorf("unable to fetch product store %s: %v", product.StoreID.Hex(), err)
 	}
 
-	// find product category
-	err = r.categoryColl.FindOne(ctx, bson.M{"_id": product.CategoryID}).Decode(&category)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return fmt.Errorf("category with id %s not found: %v", product.CategoryID.Hex(), err)
-		}
-		return fmt.Errorf("unable to fetch product category %s: %v", product.CategoryID.Hex(), err)
+	// Aggregation pipeline to fetch the product with category, size, color, billboard, and store
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"_id": product.ID, // Match the specific product
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "categories", // Join with categories collection
+				"localField":   "category_id",
+				"foreignField": "_id",
+				"as":           "category",
+			},
+		},
+		{
+			"$unwind": "$category", // Unwind the category to get the category object directly
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "billboards", // Join with billboards collection
+				"localField":   "category.billboard_id",
+				"foreignField": "_id",
+				"as":           "category.billboard", // Directly join billboard to category
+			},
+		},
+		{
+			"$unwind": "$category.billboard", // Unwind to get the billboard directly
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "colors", // Join with colors collection
+				"localField":   "color_id",
+				"foreignField": "_id",
+				"as":           "color",
+			},
+		},
+		{
+			"$unwind": "$color", // Unwind the color to get the color object
+		},
+		{
+			"$lookup": bson.M{
+				"from":         "sizes", // Join with sizes collection
+				"localField":   "size_id",
+				"foreignField": "_id",
+				"as":           "size",
+			},
+		},
+		{
+			"$unwind": "$size", // Unwind the size to get the size object
+		},
+		{
+			"$addFields": bson.M{
+				"store": store, // Add store information to the product
+			},
+		},
 	}
 
-	// here find category billboard
-	err = r.billboardColl.FindOne(ctx, bson.M{"_id": category.BillboardID}).Decode(&billboard)
+	// Execute the aggregation query to get the product with its related data
+	cursor, err := r.productColl.Aggregate(ctx, pipeline)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return fmt.Errorf("billboard with id %s not found: %v", category.BillboardID.Hex(), err)
+		return fmt.Errorf("unable to aggregate product %s: %v", product.ID.Hex(), err)
+	}
+	defer cursor.Close(ctx)
+
+	// Decode the result into the product object
+	if cursor.Next(ctx) {
+		if err := cursor.Decode(&product); err != nil {
+			return fmt.Errorf("unable to decode product: %v", err)
 		}
-		return fmt.Errorf("unable to fetch category billboard %s: %v", category.BillboardID.Hex(), err)
+
+		// Populate the related entities (category, size, color, billboard, etc.)
+		product.Category.Store = store
+		product.Size.Store = store
+		product.Color.Store = store
+		product.Category.Billboard.Store = store
+
+		return nil
 	}
 
-	// find product size
-	err = r.sizeColl.FindOne(ctx, bson.M{"_id": product.SizeID}).Decode(&size)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return fmt.Errorf("size with id %s not found: %v", product.SizeID.Hex(), err)
-		}
-		return fmt.Errorf("unable to fetch size product %s: %v", product.SizeID.Hex(), err)
+	if err := cursor.Err(); err != nil {
+		return fmt.Errorf("cursor error: %v", err)
 	}
 
-	// find product color
-	err = r.colorColl.FindOne(ctx, bson.M{"_id": product.ColorID}).Decode(&color)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return fmt.Errorf("color with id %s not found: %v", product.ColorID.Hex(), err)
-		}
-		return fmt.Errorf("unable to fetch color product %s: %v", product.ColorID.Hex(), err)
-	}
-
-	// populate fields
-	size.Store = store
-	color.Store = store
-	billboard.Store = store
-	category.Billboard = billboard
-
-	product.Store = store
-	product.Category = category
-	product.Color = color
-	product.Size = size
-	return nil
+	return fmt.Errorf("product not found")
 }

@@ -321,6 +321,15 @@ service Soleluxury {
             summary: "Get products";
         };
     }
+    rpc GetCategoryProducts (GetCategoryProductsRequest) returns (GetCategoryProductsResponse) {
+        option (google.api.http) = {
+            get: "/api/get-category-products"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get products of a category";
+            summary: "Get category products";
+        };
+    }
     rpc GetProduct (GetProductRequest) returns (GetProductResponse) {
         option (google.api.http) = {
             get: "/api/get-product"

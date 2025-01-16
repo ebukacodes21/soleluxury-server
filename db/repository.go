@@ -47,6 +47,7 @@ type DatabaseContract interface {
 
 	CreateProduct(ctx context.Context, args *pb.CreateProductRequest) (*Product, error)
 	GetProducts(ctx context.Context, args *pb.GetProductsRequest) ([]Product, error)
+	GetCategoryProducts(ctx context.Context, args *pb.GetCategoryProductsRequest) ([]Product, error)
 	GetProductByID(ctx context.Context, req *pb.GetProductRequest) (*Product, error)
 	UpdateProduct(ctx context.Context, args *pb.UpdateProductRequest) (string, error)
 	DeleteProduct(ctx context.Context, arg *pb.DeleteProductRequest) (string, error)
