@@ -26,6 +26,8 @@ func convertStore(store *db.Store) *pb.Store {
 		Billboards: convertBillboards(store.Billboards),
 		Categories: convertCategories(store.Categories),
 		Products:   convertProducts(store.Products),
+		Sizes:      convertSizes(store.Sizes),
+		Colors:     convertColors(store.Colors),
 	}
 }
 
