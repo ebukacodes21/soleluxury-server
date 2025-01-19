@@ -61,15 +61,16 @@ func (r *Repository) CreateCategory(ctx context.Context, args *pb.CreateCategory
 // get category by id
 func (r *Repository) GetCatgeoryByID(ctx context.Context, req *pb.GetCategoryRequest) (*Category, error) {
 	var category Category
-	sID, err := bson.ObjectIDFromHex(req.GetId())
+
+	cID, err := bson.ObjectIDFromHex(req.GetId())
 	if err != nil {
 		return nil, fmt.Errorf("invalid category id: %v", err)
 	}
 
-	err = r.categoryColl.FindOne(ctx, bson.M{"_id": sID}).Decode(&category)
+	err = r.categoryColl.FindOne(ctx, bson.M{"_id": cID}).Decode(&category)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, fmt.Errorf("category with ID %s not found", sID)
+			return nil, fmt.Errorf("category with ID %s not found", cID)
 		}
 		return nil, fmt.Errorf("unable to fetch category by ID: %v", err)
 	}
