@@ -40,19 +40,19 @@ func (s *Server) CreateCategory(ctx context.Context, req *pb.CreateCategoryReque
 
 // get category
 func (s *Server) GetCategory(ctx context.Context, req *pb.GetCategoryRequest) (*pb.GetCategoryResponse, error) {
-	payload, err := s.authGuard(ctx, []string{"user", "admin"})
-	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
-	}
+	// payload, err := s.authGuard(ctx, []string{"user", "admin"})
+	// if err != nil {
+	// 	return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+	// }
 
 	violations := validateGetCategoryRequest(req)
 	if violations != nil {
 		return nil, invalidArgs(violations)
 	}
 
-	if payload.Role == "user" {
-		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get category")
-	}
+	// if payload.Role == "user" {
+	// 	return nil, status.Errorf(codes.PermissionDenied, "not authorized to get category")
+	// }
 
 	category, err := s.repository.GetCatgeoryByID(ctx, req)
 	if err != nil {
