@@ -122,6 +122,40 @@
         ]
       }
     },
+    "/api/create-order": {
+      "post": {
+        "summary": "Create order",
+        "description": "Use this API to create an order",
+        "operationId": "Soleluxury_CreateOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateOrderResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/create-product": {
       "post": {
         "summary": "Create a product",
@@ -693,39 +727,6 @@
             }
           }
         },
-        "tags": [
-          "Soleluxury"
-        ]
-      }
-    },
-    "/api/get-orders": {
-      "get": {
-        "summary": "Get orders",
-        "description": "Use this API to get orders",
-        "operationId": "Soleluxury_GetOrders",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbGetOrdersResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "storeId",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "int64"
-          }
-        ],
         "tags": [
           "Soleluxury"
         ]
@@ -1331,6 +1332,25 @@
         }
       }
     },
+    "pbCreateOrderRequest": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbCreateOrderResponse": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "pbCreateProductRequest": {
       "type": "object",
       "properties": {
@@ -1555,18 +1575,6 @@
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbColor"
-          }
-        }
-      }
-    },
-    "pbGetOrdersResponse": {
-      "type": "object",
-      "properties": {
-        "ordersRes": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/pbOrder"
           }
         }
       }

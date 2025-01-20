@@ -358,13 +358,14 @@ service Soleluxury {
             summary: "Delete product";
         };
     }
-    rpc GetOrders (GetOrdersRequest) returns (GetOrdersResponse) {
+    rpc CreateOrder (CreateOrderRequest) returns (CreateOrderResponse) {
         option (google.api.http) = {
-            get: "/api/get-orders"
+            post: "/api/create-order"
+            body: "*"
         };
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            description: "Use this API to get orders";
-            summary: "Get orders";
+            description: "Use this API to create an order";
+            summary: "Create order";
         };
     }
 }
