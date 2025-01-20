@@ -30,8 +30,8 @@ func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*
 	}
 
 	paymentParams := map[string]interface{}{
-		"email":  "georgeokafo1@gmail.com",
-		"amount": totalValue,
+		"email":  req.GetEmail(),
+		"amount": totalValue * 100,
 	}
 	paymentBody, _ := json.Marshal(paymentParams)
 	paymentURL := "https://api.paystack.co/transaction/initialize"
@@ -71,6 +71,10 @@ func validateCreateOrderRequest(req *pb.CreateOrderRequest) (violations []*errde
 		if err := validate.ValidateId(item); err != nil {
 			violations = append(violations, fieldViolation("items", err))
 		}
+	}
+
+	if err := validate.ValidateEmail(req.GetEmail()); err != nil {
+		violations = append(violations, fieldViolation("email", err))
 	}
 
 	return violations

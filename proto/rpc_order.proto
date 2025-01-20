@@ -8,6 +8,7 @@ import "general.proto";
 
 message CreateOrderRequest {
     repeated string items = 1;
+    string email = 2;
 }
 
 message CreateOrderResponse {
