@@ -1340,6 +1340,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "email": {
+          "type": "string"
         }
       }
     },
