@@ -51,6 +51,8 @@ type DatabaseContract interface {
 	GetProductByID(ctx context.Context, req *pb.GetProductRequest) (*Product, error)
 	UpdateProduct(ctx context.Context, args *pb.UpdateProductRequest) (string, error)
 	DeleteProduct(ctx context.Context, arg *pb.DeleteProductRequest) (string, error)
+
+	CreateOrder(ctx context.Context, args *pb.CreateOrderRequest) ([]Product, error)
 }
 
 type Repository struct {

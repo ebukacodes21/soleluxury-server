@@ -7,8 +7,11 @@ option go_package = "github.com/ebukacodes21/soleluxury-server/pb";
 import "general.proto";
 
 message CreateOrderRequest {
-    int64 store_id = 1;
-    repeated OrderItem images = 5;
+    repeated string items = 1;
+}
+
+message CreateOrderResponse {
+    string url = 1;
 }
 
 message GetOrdersRequest {

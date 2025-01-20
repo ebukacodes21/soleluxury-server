@@ -58,7 +58,7 @@ type SoleluxuryClient interface {
 	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
 	UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*UpdateProductResponse, error)
 	DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*DeleteProductResponse, error)
-	GetOrders(ctx context.Context, in *GetOrdersRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error)
+	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -384,9 +384,9 @@ func (c *soleluxuryClient) DeleteProduct(ctx context.Context, in *DeleteProductR
 	return out, nil
 }
 
-func (c *soleluxuryClient) GetOrders(ctx context.Context, in *GetOrdersRequest, opts ...grpc.CallOption) (*GetOrdersResponse, error) {
-	out := new(GetOrdersResponse)
-	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetOrders", in, out, opts...)
+func (c *soleluxuryClient) CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error) {
+	out := new(CreateOrderResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/CreateOrder", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -432,7 +432,7 @@ type SoleluxuryServer interface {
 	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
 	UpdateProduct(context.Context, *UpdateProductRequest) (*UpdateProductResponse, error)
 	DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error)
-	GetOrders(context.Context, *GetOrdersRequest) (*GetOrdersResponse, error)
+	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -545,8 +545,8 @@ func (UnimplementedSoleluxuryServer) UpdateProduct(context.Context, *UpdateProdu
 func (UnimplementedSoleluxuryServer) DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
 }
-func (UnimplementedSoleluxuryServer) GetOrders(context.Context, *GetOrdersRequest) (*GetOrdersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
+func (UnimplementedSoleluxuryServer) CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -1191,20 +1191,20 @@ func _Soleluxury_DeleteProduct_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Soleluxury_GetOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOrdersRequest)
+func _Soleluxury_CreateOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrderRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SoleluxuryServer).GetOrders(ctx, in)
+		return srv.(SoleluxuryServer).CreateOrder(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Soleluxury/GetOrders",
+		FullMethod: "/pb.Soleluxury/CreateOrder",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SoleluxuryServer).GetOrders(ctx, req.(*GetOrdersRequest))
+		return srv.(SoleluxuryServer).CreateOrder(ctx, req.(*CreateOrderRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1357,8 +1357,8 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Soleluxury_DeleteProduct_Handler,
 		},
 		{
-			MethodName: "GetOrders",
-			Handler:    _Soleluxury_GetOrders_Handler,
+			MethodName: "CreateOrder",
+			Handler:    _Soleluxury_CreateOrder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
