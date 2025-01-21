@@ -11,6 +11,7 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
@@ -35,6 +36,7 @@ func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*
 	}
 	paymentBody, _ := json.Marshal(paymentParams)
 	paymentURL := "https://api.paystack.co/transaction/initialize"
+
 	httpReq, err := http.NewRequest("POST", paymentURL, bytes.NewBuffer(paymentBody))
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create payment request: %s", err)
@@ -64,6 +66,28 @@ func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*
 		Url: authURL,
 	}
 	return res, nil
+}
+
+func (s *Server) GetOrders(ctx context.Context, _ *emptypb.Empty) (*pb.GetOrdersResponse, error) {
+	payload, err := s.authGuard(ctx, []string{"user", "admin"})
+	if err != nil {
+		return nil, status.Errorf(codes.Unauthenticated, "unauthorized to access route %s ", err)
+	}
+
+	if payload.Role == "user" {
+		return nil, status.Errorf(codes.PermissionDenied, "not authorized to get orders")
+	}
+
+	orders, err := s.repository.GetOrders(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to get orders: %s", err)
+	}
+
+	resp := &pb.GetOrdersResponse{
+		Orders: convertOrders(orders),
+	}
+
+	return resp, nil
 }
 
 func validateCreateOrderRequest(req *pb.CreateOrderRequest) (violations []*errdetails.BadRequest_FieldViolation) {

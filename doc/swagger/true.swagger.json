@@ -732,6 +732,30 @@
         ]
       }
     },
+    "/api/get-orders": {
+      "get": {
+        "summary": "Get orders",
+        "description": "Use this API to get orders",
+        "operationId": "Soleluxury_GetOrders",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGetOrdersResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/get-product": {
       "get": {
         "summary": "Get a product",
@@ -1582,6 +1606,18 @@
         }
       }
     },
+    "pbGetOrdersResponse": {
+      "type": "object",
+      "properties": {
+        "orders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/pbOrder"
+          }
+        }
+      }
+    },
     "pbGetProductResponse": {
       "type": "object",
       "properties": {
@@ -1700,27 +1736,26 @@
         "id": {
           "type": "string"
         },
-        "orderItems": {
+        "storeId": {
+          "type": "string"
+        },
+        "items": {
           "type": "array",
           "items": {
             "type": "object",
             "$ref": "#/definitions/pbOrderItem"
           }
         },
-        "orderIsPaid": {
+        "isPaid": {
           "type": "boolean"
         },
-        "orderPhone": {
+        "phone": {
           "type": "string"
         },
-        "orderAddress": {
+        "address": {
           "type": "string"
         },
-        "orderCreatedAt": {
-          "type": "string",
-          "format": "date-time"
-        },
-        "orderUpdatedAt": {
+        "createdAt": {
           "type": "string",
           "format": "date-time"
         }
@@ -1729,11 +1764,15 @@
     "pbOrderItem": {
       "type": "object",
       "properties": {
+        "productId": {
+          "type": "string"
+        },
         "name": {
           "type": "string"
         },
-        "qty": {
-          "type": "string"
+        "price": {
+          "type": "number",
+          "format": "float"
         }
       }
     },

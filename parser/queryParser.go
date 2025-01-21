@@ -2,7 +2,6 @@ package parser
 
 import (
 	"net/url"
-	"strconv"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
@@ -47,8 +46,6 @@ func (p *CustomQueryParameterParser) Parse(target proto.Message, values url.Valu
 		return populateGetCategoryProductsParams(values, req)
 	case *service.GetProductRequest:
 		return populateGetProductParams(values, req)
-	case *service.GetOrdersRequest:
-		return populateGetOrdersParams(values, req)
 	}
 
 	return (*runtime.DefaultQueryParser)(nil).Parse(target, values, filter)
@@ -162,15 +159,6 @@ func populateGetCategoryProductsParams(values url.Values, r *service.GetCategory
 func populateGetProductParams(values url.Values, r *service.GetProductRequest) error {
 	if pId := values.Get("product_id"); pId != "" {
 		r.ProductId = pId
-	}
-	return nil
-}
-
-func populateGetOrdersParams(values url.Values, r *service.GetOrdersRequest) error {
-	if storeId := values.Get("store_id"); storeId != "" {
-		if parsedStoreId, err := strconv.Atoi(storeId); err == nil {
-			r.StoreId = int64(parsedStoreId)
-		}
 	}
 	return nil
 }

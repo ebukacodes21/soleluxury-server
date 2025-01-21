@@ -12,11 +12,6 @@ message Item {
     string url = 1;
 }
 
-message OrderItem {
-    string name = 1;
-    string qty = 2;
-}
-
 message User {
     string id = 1;
     string username = 2;
@@ -107,12 +102,18 @@ message ProductResponse {
     google.protobuf.Timestamp created_at = 16;
 }
 
+message OrderItem {
+    string product_id = 1;
+    string name = 2;
+    float price = 3;
+}
+
 message Order {
     string id = 1;  
-    repeated OrderItem order_items = 2;  
-    bool order_is_paid = 3;  
-    string order_phone = 4;  
-    string order_address = 5;  
-    google.protobuf.Timestamp order_created_at = 6;  
-    google.protobuf.Timestamp order_updated_at = 7; 
+    string store_id = 2;
+    repeated OrderItem items = 3;  
+    bool is_paid = 4;  
+    string phone = 5;  
+    string address = 6;  
+    google.protobuf.Timestamp created_at = 7;  
 }
