@@ -42,7 +42,7 @@ var file_soleluxury_proto_rawDesc = []byte{
 	0x5f, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x11, 0x72, 0x70,
 	0x63, 0x5f, 0x70, 0x72, 0x6f, 0x64, 0x75, 0x63, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a,
 	0x0f, 0x72, 0x70, 0x63, 0x5f, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x32, 0x86, 0x2c, 0x0a, 0x0a, 0x53, 0x6f, 0x6c, 0x65, 0x6c, 0x75, 0x78, 0x75, 0x72, 0x79, 0x12,
+	0x32, 0x94, 0x2d, 0x0a, 0x0a, 0x53, 0x6f, 0x6c, 0x65, 0x6c, 0x75, 0x78, 0x75, 0x72, 0x79, 0x12,
 	0x91, 0x01, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x12, 0x15,
 	0x2e, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65,
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x70, 0x62, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74,
@@ -394,15 +394,24 @@ var file_soleluxury_proto_rawDesc = []byte{
 	0x6f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x1a, 0x1a, 0x55, 0x73, 0x65, 0x20, 0x74, 0x68, 0x69, 0x73,
 	0x20, 0x41, 0x50, 0x49, 0x20, 0x74, 0x6f, 0x20, 0x67, 0x65, 0x74, 0x20, 0x6f, 0x72, 0x64, 0x65,
 	0x72, 0x73, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x11, 0x12, 0x0f, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x67,
-	0x65, 0x74, 0x2d, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x42, 0x70, 0x5a, 0x2c, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x65, 0x62, 0x75, 0x6b, 0x61, 0x63, 0x6f, 0x64,
-	0x65, 0x73, 0x32, 0x31, 0x2f, 0x73, 0x6f, 0x6c, 0x65, 0x6c, 0x75, 0x78, 0x75, 0x72, 0x79, 0x2d,
-	0x73, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2f, 0x70, 0x62, 0x92, 0x41, 0x3f, 0x12, 0x3d, 0x0a, 0x0a,
-	0x53, 0x6f, 0x6c, 0x65, 0x6c, 0x75, 0x78, 0x75, 0x72, 0x79, 0x22, 0x2a, 0x0a, 0x0a, 0x73, 0x6f,
-	0x6c, 0x65, 0x6c, 0x75, 0x78, 0x75, 0x72, 0x79, 0x1a, 0x1c, 0x73, 0x6f, 0x6c, 0x65, 0x6c, 0x75,
-	0x78, 0x75, 0x72, 0x79, 0x6f, 0x66, 0x66, 0x69, 0x63, 0x69, 0x61, 0x6c, 0x40, 0x67, 0x6d, 0x61,
-	0x69, 0x6c, 0x2e, 0x63, 0x6f, 0x6d, 0x32, 0x03, 0x31, 0x2e, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x65, 0x74, 0x2d, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x73, 0x12, 0x8b, 0x01, 0x0a, 0x0b, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x12, 0x16, 0x2e, 0x70, 0x62, 0x2e, 0x55,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x72, 0x64, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x17, 0x2e, 0x70, 0x62, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4f, 0x72, 0x64,
+	0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x4b, 0x92, 0x41, 0x2c, 0x12,
+	0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x20, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x1a, 0x1c, 0x55,
+	0x73, 0x65, 0x20, 0x74, 0x68, 0x69, 0x73, 0x20, 0x41, 0x50, 0x49, 0x20, 0x74, 0x6f, 0x20, 0x75,
+	0x70, 0x64, 0x61, 0x74, 0x65, 0x20, 0x6f, 0x72, 0x64, 0x65, 0x72, 0x82, 0xd3, 0xe4, 0x93, 0x02,
+	0x16, 0x32, 0x11, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x2d, 0x6f,
+	0x72, 0x64, 0x65, 0x72, 0x3a, 0x01, 0x2a, 0x42, 0x70, 0x5a, 0x2c, 0x67, 0x69, 0x74, 0x68, 0x75,
+	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x65, 0x62, 0x75, 0x6b, 0x61, 0x63, 0x6f, 0x64, 0x65, 0x73,
+	0x32, 0x31, 0x2f, 0x73, 0x6f, 0x6c, 0x65, 0x6c, 0x75, 0x78, 0x75, 0x72, 0x79, 0x2d, 0x73, 0x65,
+	0x72, 0x76, 0x65, 0x72, 0x2f, 0x70, 0x62, 0x92, 0x41, 0x3f, 0x12, 0x3d, 0x0a, 0x0a, 0x53, 0x6f,
+	0x6c, 0x65, 0x6c, 0x75, 0x78, 0x75, 0x72, 0x79, 0x22, 0x2a, 0x0a, 0x0a, 0x73, 0x6f, 0x6c, 0x65,
+	0x6c, 0x75, 0x78, 0x75, 0x72, 0x79, 0x1a, 0x1c, 0x73, 0x6f, 0x6c, 0x65, 0x6c, 0x75, 0x78, 0x75,
+	0x72, 0x79, 0x6f, 0x66, 0x66, 0x69, 0x63, 0x69, 0x61, 0x6c, 0x40, 0x67, 0x6d, 0x61, 0x69, 0x6c,
+	0x2e, 0x63, 0x6f, 0x6d, 0x32, 0x03, 0x31, 0x2e, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var file_soleluxury_proto_goTypes = []interface{}{
@@ -440,42 +449,44 @@ var file_soleluxury_proto_goTypes = []interface{}{
 	(*UpdateProductRequest)(nil),        // 31: pb.UpdateProductRequest
 	(*DeleteProductRequest)(nil),        // 32: pb.DeleteProductRequest
 	(*CreateOrderRequest)(nil),          // 33: pb.CreateOrderRequest
-	(*CreateUserResponse)(nil),          // 34: pb.CreateUserResponse
-	(*LoginUserResponse)(nil),           // 35: pb.LoginUserResponse
-	(*LogoutResponse)(nil),              // 36: pb.LogoutResponse
-	(*CreateStoreResponse)(nil),         // 37: pb.CreateStoreResponse
-	(*GetStoreResponse)(nil),            // 38: pb.GetStoreResponse
-	(*GetStoresResponse)(nil),           // 39: pb.GetStoresResponse
-	(*UpdateStoreResponse)(nil),         // 40: pb.UpdateStoreResponse
-	(*DeleteStoreResponse)(nil),         // 41: pb.DeleteStoreResponse
-	(*CreateBillboardResponse)(nil),     // 42: pb.CreateBillboardResponse
-	(*GetBillboardResponse)(nil),        // 43: pb.GetBillboardResponse
-	(*GetBillboardsResponse)(nil),       // 44: pb.GetBillboardsResponse
-	(*UpdateBillboardResponse)(nil),     // 45: pb.UpdateBillboardResponse
-	(*DeleteBillboardResponse)(nil),     // 46: pb.DeleteBillboardResponse
-	(*CreateCategoryResponse)(nil),      // 47: pb.CreateCategoryResponse
-	(*GetCategoryResponse)(nil),         // 48: pb.GetCategoryResponse
-	(*GetCategoriesResponse)(nil),       // 49: pb.GetCategoriesResponse
-	(*UpdateCategoryResponse)(nil),      // 50: pb.UpdateCategoryResponse
-	(*DeleteCategoryResponse)(nil),      // 51: pb.DeleteCategoryResponse
-	(*CreateSizeResponse)(nil),          // 52: pb.CreateSizeResponse
-	(*GetSizeResponse)(nil),             // 53: pb.GetSizeResponse
-	(*GetSizesResponse)(nil),            // 54: pb.GetSizesResponse
-	(*UpdateSizeResponse)(nil),          // 55: pb.UpdateSizeResponse
-	(*DeleteSizeResponse)(nil),          // 56: pb.DeleteSizeResponse
-	(*CreateColorResponse)(nil),         // 57: pb.CreateColorResponse
-	(*GetColorResponse)(nil),            // 58: pb.GetColorResponse
-	(*GetColorsResponse)(nil),           // 59: pb.GetColorsResponse
-	(*UpdateColorResponse)(nil),         // 60: pb.UpdateColorResponse
-	(*DeleteColorResponse)(nil),         // 61: pb.DeleteColorResponse
-	(*CreateProductResponse)(nil),       // 62: pb.CreateProductResponse
-	(*GetProductsResponse)(nil),         // 63: pb.GetProductsResponse
-	(*GetCategoryProductsResponse)(nil), // 64: pb.GetCategoryProductsResponse
-	(*GetProductResponse)(nil),          // 65: pb.GetProductResponse
-	(*UpdateProductResponse)(nil),       // 66: pb.UpdateProductResponse
-	(*DeleteProductResponse)(nil),       // 67: pb.DeleteProductResponse
-	(*CreateOrderResponse)(nil),         // 68: pb.CreateOrderResponse
-	(*GetOrdersResponse)(nil),           // 69: pb.GetOrdersResponse
+	(*UpdateOrderRequest)(nil),          // 34: pb.UpdateOrderRequest
+	(*CreateUserResponse)(nil),          // 35: pb.CreateUserResponse
+	(*LoginUserResponse)(nil),           // 36: pb.LoginUserResponse
+	(*LogoutResponse)(nil),              // 37: pb.LogoutResponse
+	(*CreateStoreResponse)(nil),         // 38: pb.CreateStoreResponse
+	(*GetStoreResponse)(nil),            // 39: pb.GetStoreResponse
+	(*GetStoresResponse)(nil),           // 40: pb.GetStoresResponse
+	(*UpdateStoreResponse)(nil),         // 41: pb.UpdateStoreResponse
+	(*DeleteStoreResponse)(nil),         // 42: pb.DeleteStoreResponse
+	(*CreateBillboardResponse)(nil),     // 43: pb.CreateBillboardResponse
+	(*GetBillboardResponse)(nil),        // 44: pb.GetBillboardResponse
+	(*GetBillboardsResponse)(nil),       // 45: pb.GetBillboardsResponse
+	(*UpdateBillboardResponse)(nil),     // 46: pb.UpdateBillboardResponse
+	(*DeleteBillboardResponse)(nil),     // 47: pb.DeleteBillboardResponse
+	(*CreateCategoryResponse)(nil),      // 48: pb.CreateCategoryResponse
+	(*GetCategoryResponse)(nil),         // 49: pb.GetCategoryResponse
+	(*GetCategoriesResponse)(nil),       // 50: pb.GetCategoriesResponse
+	(*UpdateCategoryResponse)(nil),      // 51: pb.UpdateCategoryResponse
+	(*DeleteCategoryResponse)(nil),      // 52: pb.DeleteCategoryResponse
+	(*CreateSizeResponse)(nil),          // 53: pb.CreateSizeResponse
+	(*GetSizeResponse)(nil),             // 54: pb.GetSizeResponse
+	(*GetSizesResponse)(nil),            // 55: pb.GetSizesResponse
+	(*UpdateSizeResponse)(nil),          // 56: pb.UpdateSizeResponse
+	(*DeleteSizeResponse)(nil),          // 57: pb.DeleteSizeResponse
+	(*CreateColorResponse)(nil),         // 58: pb.CreateColorResponse
+	(*GetColorResponse)(nil),            // 59: pb.GetColorResponse
+	(*GetColorsResponse)(nil),           // 60: pb.GetColorsResponse
+	(*UpdateColorResponse)(nil),         // 61: pb.UpdateColorResponse
+	(*DeleteColorResponse)(nil),         // 62: pb.DeleteColorResponse
+	(*CreateProductResponse)(nil),       // 63: pb.CreateProductResponse
+	(*GetProductsResponse)(nil),         // 64: pb.GetProductsResponse
+	(*GetCategoryProductsResponse)(nil), // 65: pb.GetCategoryProductsResponse
+	(*GetProductResponse)(nil),          // 66: pb.GetProductResponse
+	(*UpdateProductResponse)(nil),       // 67: pb.UpdateProductResponse
+	(*DeleteProductResponse)(nil),       // 68: pb.DeleteProductResponse
+	(*CreateOrderResponse)(nil),         // 69: pb.CreateOrderResponse
+	(*GetOrdersResponse)(nil),           // 70: pb.GetOrdersResponse
+	(*UpdateOrderResponse)(nil),         // 71: pb.UpdateOrderResponse
 }
 var file_soleluxury_proto_depIdxs = []int32{
 	0,  // 0: pb.Soleluxury.CreateUser:input_type -> pb.CreateUserRequest
@@ -515,45 +526,47 @@ var file_soleluxury_proto_depIdxs = []int32{
 	32, // 34: pb.Soleluxury.DeleteProduct:input_type -> pb.DeleteProductRequest
 	33, // 35: pb.Soleluxury.CreateOrder:input_type -> pb.CreateOrderRequest
 	2,  // 36: pb.Soleluxury.GetOrders:input_type -> google.protobuf.Empty
-	34, // 37: pb.Soleluxury.CreateUser:output_type -> pb.CreateUserResponse
-	35, // 38: pb.Soleluxury.LoginUser:output_type -> pb.LoginUserResponse
-	36, // 39: pb.Soleluxury.LogoutUser:output_type -> pb.LogoutResponse
-	37, // 40: pb.Soleluxury.CreateStore:output_type -> pb.CreateStoreResponse
-	38, // 41: pb.Soleluxury.GetStore:output_type -> pb.GetStoreResponse
-	38, // 42: pb.Soleluxury.GetFirstStore:output_type -> pb.GetStoreResponse
-	39, // 43: pb.Soleluxury.GetStores:output_type -> pb.GetStoresResponse
-	40, // 44: pb.Soleluxury.UpdateStore:output_type -> pb.UpdateStoreResponse
-	41, // 45: pb.Soleluxury.DeleteStore:output_type -> pb.DeleteStoreResponse
-	42, // 46: pb.Soleluxury.CreateBillboard:output_type -> pb.CreateBillboardResponse
-	43, // 47: pb.Soleluxury.GetBillboard:output_type -> pb.GetBillboardResponse
-	44, // 48: pb.Soleluxury.GetBillboards:output_type -> pb.GetBillboardsResponse
-	45, // 49: pb.Soleluxury.UpdateBillboard:output_type -> pb.UpdateBillboardResponse
-	46, // 50: pb.Soleluxury.DeleteBillboard:output_type -> pb.DeleteBillboardResponse
-	47, // 51: pb.Soleluxury.CreateCategory:output_type -> pb.CreateCategoryResponse
-	48, // 52: pb.Soleluxury.GetCategory:output_type -> pb.GetCategoryResponse
-	49, // 53: pb.Soleluxury.GetCategories:output_type -> pb.GetCategoriesResponse
-	50, // 54: pb.Soleluxury.UpdateCategory:output_type -> pb.UpdateCategoryResponse
-	51, // 55: pb.Soleluxury.DeleteCategory:output_type -> pb.DeleteCategoryResponse
-	52, // 56: pb.Soleluxury.CreateSize:output_type -> pb.CreateSizeResponse
-	53, // 57: pb.Soleluxury.GetSize:output_type -> pb.GetSizeResponse
-	54, // 58: pb.Soleluxury.GetSizes:output_type -> pb.GetSizesResponse
-	55, // 59: pb.Soleluxury.UpdateSize:output_type -> pb.UpdateSizeResponse
-	56, // 60: pb.Soleluxury.DeleteSize:output_type -> pb.DeleteSizeResponse
-	57, // 61: pb.Soleluxury.CreateColor:output_type -> pb.CreateColorResponse
-	58, // 62: pb.Soleluxury.GetColor:output_type -> pb.GetColorResponse
-	59, // 63: pb.Soleluxury.GetColors:output_type -> pb.GetColorsResponse
-	60, // 64: pb.Soleluxury.UpdateColor:output_type -> pb.UpdateColorResponse
-	61, // 65: pb.Soleluxury.DeleteColor:output_type -> pb.DeleteColorResponse
-	62, // 66: pb.Soleluxury.CreateProduct:output_type -> pb.CreateProductResponse
-	63, // 67: pb.Soleluxury.GetProducts:output_type -> pb.GetProductsResponse
-	64, // 68: pb.Soleluxury.GetCategoryProducts:output_type -> pb.GetCategoryProductsResponse
-	65, // 69: pb.Soleluxury.GetProduct:output_type -> pb.GetProductResponse
-	66, // 70: pb.Soleluxury.UpdateProduct:output_type -> pb.UpdateProductResponse
-	67, // 71: pb.Soleluxury.DeleteProduct:output_type -> pb.DeleteProductResponse
-	68, // 72: pb.Soleluxury.CreateOrder:output_type -> pb.CreateOrderResponse
-	69, // 73: pb.Soleluxury.GetOrders:output_type -> pb.GetOrdersResponse
-	37, // [37:74] is the sub-list for method output_type
-	0,  // [0:37] is the sub-list for method input_type
+	34, // 37: pb.Soleluxury.UpdateOrder:input_type -> pb.UpdateOrderRequest
+	35, // 38: pb.Soleluxury.CreateUser:output_type -> pb.CreateUserResponse
+	36, // 39: pb.Soleluxury.LoginUser:output_type -> pb.LoginUserResponse
+	37, // 40: pb.Soleluxury.LogoutUser:output_type -> pb.LogoutResponse
+	38, // 41: pb.Soleluxury.CreateStore:output_type -> pb.CreateStoreResponse
+	39, // 42: pb.Soleluxury.GetStore:output_type -> pb.GetStoreResponse
+	39, // 43: pb.Soleluxury.GetFirstStore:output_type -> pb.GetStoreResponse
+	40, // 44: pb.Soleluxury.GetStores:output_type -> pb.GetStoresResponse
+	41, // 45: pb.Soleluxury.UpdateStore:output_type -> pb.UpdateStoreResponse
+	42, // 46: pb.Soleluxury.DeleteStore:output_type -> pb.DeleteStoreResponse
+	43, // 47: pb.Soleluxury.CreateBillboard:output_type -> pb.CreateBillboardResponse
+	44, // 48: pb.Soleluxury.GetBillboard:output_type -> pb.GetBillboardResponse
+	45, // 49: pb.Soleluxury.GetBillboards:output_type -> pb.GetBillboardsResponse
+	46, // 50: pb.Soleluxury.UpdateBillboard:output_type -> pb.UpdateBillboardResponse
+	47, // 51: pb.Soleluxury.DeleteBillboard:output_type -> pb.DeleteBillboardResponse
+	48, // 52: pb.Soleluxury.CreateCategory:output_type -> pb.CreateCategoryResponse
+	49, // 53: pb.Soleluxury.GetCategory:output_type -> pb.GetCategoryResponse
+	50, // 54: pb.Soleluxury.GetCategories:output_type -> pb.GetCategoriesResponse
+	51, // 55: pb.Soleluxury.UpdateCategory:output_type -> pb.UpdateCategoryResponse
+	52, // 56: pb.Soleluxury.DeleteCategory:output_type -> pb.DeleteCategoryResponse
+	53, // 57: pb.Soleluxury.CreateSize:output_type -> pb.CreateSizeResponse
+	54, // 58: pb.Soleluxury.GetSize:output_type -> pb.GetSizeResponse
+	55, // 59: pb.Soleluxury.GetSizes:output_type -> pb.GetSizesResponse
+	56, // 60: pb.Soleluxury.UpdateSize:output_type -> pb.UpdateSizeResponse
+	57, // 61: pb.Soleluxury.DeleteSize:output_type -> pb.DeleteSizeResponse
+	58, // 62: pb.Soleluxury.CreateColor:output_type -> pb.CreateColorResponse
+	59, // 63: pb.Soleluxury.GetColor:output_type -> pb.GetColorResponse
+	60, // 64: pb.Soleluxury.GetColors:output_type -> pb.GetColorsResponse
+	61, // 65: pb.Soleluxury.UpdateColor:output_type -> pb.UpdateColorResponse
+	62, // 66: pb.Soleluxury.DeleteColor:output_type -> pb.DeleteColorResponse
+	63, // 67: pb.Soleluxury.CreateProduct:output_type -> pb.CreateProductResponse
+	64, // 68: pb.Soleluxury.GetProducts:output_type -> pb.GetProductsResponse
+	65, // 69: pb.Soleluxury.GetCategoryProducts:output_type -> pb.GetCategoryProductsResponse
+	66, // 70: pb.Soleluxury.GetProduct:output_type -> pb.GetProductResponse
+	67, // 71: pb.Soleluxury.UpdateProduct:output_type -> pb.UpdateProductResponse
+	68, // 72: pb.Soleluxury.DeleteProduct:output_type -> pb.DeleteProductResponse
+	69, // 73: pb.Soleluxury.CreateOrder:output_type -> pb.CreateOrderResponse
+	70, // 74: pb.Soleluxury.GetOrders:output_type -> pb.GetOrdersResponse
+	71, // 75: pb.Soleluxury.UpdateOrder:output_type -> pb.UpdateOrderResponse
+	38, // [38:76] is the sub-list for method output_type
+	0,  // [0:38] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

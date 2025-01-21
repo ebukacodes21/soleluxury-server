@@ -20,7 +20,7 @@ func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*
 		return nil, invalidArgs(violations)
 	}
 
-	products, err := s.repository.CreateOrder(ctx, req)
+	order, products, err := s.repository.CreateOrder(ctx, req)
 	if err != nil {
 		return nil, status.Errorf(codes.FailedPrecondition, "unable to create order: %s", err)
 	}
@@ -56,14 +56,15 @@ func (s *Server) CreateOrder(ctx context.Context, req *pb.CreateOrderRequest) (*
 		return nil, status.Errorf(codes.Internal, "failed to parse payment response: %s", err)
 	}
 
-	authURL := ""
+	reference := ""
 	if data, ok := paymentResponse["data"].(map[string]interface{}); ok {
-		if url, ok := data["authorization_url"].(string); ok {
-			authURL = url
+		if r, ok := data["reference"].(string); ok {
+			reference = r
 		}
 	}
 	res := &pb.CreateOrderResponse{
-		Url: authURL,
+		Reference: reference,
+		OrderId:   order.ID.Hex(),
 	}
 	return res, nil
 }
@@ -90,6 +91,24 @@ func (s *Server) GetOrders(ctx context.Context, _ *emptypb.Empty) (*pb.GetOrders
 	return resp, nil
 }
 
+func (s *Server) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.UpdateOrderResponse, error) {
+	violations := validateUpdateOrderRequest(req)
+	if violations != nil {
+		return nil, invalidArgs(violations)
+	}
+
+	message, err := s.repository.UpdateOrder(ctx, req)
+	if err != nil {
+		return nil, status.Errorf(codes.FailedPrecondition, "unable to update order: %s", err)
+	}
+
+	resp := &pb.UpdateOrderResponse{
+		Message: message,
+	}
+
+	return resp, nil
+}
+
 func validateCreateOrderRequest(req *pb.CreateOrderRequest) (violations []*errdetails.BadRequest_FieldViolation) {
 	for _, item := range req.GetItems() {
 		if err := validate.ValidateId(item); err != nil {
@@ -101,5 +120,28 @@ func validateCreateOrderRequest(req *pb.CreateOrderRequest) (violations []*errde
 		violations = append(violations, fieldViolation("email", err))
 	}
 
+	if err := validate.ValidateAddress(req.GetAddress()); err != nil {
+		violations = append(violations, fieldViolation("address", err))
+	}
+
+	if err := validate.ValidatePhone(req.GetPhone()); err != nil {
+		violations = append(violations, fieldViolation("phone", err))
+	}
+
+	return violations
+}
+
+func validateUpdateOrderRequest(req *pb.UpdateOrderRequest) (violations []*errdetails.BadRequest_FieldViolation) {
+	if err := validate.ValidateId(req.GetOrderId()); err != nil {
+		violations = append(violations, fieldViolation("order_id", err))
+	}
+
+	if err := validate.ValidateOrderMessage(req.GetMessage()); err != nil {
+		violations = append(violations, fieldViolation("message", err))
+	}
+
+	if err := validate.ValidateOrderStatus(req.GetStatus()); err != nil {
+		violations = append(violations, fieldViolation("status", err))
+	}
 	return violations
 }

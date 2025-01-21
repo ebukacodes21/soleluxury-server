@@ -377,4 +377,14 @@ service Soleluxury {
             summary: "Get orders";
         };
     }
+    rpc UpdateOrder (UpdateOrderRequest) returns (UpdateOrderResponse) {
+        option (google.api.http) = {
+            patch: "/api/update-order"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to update order";
+            summary: "Update order";
+        };
+    }
 }

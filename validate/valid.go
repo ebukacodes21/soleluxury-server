@@ -38,7 +38,7 @@ func ValidateUsername(value string) error {
 }
 
 func ValidatePassword(value string) error {
-	return ValidateString(value, 8, 100)
+	return ValidateString(value, 8, 50)
 }
 
 func ValidateEmail(value string) error {
@@ -123,5 +123,32 @@ func ValidateUrls(values []*pb.Item) error {
 }
 
 func ValidateBool(value bool) error {
+	return nil
+}
+
+func ValidateAddress(value string) error {
+	return ValidateString(value, 5, 200)
+}
+
+func ValidatePhone(value string) error {
+	isPhoneValid := regexp.MustCompile(`^\d{11}$`).MatchString
+	if !isPhoneValid(value) {
+		return errors.New("phone number must be exactly 11 digits")
+	}
+	return nil
+}
+
+// special check for orders
+func ValidateOrderMessage(value string) error {
+	if value != "Approved" {
+		return errors.New("order has not been approved")
+	}
+	return nil
+}
+
+func ValidateOrderStatus(value string) error {
+	if value != "success" {
+		return errors.New("order is not successful")
+	}
 	return nil
 }

@@ -9,12 +9,25 @@ import "general.proto";
 message CreateOrderRequest {
     repeated string items = 1;
     string email = 2;
+    string address = 3;
+    string phone = 4;
 }
 
 message CreateOrderResponse {
-    string url = 1;
+    string reference = 1;
+    string order_id = 2;
 }
 
 message GetOrdersResponse {
     repeated Order orders = 1;
+}
+
+message UpdateOrderRequest {
+    string order_id = 1;
+    string status = 2;
+    string message = 3;
+}
+
+message UpdateOrderResponse {
+    string message = 1;
 }
