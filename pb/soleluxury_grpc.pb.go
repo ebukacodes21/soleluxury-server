@@ -59,6 +59,7 @@ type SoleluxuryClient interface {
 	UpdateProduct(ctx context.Context, in *UpdateProductRequest, opts ...grpc.CallOption) (*UpdateProductResponse, error)
 	DeleteProduct(ctx context.Context, in *DeleteProductRequest, opts ...grpc.CallOption) (*DeleteProductResponse, error)
 	CreateOrder(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
+	GetOrders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetOrdersResponse, error)
 }
 
 type soleluxuryClient struct {
@@ -393,6 +394,15 @@ func (c *soleluxuryClient) CreateOrder(ctx context.Context, in *CreateOrderReque
 	return out, nil
 }
 
+func (c *soleluxuryClient) GetOrders(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetOrdersResponse, error) {
+	out := new(GetOrdersResponse)
+	err := c.cc.Invoke(ctx, "/pb.Soleluxury/GetOrders", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SoleluxuryServer is the server API for Soleluxury service.
 // All implementations must embed UnimplementedSoleluxuryServer
 // for forward compatibility
@@ -433,6 +443,7 @@ type SoleluxuryServer interface {
 	UpdateProduct(context.Context, *UpdateProductRequest) (*UpdateProductResponse, error)
 	DeleteProduct(context.Context, *DeleteProductRequest) (*DeleteProductResponse, error)
 	CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
+	GetOrders(context.Context, *emptypb.Empty) (*GetOrdersResponse, error)
 	mustEmbedUnimplementedSoleluxuryServer()
 }
 
@@ -547,6 +558,9 @@ func (UnimplementedSoleluxuryServer) DeleteProduct(context.Context, *DeleteProdu
 }
 func (UnimplementedSoleluxuryServer) CreateOrder(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrder not implemented")
+}
+func (UnimplementedSoleluxuryServer) GetOrders(context.Context, *emptypb.Empty) (*GetOrdersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrders not implemented")
 }
 func (UnimplementedSoleluxuryServer) mustEmbedUnimplementedSoleluxuryServer() {}
 
@@ -1209,6 +1223,24 @@ func _Soleluxury_CreateOrder_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Soleluxury_GetOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SoleluxuryServer).GetOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.Soleluxury/GetOrders",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SoleluxuryServer).GetOrders(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Soleluxury_ServiceDesc is the grpc.ServiceDesc for Soleluxury service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1359,6 +1391,10 @@ var Soleluxury_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateOrder",
 			Handler:    _Soleluxury_CreateOrder_Handler,
+		},
+		{
+			MethodName: "GetOrders",
+			Handler:    _Soleluxury_GetOrders_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -3,6 +3,7 @@ package gapi
 import (
 	"github.com/ebukacodes21/soleluxury-server/db"
 	"github.com/ebukacodes21/soleluxury-server/pb"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -238,4 +239,36 @@ func convertImage(images []db.Image) []*pb.Item {
 		dbImages = append(dbImages, dbImage)
 	}
 	return dbImages
+}
+
+func convertOrders(orders []db.Order) []*pb.Order {
+	var dbOrders []*pb.Order
+	for _, order := range orders {
+		dbOrder := &pb.Order{
+			Id:        order.ID.Hex(),
+			StoreId:   order.StoreID.Hex(),
+			IsPaid:    order.IsPaid,
+			Phone:     order.Phone,
+			Address:   order.Address,
+			Items:     convertOrderItems(order.Items),
+			CreatedAt: timestamppb.New(order.CreatedAt),
+		}
+
+		dbOrders = append(dbOrders, dbOrder)
+	}
+
+	return dbOrders
+}
+
+func convertOrderItems(items []bson.M) []*pb.OrderItem {
+	var orderItems []*pb.OrderItem
+	for _, item := range items {
+		orderItem := &pb.OrderItem{
+			ProductId: item["product_id"].(bson.ObjectID).Hex(),
+			Name:      item["name"].(string),
+			Price:     float32(item["price"].(float64)),
+		}
+		orderItems = append(orderItems, orderItem)
+	}
+	return orderItems
 }

@@ -53,6 +53,7 @@ type DatabaseContract interface {
 	DeleteProduct(ctx context.Context, arg *pb.DeleteProductRequest) (string, error)
 
 	CreateOrder(ctx context.Context, args *pb.CreateOrderRequest) ([]Product, error)
+	GetOrders(ctx context.Context) ([]Order, error)
 }
 
 type Repository struct {

@@ -60,3 +60,27 @@ func (r *Repository) CreateOrder(ctx context.Context, args *pb.CreateOrderReques
 	order.ID = result.InsertedID.(bson.ObjectID)
 	return products, nil
 }
+
+func (r *Repository) GetOrders(ctx context.Context) ([]Order, error) {
+	var orders []Order
+	cursor, err := r.orderColl.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, fmt.Errorf("unable to fetch orders: %v", err)
+	}
+	defer cursor.Close(ctx)
+
+	// decode all the orders
+	for cursor.Next(ctx) {
+		var order Order
+		if err := cursor.Decode(&order); err != nil {
+			return nil, fmt.Errorf("unable to decode order: %v", err)
+		}
+		orders = append(orders, order)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cursor error: %v", err)
+	}
+
+	return orders, nil
+}
