@@ -1100,6 +1100,40 @@
         ]
       }
     },
+    "/api/update-order": {
+      "patch": {
+        "summary": "Update order",
+        "description": "Use this API to update order",
+        "operationId": "Soleluxury_UpdateOrder",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbUpdateOrderResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbUpdateOrderRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Soleluxury"
+        ]
+      }
+    },
     "/api/update-product": {
       "patch": {
         "summary": "Update a product",
@@ -1367,13 +1401,22 @@
         },
         "email": {
           "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
         }
       }
     },
     "pbCreateOrderResponse": {
       "type": "object",
       "properties": {
-        "url": {
+        "reference": {
+          "type": "string"
+        },
+        "orderId": {
           "type": "string"
         }
       }
@@ -2007,6 +2050,28 @@
       }
     },
     "pbUpdateColorResponse": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateOrderRequest": {
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "pbUpdateOrderResponse": {
       "type": "object",
       "properties": {
         "message": {
