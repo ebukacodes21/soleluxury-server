@@ -104,8 +104,9 @@ message ProductResponse {
 
 message OrderItem {
     string product_id = 1;
-    string name = 2;
-    float price = 3;
+    string store_id = 2;
+    string name = 3;
+    float price = 4;
 }
 
 message Order {

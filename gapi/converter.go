@@ -29,6 +29,7 @@ func convertStore(store *db.Store) *pb.Store {
 		Products:   convertProducts(store.Products),
 		Sizes:      convertSizes(store.Sizes),
 		Colors:     convertColors(store.Colors),
+		Orders:     convertOrders(store.Orders),
 	}
 }
 
@@ -43,6 +44,7 @@ func convertStores(stores []db.Store) []*pb.Store {
 			Billboards: convertBillboards(store.Billboards),
 			Categories: convertCategories(store.Categories),
 			Products:   convertProducts(store.Products),
+			Orders:     convertOrders(store.Orders),
 		}
 
 		pbStores = append(pbStores, pbStore)
@@ -265,6 +267,7 @@ func convertOrderItems(items []bson.M) []*pb.OrderItem {
 	for _, item := range items {
 		orderItem := &pb.OrderItem{
 			ProductId: item["product_id"].(bson.ObjectID).Hex(),
+			StoreId:   item["store_id"].(bson.ObjectID).Hex(),
 			Name:      item["name"].(string),
 			Price:     float32(item["price"].(float64)),
 		}
