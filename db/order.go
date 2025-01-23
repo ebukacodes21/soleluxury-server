@@ -41,6 +41,7 @@ func (r *Repository) CreateOrder(ctx context.Context, args *pb.CreateOrderReques
 	for _, product := range products {
 		items = append(items, bson.M{
 			"product_id": product.ID,
+			"store_id":   product.StoreID,
 			"name":       product.Name,
 			"price":      product.Price,
 		})
